@@ -36,7 +36,7 @@ const Navbar = () => {
           }}
           to="/"
         >
-          Home
+          Trang chủ
         </Link>
 
         <Link
@@ -46,7 +46,7 @@ const Navbar = () => {
           }}
           to="/movies"
         >
-          Movies
+          Phim
         </Link>
 
         <Link
@@ -56,7 +56,7 @@ const Navbar = () => {
           }}
           to="/"
         >
-          Theaters
+          Rạp chiếu
         </Link>
 
         <Link
@@ -66,7 +66,7 @@ const Navbar = () => {
           }}
           to="/"
         >
-          Releases
+          Lịch phát hành
         </Link>
 
         {favouriteMovies.length > 0 && (
@@ -77,7 +77,7 @@ const Navbar = () => {
             }}
             to="/favourite"
           >
-            Favourites
+            Yêu thích
           </Link>
         )}
 
@@ -90,7 +90,7 @@ const Navbar = () => {
             to="/admin"
             className="font-bold text-primary"
           >
-            Admin Panel
+            Quản trị
           </Link>
         )}
       </div>
@@ -102,13 +102,13 @@ const Navbar = () => {
             onClick={openSignIn}
             className="px-4 py-1 font-medium transition rounded-full cursor-pointer sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull"
           >
-            Login
+            Đăng nhập
           </button>
         ) : (
           <UserButton>
             <UserButton.MenuItems>
               <UserButton.Action
-                label="My Bookings"
+                label="Vé của tôi"
                 labelIcon={<TicketPlus width={15} />}
                 onClick={() => navigate("/my-bookings")}
               />

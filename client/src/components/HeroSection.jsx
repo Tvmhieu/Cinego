@@ -15,25 +15,25 @@ const HeroSection = () => {
       </h1>
 
       <div className="flex items-center gap-4 text-gray-300">
-        <span>Action | Adventure | Sci-Fi</span>
+        <span>Hành động | Phiêu lưu | Viễn tưởng</span>
         <div className="flex items-center gap-1">
           <CalendarIcon className="w-4.5 h-4.5" /> 2018
         </div>
         <div className="flex items-center gap-1">
-          <ClockIcon className="w-4.5 h-4.5" /> 2h 8m
+          <ClockIcon className="w-4.5 h-4.5" /> 2 giờ 8 phút
         </div>
       </div>
 
       <p className="max-w-md text-gray-300">
-        A group of intergalactic misfits bands together to protect the galaxy
-        from a powerful villain who threatens the entire universe.
+        Một nhóm những kẻ bất hảo ngoài không gian liên kết với nhau để bảo vệ ngân hà 
+        khỏi một tên phản diện hùng mạnh đang đe dọa toàn bộ vũ trụ.
       </p>
       
       <button
         onClick={() => navigate("/movies")}
         className="flex items-center gap-1 px-6 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer"
       >
-        Explore Movies
+        Khám phá Phim
         <ArrowRight className="w-5 h-5" />
       </button>
     </div>
