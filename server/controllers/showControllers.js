@@ -108,11 +108,20 @@ export const addShow = async (req, res) => {
       await Show.insertMany(showsToCreate);
     }
 
-    // Trigger Inngest Event
-    await inngest.send({
-      name: "app/show.added",
-      data: { movieTitle: movie.title },
-    });
+    // Trigger Inngest Event (Safely wrapped in try-catch)
+    try {
+      if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
+        await inngest.send({
+          name: "app/show.added",
+          data: { movieTitle: movie.title },
+        });
+      } else {
+        console.warn("Inngest keys not configured. Skipping background event.");
+      }
+    } catch (inngestError) {
+      console.error("Inngest Event Error:", inngestError);
+      // We don't throw here because the show was already successfully saved
+    }
 
     res.json({ success: true, message: "Show Added Successfully" });
   } catch (error) {

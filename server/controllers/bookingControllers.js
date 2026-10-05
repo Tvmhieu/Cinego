@@ -76,12 +76,18 @@ export const createBooking = async (req, res) => {
     await booking.save();
 
     // Run Inngest Scheduler Function to check payment status after 10 minutes
-    await inngest.send({
-      name: "app/checkpayment",
-      data: {
-        bookingId: booking._id.toString(),
-      },
-    });
+    try {
+      if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
+        await inngest.send({
+          name: "app/checkpayment",
+          data: {
+            bookingId: booking._id.toString(),
+          },
+        });
+      }
+    } catch (err) {
+      console.warn("Skipping background check payment task (Inngest keys missing)");
+    }
 
     res.json({ success: true, url: paymentUrl });
   } catch (error) {
@@ -138,10 +144,16 @@ export const confirmPayment = async (req, res) => {
     }
 
     // Send Confirmation Email via Inngest
-    await inngest.send({
-      name: "app/show.booked",
-      data: { bookingId: booking._id.toString() },
-    });
+    try {
+      if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
+        await inngest.send({
+          name: "app/show.booked",
+          data: { bookingId: booking._id.toString() },
+        });
+      }
+    } catch (err) {
+      console.warn("Skipping confirmation email task (Inngest keys missing)");
+    }
 
     res.json({ success: true, message: "Payment confirmed successfully" });
   } catch (error) {
