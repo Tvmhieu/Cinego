@@ -113,12 +113,12 @@ export const addShow = async (req, res) => {
       const end = new Date(dt.getTime() + 2 * 60 * 60 * 1000);
       const conflict = await Show.findOne({
         showDateTime: { $gt: start, $lt: end }
-      });
+      }).populate("movie");
       
       if (conflict) {
         return res.json({ 
           success: false, 
-          message: `Khung giờ ${dt.toLocaleTimeString("vi-VN", {hour: '2-digit', minute:'2-digit'})} ngày ${dt.toLocaleDateString("vi-VN")} bị trùng lịch (cần cách nhau ít nhất 2 tiếng).` 
+          message: `Khung giờ ${dt.toLocaleTimeString("vi-VN", {hour: '2-digit', minute:'2-digit'})} ngày ${dt.toLocaleDateString("vi-VN")} bị trùng lịch với phim "${conflict.movie.title}" (cần cách nhau ít nhất 2 tiếng).` 
         });
       }
     }
