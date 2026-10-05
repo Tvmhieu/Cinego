@@ -67,13 +67,13 @@ const syncUserUpdation = inngest.createFunction(
   },
 );
 
-// Inngest Function to cancel booking and release seats of show after 10 minutes of booking created if payment is not made
+// Inngest Function to cancel booking and release seats of show after 5 minutes of booking created if payment is not made
 const releaseSeatsAndDeleteBooking = inngest.createFunction(
   { id: "release-seats-delete-booking" },
   { event: "app/checkpayment" },
   async ({ event, step }) => {
-    const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000);
-    await step.sleepUntil("wait-for-10-minutes", tenMinutesLater);
+    const fiveMinutesLater = new Date(Date.now() + 5 * 60 * 1000);
+    await step.sleepUntil("wait-for-5-minutes", fiveMinutesLater);
 
     await step.run("check-payment-status", async () => {
       const bookingId = event.data.bookingId;

@@ -32,7 +32,7 @@ export const createVnpayUrl = (booking, ipAddr, returnUrl) => {
   const vnp_Url = process.env.VNP_URL || "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
   const createDate = formatVnpDate(new Date());
-  const expireDate = formatVnpDate(new Date(Date.now() + 30 * 60 * 1000)); // 30 min
+  const expireDate = formatVnpDate(new Date(Date.now() + 5 * 60 * 1000)); // 5 min
 
   let vnp_Params = {
     vnp_Version: "2.1.0",
