@@ -134,7 +134,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
     <p>Enjoy the show! 🍿</p>
     <p>
       Thanks for booking with us!<br/>
-      - QuickShow Team
+      - CineGo Team
     </p>
   </div>`,
     });
@@ -222,7 +222,7 @@ const sendShowReminders = inngest.createFunction(
 
     <p style="margin-top: 20px;">
       Enjoy the show! 🍿<br/>
-      <span style="color: #F84565; font-weight: bold;">– QuickShow Team</span>
+      <span style="color: #F84565; font-weight: bold;">– CineGo Team</span>
     </p>
   </div>`,
           }),
@@ -263,7 +263,7 @@ const sendNewShowNotifications = inngest.createFunction(
     
     <p style="margin-top: 20px;">
       Thanks,<br/>
-      <strong>QuickShow Team</strong>
+      <strong>CineGo Team</strong>
     </p>
   </div>`;
 
