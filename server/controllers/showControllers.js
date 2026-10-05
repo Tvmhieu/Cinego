@@ -7,7 +7,7 @@ import { inngest } from "../inngest/index.js";
 export const getNowPlayingMovies = async (req, res) => {
   try {
     const { data } = await axios.get(
-      "https://api.themoviedb.org/3/movie/now_playing",
+      "https://api.themoviedb.org/3/movie/now_playing?language=vi-VN",
       {
         headers: {
           Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
@@ -17,6 +17,30 @@ export const getNowPlayingMovies = async (req, res) => {
 
     const movies = data.results;
     res.json({ success: true, movies: movies });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to search movies from TMDB API
+export const searchMovies = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.json({ success: true, movies: [] });
+    }
+
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(q)}&language=vi-VN`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      },
+    );
+
+    res.json({ success: true, movies: data.results });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });

@@ -13,6 +13,8 @@ const AddShows = () => {
   const currency = import.meta.env.VITE_CURRENCY;
 
   const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [dateTimeSelection, setDataTimeSelection] = useState({});
   const [dateTimeInput, setDataTimeInput] = useState("");
@@ -32,6 +34,30 @@ const AddShows = () => {
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) {
+      fetchNowPlayingMovies();
+      return;
+    }
+    
+    setIsSearching(true);
+    try {
+      const { data } = await axios.get(`/api/show/search?q=${searchQuery}`, {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      });
+
+      if (data.success) {
+        setNowPlayingMovies(data.movies);
+      }
+    } catch (error) {
+      console.error("Error searching movies:", error);
+      toast.error("Lỗi khi tìm kiếm phim");
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -115,7 +141,26 @@ const AddShows = () => {
     <>
       <Title text1="Add" text2="Shows" />
 
-      <p className="mt-10 text-lg font-medium">Now Playing Movies</p>
+      <form onSubmit={handleSearch} className="flex items-center max-w-md gap-2 mt-8">
+        <input 
+          type="text" 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Tìm kiếm phim (tiếng Việt)..." 
+          className="flex-1 px-4 py-2 text-sm border rounded-lg border-primary/30 bg-primary/5 focus:outline-none focus:border-primary"
+        />
+        <button 
+          type="submit" 
+          disabled={isSearching}
+          className="px-6 py-2 text-sm text-white transition rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-50"
+        >
+          {isSearching ? "Đang tìm..." : "Tìm kiếm"}
+        </button>
+      </form>
+
+      <p className="mt-8 text-lg font-medium">
+        {searchQuery ? "Kết quả tìm kiếm" : "Phim đang hot"}
+      </p>
       <div className="pb-4 overflow-x-auto">
         <div className="flex flex-wrap gap-4 mt-4 group w-max">
           {nowPlayingMovies.map((movie) => (
