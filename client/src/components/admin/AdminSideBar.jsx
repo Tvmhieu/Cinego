@@ -3,6 +3,7 @@ import {
   ListCollapseIcon,
   ListIcon,
   PlusSquareIcon,
+  UsersIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../../assets/assets";
@@ -22,6 +23,11 @@ const AdminSideBar = () => {
       name: "DS Vé đã đặt",
       path: "/admin/list-bookings",
       icon: ListCollapseIcon,
+    },
+    {
+      name: "Tài khoản",
+      path: "/admin/users",
+      icon: UsersIcon,
     },
   ];
 

@@ -6,6 +6,8 @@ import {
   getAllShows,
   getDashboardData,
   isAdmin,
+  getAllUsers,
+  updateUserRole,
 } from "../controllers/adminControllers.js";
 import { confirmPayment } from "../controllers/bookingControllers.js";
 
@@ -17,6 +19,8 @@ adminRouter.get("/all-shows", protectAdmin, getAllShows);
 adminRouter.get("/all-bookings", protectAdmin, getAllBookings);
 adminRouter.post("/confirm-payment", protectAdmin, confirmPayment);
 adminRouter.post("/cancel-show", protectAdmin, cancelShow);
+adminRouter.get("/users", protectAdmin, getAllUsers);
+adminRouter.post("/update-role", protectAdmin, updateUserRole);
 
 export default adminRouter;
 

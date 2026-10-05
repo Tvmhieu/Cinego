@@ -1,6 +1,7 @@
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import User from "../models/User.js";
+import { clerkClient } from "@clerk/express";
 
 // API to check if user is admin
 export const isAdmin = async (req, res) => {
@@ -80,6 +81,48 @@ export const cancelShow = async (req, res) => {
     await Show.findByIdAndDelete(showId);
 
     res.json({ success: true, message: "Xóa suất chiếu thành công" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to get all users and their roles
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await clerkClient.users.getUserList();
+    
+    const formattedUsers = users.data.map(user => ({
+      _id: user.id,
+      name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Người dùng',
+      email: user.emailAddresses[0]?.emailAddress,
+      role: user.privateMetadata?.role || "user",
+      image: user.imageUrl,
+    }));
+    
+    res.json({ success: true, users: formattedUsers });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to update user role
+export const updateUserRole = async (req, res) => {
+  try {
+    const { userId, role } = req.body;
+    
+    if (role !== "admin" && role !== "user") {
+      return res.json({ success: false, message: "Role không hợp lệ" });
+    }
+    
+    await clerkClient.users.updateUserMetadata(userId, {
+      privateMetadata: {
+        role: role === "admin" ? "admin" : null
+      }
+    });
+    
+    res.json({ success: true, message: "Cập nhật quyền thành công" });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
