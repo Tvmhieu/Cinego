@@ -102,8 +102,7 @@ const ListBookings = () => {
                   <td className="p-2">{dateFormat(item.show?.showDateTime)}</td>
                   <td className="p-2">{item.bookedSeats?.join(", ") || "N/A"}</td>
                   <td className="p-2">
-                    {currency}
-                    {item.amount || 0}
+                    {(item.amount || 0).toLocaleString("vi-VN")} {currency}
                   </td>
                   <td className="p-2">
                     {item.isPaid ? (

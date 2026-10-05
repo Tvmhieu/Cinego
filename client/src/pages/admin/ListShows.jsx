@@ -96,8 +96,7 @@ const ListShows = () => {
                   {Object.keys(show.occupiedSeats).length}
                 </td>
                 <td className="p-2">
-                  {currency}
-                  {Object.keys(show.occupiedSeats).length * show.showPrice}
+                  {(Object.keys(show.occupiedSeats).length * show.showPrice).toLocaleString("vi-VN")} {currency}
                 </td>
                 <td className="p-2">
                   <button

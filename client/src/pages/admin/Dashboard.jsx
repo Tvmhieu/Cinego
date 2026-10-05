@@ -36,7 +36,7 @@ const Dashboard = () => {
     },
     {
       title: "Tổng doanh thu",
-      value: currency + dashboardData.totalRevenue || "0",
+      value: `${(dashboardData.totalRevenue || 0).toLocaleString("vi-VN")} ${currency}`,
       icon: CircleDollarSignIcon,
     },
     {
@@ -118,7 +118,7 @@ const Dashboard = () => {
             <p className="p-2 font-medium truncate">{show.movie.title}</p>
             <div className="flex items-center justify-between px-2">
               <p className="text-lg font-medium">
-                {currency} {show.showPrice}
+                {show.showPrice.toLocaleString("vi-VN")} {currency}
               </p>
               <p className="flex items-center gap-1 pr-1 mt-1 text-sm text-gray-400">
                 <StarIcon className="w-4 h-4 text-primary fill-primary" />+{" "}

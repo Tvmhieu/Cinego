@@ -204,15 +204,15 @@ const AddShows = () => {
       <div className="mt-8">
         <label className="block mb-2 text-sm font-medium">Giá vé</label>
         <div className="inline-flex items-center gap-2 px-3 py-2 border border-gray-600 rounded-md">
-          <p className="text-sm text-gray-400">{currency}</p>
           <input
             min={0}
             type="number"
             value={showPrice}
             onChange={(e) => setShowPrice(e.target.value)}
-            placeholder="Nhập giá vé (VNĐ)"
+            placeholder="Nhập giá vé"
             className="outline-none"
           />
+          <p className="text-sm text-gray-400">{currency}</p>
         </div>
       </div>
 

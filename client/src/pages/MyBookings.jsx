@@ -73,8 +73,7 @@ const MyBookings = () => {
             <div className="flex flex-col items-end">
               <div className="flex items-center gap-4">
                 <p className="mb-1 text-2xl font-semibold">
-                  {currency}
-                  {item.amount}
+                  {item.amount.toLocaleString("vi-VN")} {currency}
                 </p>
                 {!item.isPaid && (
                   <Link
