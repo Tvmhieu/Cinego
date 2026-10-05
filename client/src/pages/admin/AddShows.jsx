@@ -38,13 +38,19 @@ const AddShows = () => {
     }
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) {
-      fetchNowPlayingMovies();
-      return;
-    }
-    
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.trim()) {
+        executeSearch();
+      } else {
+        fetchNowPlayingMovies();
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, user]);
+
+  const executeSearch = async () => {
     setIsSearching(true);
     try {
       const { data } = await axios.get(`/api/show/search?q=${searchQuery}`, {
@@ -132,17 +138,13 @@ const AddShows = () => {
     setAddingShow(false);
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchNowPlayingMovies();
-    }
-  }, [user]);
+  // Removed since we fetch via debounce in the useEffect above
 
   return nowPlayingMovies.length > 0 ? (
     <>
       <Title text1="Thêm" text2="Suất chiếu" />
 
-      <form onSubmit={handleSearch} className="flex items-center max-w-md gap-2 mt-8">
+      <div className="flex items-center max-w-md gap-2 mt-8">
         <input 
           type="text" 
           value={searchQuery}
@@ -150,14 +152,8 @@ const AddShows = () => {
           placeholder="Tìm kiếm phim (tiếng Việt)..." 
           className="flex-1 px-4 py-2 text-sm border rounded-lg border-primary/30 bg-primary/5 focus:outline-none focus:border-primary"
         />
-        <button 
-          type="submit" 
-          disabled={isSearching}
-          className="px-6 py-2 text-sm text-white transition rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-50"
-        >
-          {isSearching ? "Đang tìm..." : "Tìm kiếm"}
-        </button>
-      </form>
+        {isSearching && <span className="text-sm text-gray-400">Đang tìm...</span>}
+      </div>
 
       <p className="mt-8 text-lg font-medium">
         {searchQuery ? "Kết quả tìm kiếm" : "Phim đang hot"}

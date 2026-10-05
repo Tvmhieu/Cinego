@@ -91,10 +91,13 @@ export const addShow = async (req, res) => {
     }
 
     const showsToCreate = [];
+    const dateTimesToCheck = [];
+
     showsInput.forEach((show) => {
       show.time.forEach((time) => {
         const showDateTime = new Date(`${show.date}T${time}:00`);
-
+        dateTimesToCheck.push(showDateTime);
+        
         showsToCreate.push({
           movie: movieId,
           showDateTime,
@@ -103,6 +106,22 @@ export const addShow = async (req, res) => {
         });
       });
     });
+
+    // Check for conflicts (2-hour window)
+    for (let dt of dateTimesToCheck) {
+      const start = new Date(dt.getTime() - 2 * 60 * 60 * 1000);
+      const end = new Date(dt.getTime() + 2 * 60 * 60 * 1000);
+      const conflict = await Show.findOne({
+        showDateTime: { $gt: start, $lt: end }
+      });
+      
+      if (conflict) {
+        return res.json({ 
+          success: false, 
+          message: `Khung giờ ${dt.toLocaleTimeString("vi-VN", {hour: '2-digit', minute:'2-digit'})} ngày ${dt.toLocaleDateString("vi-VN")} bị trùng lịch (cần cách nhau ít nhất 2 tiếng).` 
+        });
+      }
+    }
 
     if (showsToCreate.length > 0) {
       await Show.insertMany(showsToCreate);
