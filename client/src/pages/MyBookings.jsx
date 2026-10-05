@@ -70,22 +70,27 @@ const MyBookings = () => {
           </div>
 
           <div className="flex flex-col justify-between p-4 md:items-end md:text-right">
-            <div className="flex items-center gap-4">
-              <p className="mb-3 text-2xl font-semibold">
-                {currency}
-                {item.amount}
-              </p>
-              {!item.isPaid && (
-                <Link
-                  to={item.paymentLink}
-                  className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer"
-                >
-                  Thanh toán
-                </Link>
-              )}
+            <div className="flex flex-col items-end">
+              <div className="flex items-center gap-4">
+                <p className="mb-1 text-2xl font-semibold">
+                  {currency}
+                  {item.amount}
+                </p>
+                {!item.isPaid && (
+                  <Link
+                    to={item.paymentLink}
+                    className="bg-primary px-4 py-1.5 text-sm rounded-full font-medium cursor-pointer"
+                  >
+                    Thanh toán
+                  </Link>
+                )}
+              </div>
+              <span className={`text-xs px-2 py-1 mt-1 rounded ${item.isPaid ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                {item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+              </span>
             </div>
 
-            <div className="text-sm">
+            <div className="text-sm mt-3">
               <p>
                 <span className="text-gray-400">Số vé: </span>
                 {item.bookedSeats.length}
@@ -93,6 +98,10 @@ const MyBookings = () => {
               <p>
                 <span className="text-gray-400">Số ghế: </span>
                 {item.bookedSeats.join(", ")}
+              </p>
+              <p>
+                <span className="text-gray-400">Ngày đặt: </span>
+                {dateFormat(item.createdAt)}
               </p>
             </div>
           </div>
