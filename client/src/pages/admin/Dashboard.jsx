@@ -30,22 +30,22 @@ const Dashboard = () => {
 
   const dashboardCards = [
     {
-      title: "Total Bookings",
+      title: "Tổng số vé đặt",
       value: dashboardData.totalBookings || "0",
       icon: ChartLineIcon,
     },
     {
-      title: "Total Revenue",
+      title: "Tổng doanh thu",
       value: currency + dashboardData.totalRevenue || "0",
       icon: CircleDollarSignIcon,
     },
     {
-      title: "Active Shows",
+      title: "Suất chiếu đang mở",
       value: dashboardData.activeShows.length || "0",
       icon: PlayCircleIcon,
     },
     {
-      title: "Total Users",
+      title: "Tổng người dùng",
       value: dashboardData.totalUser || "0",
       icon: UserIcon,
     },
@@ -82,7 +82,7 @@ const Dashboard = () => {
 
   return !loading ? (
     <>
-      <Title text1="Admin" text2="Dashboard" />
+      <Title text1="Bảng" text2="Điều khiển" />
 
       <div className="relative flex flex-wrap gap-4 mt-6">
         <BlurCircle top="-100px" left="0" />
@@ -102,7 +102,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <p className="mt-10 text-lg font-medium">Active Shows</p>
+      <p className="mt-10 text-lg font-medium">Các suất chiếu đang mở</p>
       <div className="relative flex flex-wrap max-w-5xl gap-6 mt-4">
         <BlurCircle top="100px" left="-10%" />
         {dashboardData.activeShows.map((show) => (

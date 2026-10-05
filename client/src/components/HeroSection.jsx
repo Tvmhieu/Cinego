@@ -1,41 +1,83 @@
 import { ArrowRight, CalendarIcon, ClockIcon } from "lucide-react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { axios, image_base_url } = useAppContext();
+  const [featuredMovie, setFeaturedMovie] = useState(null);
 
-  return (
-    <div className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-[url("/backgroundImage.png")] bg-cover bg-center h-screen'>
-      <img src={assets.marvelLogo} alt="" className="max-h-11 lg:h-11 mt-20" />
+  useEffect(() => {
+    const fetchTopMovie = async () => {
+      try {
+        const { data } = await axios.get("/api/show/all");
+        if (data.success && data.shows && data.shows.length > 0) {
+          // Lấy phim đầu tiên đang chiếu rạp
+          setFeaturedMovie(data.shows[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching featured movie:", error);
+      }
+    };
+    fetchTopMovie();
+  }, [axios]);
 
-      <h1 className="text-5xl md:text-[70px] md:leading-18 font-semibold max-w-110">
-        Guardians <br />
-        of the Galaxy
-      </h1>
-
-      <div className="flex items-center gap-4 text-gray-300">
-        <span>Hành động | Phiêu lưu | Viễn tưởng</span>
-        <div className="flex items-center gap-1">
-          <CalendarIcon className="w-4.5 h-4.5" /> 2018
-        </div>
-        <div className="flex items-center gap-1">
-          <ClockIcon className="w-4.5 h-4.5" /> 2 giờ 8 phút
-        </div>
+  // Nếu chưa có phim nào trong rạp, hiển thị mặc định
+  if (!featuredMovie) {
+    return (
+      <div className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-[url("/backgroundImage.png")] bg-cover bg-center h-screen'>
+        <h1 className="text-5xl md:text-[70px] md:leading-[80px] font-semibold max-w-[600px] mt-20">
+          Chào mừng đến với <br /> CineGo
+        </h1>
+        <p className="max-w-md text-gray-300">
+          Hệ thống đặt vé xem phim trực tuyến tiện lợi nhất. Hãy khám phá các bộ phim đang được chiếu tại rạp ngay hôm nay.
+        </p>
+        <button
+          onClick={() => navigate("/movies")}
+          className="flex items-center gap-1 px-6 py-3 text-sm transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull font-medium"
+        >
+          Khám phá Phim
+          <ArrowRight className="w-5 h-5" />
+        </button>
       </div>
+    );
+  }
 
-      <p className="max-w-md text-gray-300">
-        Một nhóm những kẻ bất hảo ngoài không gian liên kết với nhau để bảo vệ ngân hà 
-        khỏi một tên phản diện hùng mạnh đang đe dọa toàn bộ vũ trụ.
-      </p>
-      
-      <button
-        onClick={() => navigate("/movies")}
-        className="flex items-center gap-1 px-6 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer"
-      >
-        Khám phá Phim
-        <ArrowRight className="w-5 h-5" />
-      </button>
+  // Nếu có phim trong rạp, tự động lấy ảnh và thông tin của phim đó làm Banner
+  return (
+    <div 
+      className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-cover bg-center h-screen relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/90 before:to-transparent'
+      style={{ backgroundImage: `url(${image_base_url + featuredMovie.backdrop_path})` }}
+    >
+      <div className="relative z-10">
+        <h1 className="text-5xl md:text-[70px] md:leading-[80px] font-semibold max-w-[800px] mt-20 drop-shadow-lg">
+          {featuredMovie.title}
+        </h1>
+
+        <div className="flex items-center gap-4 mt-4 text-gray-200">
+          <span>{featuredMovie.genres?.map(g => g.name).join(" | ")}</span>
+          <div className="flex items-center gap-1">
+            <CalendarIcon className="w-4.5 h-4.5" /> {featuredMovie.release_date?.substring(0, 4)}
+          </div>
+          <div className="flex items-center gap-1">
+            <ClockIcon className="w-4.5 h-4.5" /> {Math.floor(featuredMovie.runtime / 60)}h {featuredMovie.runtime % 60}m
+          </div>
+        </div>
+
+        <p className="max-w-xl mt-4 text-gray-300 drop-shadow-md line-clamp-3">
+          {featuredMovie.overview}
+        </p>
+        
+        <button
+          onClick={() => navigate(`/movies/${featuredMovie._id}`)}
+          className="flex items-center gap-2 px-6 py-3 mt-6 text-sm transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull font-medium shadow-lg"
+        >
+          Đặt vé ngay
+          <ArrowRight className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   );
 };

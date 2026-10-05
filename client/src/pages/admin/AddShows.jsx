@@ -139,7 +139,7 @@ const AddShows = () => {
 
   return nowPlayingMovies.length > 0 ? (
     <>
-      <Title text1="Add" text2="Shows" />
+      <Title text1="Thêm" text2="Suất chiếu" />
 
       <form onSubmit={handleSearch} className="flex items-center max-w-md gap-2 mt-8">
         <input 
@@ -182,7 +182,7 @@ const AddShows = () => {
                     {movie.vote_average.toFixed(1)}
                   </p>
                   <p className="text-gray-300">
-                    {kConverter(movie.vote_count)} Votes
+                    {kConverter(movie.vote_count)} Lượt đánh giá
                   </p>
                 </div>
               </div>
@@ -201,7 +201,7 @@ const AddShows = () => {
 
       {/* Show Price Input  */}
       <div className="mt-8">
-        <label className="block mb-2 text-sm font-medium">Show Price</label>
+        <label className="block mb-2 text-sm font-medium">Giá vé</label>
         <div className="inline-flex items-center gap-2 px-3 py-2 border border-gray-600 rounded-md">
           <p className="text-sm text-gray-400">{currency}</p>
           <input
@@ -209,7 +209,7 @@ const AddShows = () => {
             type="number"
             value={showPrice}
             onChange={(e) => setShowPrice(e.target.value)}
-            placeholder="Enter show price"
+            placeholder="Nhập giá vé (VNĐ)"
             className="outline-none"
           />
         </div>
@@ -218,7 +218,7 @@ const AddShows = () => {
       {/* Date & Time Selection  */}
       <div className="mt-6">
         <label className="block mb-2 text-sm font-medium">
-          Select Date and Time
+          Chọn ngày & giờ chiếu
         </label>
         <div className="inline-flex gap-5 p-1 pl-3 border border-gray-600 rounded-lg">
           <input
@@ -231,7 +231,7 @@ const AddShows = () => {
             onClick={handleDateTimeAdd}
             className="px-3 py-2 text-sm text-white rounded-lg cursor-pointer bg-primary/80 hover:bg-primary"
           >
-            Add Time
+            Thêm giờ
           </button>
         </div>
       </div>
@@ -239,7 +239,7 @@ const AddShows = () => {
       {/* Display Selected Times  */}
       {Object.keys(dateTimeSelection).length > 0 && (
         <div className="mt-6">
-          <h2 className="mb-2">Selected Date-Time</h2>
+          <h2 className="mb-2">Ngày - Giờ đã chọn</h2>
           <ul className="space-y-3">
             {Object.entries(dateTimeSelection).map(([date, times]) => (
               <li key={date}>
@@ -270,7 +270,7 @@ const AddShows = () => {
         disabled={addingShow}
         className="px-8 py-2 mt-6 text-white transition-all rounded cursor-pointer bg-primary hover:bg-primary/90"
       >
-        Add Show
+        Thêm suất chiếu
       </button>
     </>
   ) : (

@@ -47,16 +47,16 @@ const ListShows = () => {
 
   return !loading ? (
     <>
-      <Title text1="List" text2="Shows" />
+      <Title text1="Danh sách" text2="Suất chiếu" />
 
       <div className="max-w-4xl mt-6 overflow-x-auto">
         <table className="w-full overflow-hidden border-collapse rounded-md text-nowrap">
           <thead>
             <tr className="text-left text-white bg-primary/20">
-              <th className="p-2 pl-5 font-medium">Movie Name</th>
-              <th className="p-2 font-medium">Show Time</th>
-              <th className="p-2 font-medium">Total Bookings</th>
-              <th className="p-2 font-medium">Earnings</th>
+              <th className="p-2 pl-5 font-medium">Tên phim</th>
+              <th className="p-2 font-medium">Giờ chiếu</th>
+              <th className="p-2 font-medium">Tổng vé bán</th>
+              <th className="p-2 font-medium">Doanh thu</th>
             </tr>
           </thead>
 

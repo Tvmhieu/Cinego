@@ -49,25 +49,7 @@ const Navbar = () => {
           Phim
         </Link>
 
-        <Link
-          onClick={() => {
-            scrollTo(0, 0);
-            setIsOpen(false);
-          }}
-          to="/"
-        >
-          Rạp chiếu
-        </Link>
 
-        <Link
-          onClick={() => {
-            scrollTo(0, 0);
-            setIsOpen(false);
-          }}
-          to="/"
-        >
-          Lịch phát hành
-        </Link>
 
         {favouriteMovies.length > 0 && (
           <Link

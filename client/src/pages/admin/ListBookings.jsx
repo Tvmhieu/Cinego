@@ -69,7 +69,7 @@ const ListBookings = () => {
 
   return !isLoading ? (
     <>
-      <Title text1="List" text2="Bookings" />
+      <Title text1="Danh sách" text2="Vé đã đặt" />
       {error && (
         <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-md">
           {error}
@@ -79,13 +79,13 @@ const ListBookings = () => {
         <table className="w-full overflow-hidden border-collapse rounded-md text-nowrap">
           <thead>
             <tr className="text-left text-white bg-primary/20">
-              <th className="p-2 pl-5 font-medium">User Name</th>
-              <th className="p-2 font-medium">Movie Name</th>
-              <th className="p-2 font-medium">Show Time</th>
-              <th className="p-2 font-medium">Seats</th>
-              <th className="p-2 font-medium">Amount</th>
-              <th className="p-2 font-medium">Status</th>
-              <th className="p-2 font-medium">Action</th>
+              <th className="p-2 pl-5 font-medium">Tên khách hàng</th>
+              <th className="p-2 font-medium">Tên phim</th>
+              <th className="p-2 font-medium">Giờ chiếu</th>
+              <th className="p-2 font-medium">Ghế</th>
+              <th className="p-2 font-medium">Tổng tiền</th>
+              <th className="p-2 font-medium">Trạng thái</th>
+              <th className="p-2 font-medium">Thao tác</th>
             </tr>
           </thead>
 
@@ -97,8 +97,8 @@ const ListBookings = () => {
                   key={item._id || index}
                   className="border-b border-primary/20 bg-primary/5 even:bg-primary/10"
                 >
-                  <td className="p-2 pl-5 min-w-45">{item.user?.name || "Unknown User"}</td>
-                  <td className="p-2">{item.show.movie?.title || "Unknown Movie"}</td>
+                  <td className="p-2 pl-5 min-w-45">{item.user?.name || "Khách ẩn danh"}</td>
+                  <td className="p-2">{item.show.movie?.title || "Phim không xác định"}</td>
                   <td className="p-2">{dateFormat(item.show?.showDateTime)}</td>
                   <td className="p-2">{item.bookedSeats?.join(", ") || "N/A"}</td>
                   <td className="p-2">
