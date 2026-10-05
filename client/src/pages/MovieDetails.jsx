@@ -80,7 +80,7 @@ const MovieDetails = () => {
 
           <div className="flex items-center gap-2 text-gray-300">
             <StarIcon className="w-5 h-5 text-primary fill-primary" />
-            {show.movie.vote_average?.toFixed(1) || "N/A"} User Rating
+            {show.movie.vote_average?.toFixed(1) || "N/A"} Điểm đánh giá
           </div>
 
           <p className="max-w-xl mt-2 text-sm leading-tight text-gray-400">
@@ -96,16 +96,19 @@ const MovieDetails = () => {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 mt-4">
-            <button className="flex items-center gap-2 py-3 text-sm font-medium transition bg-gray-800 rounded-md cursor-pointer px-7 hover:bg-gray-900 active:scale-95">
+            <button 
+              onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(show.movie.title + ' trailer')}`, '_blank')}
+              className="flex items-center gap-2 py-3 text-sm font-medium transition bg-gray-800 rounded-md cursor-pointer px-7 hover:bg-gray-900 active:scale-95"
+            >
               <PlayCircleIcon className="w-5 h-5" />
-              Watch Trailer
+              Xem Trailer
             </button>
 
             <a
               href="#dateSelect"
               className="px-10 py-3 text-sm font-medium transition rounded-md cursor-pointer bg-primary hover:bg-primary-dull active:scale-95"
             >
-              Buy Tickets
+              Mua Vé Ngay
             </a>
 
             <button
@@ -124,7 +127,7 @@ const MovieDetails = () => {
         </div>
       </div>
 
-      <p className="mt-20 text-lg font-medium">Your Favourite Cast</p>
+      <p className="mt-20 text-lg font-medium">Diễn viên nổi bật</p>
       <div className="pb-4 mt-8 overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-4 px-4 w-max">
           {show.movie.casts.slice(0, 12).map((cast, index) => (
@@ -137,7 +140,7 @@ const MovieDetails = () => {
                 />
               ) : (
                 <div className="flex items-center justify-center h-20 bg-gray-700 rounded-full md:h-20 aspect-square">
-                  <span className="text-xs text-gray-400">No Image</span>
+                  <span className="text-xs text-gray-400">Ẩn ảnh</span>
                 </div>
               )}
               <p className="mt-3 text-xs font-medium">{cast.name}</p>
@@ -148,7 +151,7 @@ const MovieDetails = () => {
 
       <DateSelect dateTime={show.dateTime} id={id} />
 
-      <p className="mt-20 mb-8 text-lg font-medium">You May Also Like</p>
+      <p className="mt-20 mb-8 text-lg font-medium">Phim khác bạn có thể thích</p>
       <div className="flex flex-wrap gap-8 max-sm:justify-center">
         {shows.slice(0, 4).map((movie, index) => (
           <MovieCard key={index} movie={movie} />
@@ -163,7 +166,7 @@ const MovieDetails = () => {
           }}
           className="px-10 py-3 text-sm font-medium transition rounded-md cursor-pointer bg-primary hover:bg-primary-dull"
         >
-          Show more
+          Xem thêm
         </button>
       </div>
     </div>

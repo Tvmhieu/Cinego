@@ -56,12 +56,12 @@ export const addShow = async (req, res) => {
     if (!movie) {
       // Fetch movie details and credits from TMDB API
       const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
-        axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+        axios.get(`https://api.themoviedb.org/3/movie/${movieId}?language=vi-VN`, {
           headers: {
             Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
           },
         }),
-        axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits`, {
+        axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits?language=vi-VN`, {
           headers: {
             Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
           },

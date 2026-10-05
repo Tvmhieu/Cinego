@@ -4,6 +4,7 @@ import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title";
 import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const ListShows = () => {
   const { axios, getToken, user } = useAppContext();
@@ -39,6 +40,28 @@ const ListShows = () => {
     }
   };
 
+  const handleCancelShow = async (showId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa suất chiếu này?")) return;
+
+    try {
+      const { data } = await axios.post(
+        "/api/admin/cancel-show",
+        { showId },
+        { headers: { Authorization: `Bearer ${await getToken()}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getAllShows(); // Refresh list
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Lỗi khi xóa suất chiếu");
+    }
+  };
+
   useEffect(() => {
     if (user) {
       getAllShows();
@@ -57,6 +80,7 @@ const ListShows = () => {
               <th className="p-2 font-medium">Giờ chiếu</th>
               <th className="p-2 font-medium">Tổng vé bán</th>
               <th className="p-2 font-medium">Doanh thu</th>
+              <th className="p-2 font-medium">Thao tác</th>
             </tr>
           </thead>
 
@@ -74,6 +98,14 @@ const ListShows = () => {
                 <td className="p-2">
                   {currency}
                   {Object.keys(show.occupiedSeats).length * show.showPrice}
+                </td>
+                <td className="p-2">
+                  <button
+                    onClick={() => handleCancelShow(show._id)}
+                    className="px-3 py-1 text-xs font-medium text-white transition rounded-md cursor-pointer bg-red-600 hover:bg-red-700 active:scale-95"
+                  >
+                    Xóa
+                  </button>
                 </td>
               </tr>
             ))}

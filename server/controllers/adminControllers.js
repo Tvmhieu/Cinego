@@ -61,3 +61,27 @@ export const getAllBookings = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to cancel a show
+export const cancelShow = async (req, res) => {
+  try {
+    const { showId } = req.body;
+    
+    // Check if there are paid bookings for this show
+    const bookings = await Booking.find({ show: showId, isPaid: true });
+    if (bookings.length > 0) {
+      return res.json({ success: false, message: "Không thể xóa suất chiếu đã có khách thanh toán" });
+    }
+
+    // Delete associated unpaid bookings
+    await Booking.deleteMany({ show: showId });
+
+    // Delete the show
+    await Show.findByIdAndDelete(showId);
+
+    res.json({ success: true, message: "Xóa suất chiếu thành công" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
