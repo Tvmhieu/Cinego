@@ -111,11 +111,8 @@ const SeatLayout = () => {
       );
 
       if (data.success) {
-        // toast.success(data.message);
-        // navigate("/my-bookings");
-
+        // Redirect to VNPay payment page
         window.location.href = data.url;
-        
       } else {
         toast.error(data.message);
       }

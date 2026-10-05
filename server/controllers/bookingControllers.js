@@ -1,7 +1,7 @@
 import { inngest } from "../inngest/index.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
-import Stripe from "stripe";
+import { createVnpayUrl } from "./vnpayController.js";
 
 // Function to check availability of selected seats for a movie
 const checkSeatsAvailability = async (showId, selectedSeats) => {
@@ -39,12 +39,16 @@ export const createBooking = async (req, res) => {
     // Get the show details
     const showData = await Show.findById(showId).populate("movie");
 
+    const bookingCode = "CG" + Math.floor(100000 + Math.random() * 900000);
+
     // Create a new booking
     const booking = await Booking.create({
       user: userId,
       show: showId,
       amount: showData.showPrice * selectedSeats.length,
       bookedSeats: selectedSeats,
+      bookingCode: bookingCode,
+      isPaid: false,
     });
 
     selectedSeats.map((seat) => {
@@ -52,41 +56,26 @@ export const createBooking = async (req, res) => {
     });
 
     showData.markModified("occupiedSeats");
-
     await showData.save();
 
-    // TODO: Stripe Gateway Initialize
-    const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
+    // Get client IP for VNPay
+    const ipAddr =
+      req.headers["x-forwarded-for"] ||
+      req.connection?.remoteAddress ||
+      req.socket?.remoteAddress ||
+      "127.0.0.1";
 
-    // Creating line items to for Stripe
-    const line_items = [
-      {
-        price_data: {
-          currency: "inr",
-          product_data: {
-            name: showData.movie.title,
-          },
-          unit_amount: Math.floor(booking.amount) * 100,
-        },
-        quantity: 1,
-      },
-    ];
+    // VNPay return URL (backend endpoint)
+    const serverUrl = process.env.SERVER_URL || `${req.protocol}://${req.get("host")}`;
+    const returnUrl = `${serverUrl}/api/vnpay/return`;
 
-    const session = await stripeInstance.checkout.sessions.create({
-      success_url: `${origin}/loading/my-bookings`,
-      cancel_url: `${origin}/my-bookings`,
-      line_items: line_items,
-      mode: "payment",
-      metadata: {
-        bookingId: booking._id.toString(),
-      },
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // Expires in 30 minutes
-    });
+    // Generate VNPay payment URL
+    const paymentUrl = createVnpayUrl(booking, ipAddr, returnUrl);
 
-    booking.paymentLink = session.url;
+    booking.paymentLink = paymentUrl;
     await booking.save();
 
-    // Run Inngest Sheduler Function to check payment status after 10 minutes
+    // Run Inngest Scheduler Function to check payment status after 10 minutes
     await inngest.send({
       name: "app/checkpayment",
       data: {
@@ -94,7 +83,7 @@ export const createBooking = async (req, res) => {
       },
     });
 
-    res.json({ success: true, url: session.url });
+    res.json({ success: true, url: paymentUrl });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
@@ -114,3 +103,50 @@ export const getOccupiedSeats = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to get booking details by ID (for payment page)
+export const getBookingById = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const booking = await Booking.findById(bookingId)
+      .populate({ path: "show", populate: { path: "movie" } });
+
+    if (!booking) {
+      return res.json({ success: false, message: "Booking not found" });
+    }
+
+    res.json({ success: true, booking });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API for admin to confirm payment manually
+export const confirmPayment = async (req, res) => {
+  try {
+    const { bookingId } = req.body;
+
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { isPaid: true, paymentLink: "" },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.json({ success: false, message: "Booking not found" });
+    }
+
+    // Send Confirmation Email via Inngest
+    await inngest.send({
+      name: "app/show.booked",
+      data: { bookingId: booking._id.toString() },
+    });
+
+    res.json({ success: true, message: "Payment confirmed successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
