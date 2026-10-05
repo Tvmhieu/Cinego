@@ -12,16 +12,19 @@ function sortObject(obj) {
   return sorted;
 }
 
-// Format date as yyyyMMddHHmmss (VNPay requirement)
+// Format date as yyyyMMddHHmmss (VNPay requirement) - Must be GMT+7
 function formatVnpDate(date) {
+  const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+  const vnTime = new Date(utc + (3600000 * 7));
+  
   const pad = (n) => String(n).padStart(2, "0");
   return (
-    date.getFullYear().toString() +
-    pad(date.getMonth() + 1) +
-    pad(date.getDate()) +
-    pad(date.getHours()) +
-    pad(date.getMinutes()) +
-    pad(date.getSeconds())
+    vnTime.getFullYear().toString() +
+    pad(vnTime.getMonth() + 1) +
+    pad(vnTime.getDate()) +
+    pad(vnTime.getHours()) +
+    pad(vnTime.getMinutes()) +
+    pad(vnTime.getSeconds())
   );
 }
 
