@@ -8,7 +8,7 @@ import BlurCircle from "../components/BlurCircle";
 import toast from "react-hot-toast";
 import { useAppContext } from "../context/AppContext";
 
-const SeatLayout = () => {
+const SeatLayout = ({ propId, propDate }) => {
   const groupRows = [
     ["A", "B"],
     ["C", "D"],
@@ -17,7 +17,10 @@ const SeatLayout = () => {
     ["I", "J"],
   ];
 
-  const { id, date } = useParams();
+  const { id: paramId, date: paramDate } = useParams();
+  const id = propId || paramId;
+  const date = propDate || paramDate;
+  
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
   const [show, setShow] = useState(null);
@@ -41,7 +44,7 @@ const SeatLayout = () => {
 
   const handleSeatClick = (seatId) => {
     if (!selectedTime) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      document.getElementById("dateSelect")?.scrollIntoView({ behavior: "smooth" });
       return toast("Vui lòng chọn khung giờ chiếu trước");
     }
     if (!selectedSeats.includes(seatId) && selectedSeats.length >= 5) {
@@ -102,7 +105,7 @@ const SeatLayout = () => {
       if (!user) return toast.error("Vui lòng đăng nhập để tiếp tục");
 
       if (!selectedSeats || !selectedSeats.length) {
-        if (!selectedTime) window.scrollTo({ top: 0, behavior: "smooth" });
+        if (!selectedTime) document.getElementById("dateSelect")?.scrollIntoView({ behavior: "smooth" });
         return toast.error("Vui lòng chọn khung giờ và ghế ngồi");
       }
 
@@ -134,7 +137,7 @@ const SeatLayout = () => {
   }, [selectedTime]);
 
   return show ? (
-    <div className="flex flex-col px-6 md:flex-row md:px-16 lg:px-40 py-30 md:pt-50">
+    <div className={`flex flex-col md:flex-row ${propId ? 'mt-10' : 'px-6 md:px-16 lg:px-40 py-30 md:pt-50'}`}>
       {/* Available Timings */}
       <div className="py-10 border rounded-lg w-60 bg-primary/10 border-primary/20 h-max md:sticky md:top-30">
         <p className="px-6 text-lg font-semibold">Khung giờ chiếu</p>

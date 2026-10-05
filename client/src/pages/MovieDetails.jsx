@@ -9,6 +9,7 @@ import Loading from "../components/Loading";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 import ReactPlayer from "react-player";
+import SeatLayout from "./SeatLayout";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const MovieDetails = () => {
   const [show, setShow] = useState(null);
   const [trailerUrl, setTrailerUrl] = useState("");
   const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const {
     shows,
@@ -191,7 +193,9 @@ const MovieDetails = () => {
         </div>
       </div>
 
-      <DateSelect dateTime={show.dateTime} id={id} />
+      <DateSelect dateTime={show.dateTime} id={id} onSelectDate={setSelectedDate} />
+
+      {selectedDate && <SeatLayout propId={id} propDate={selectedDate} />}
 
       <p className="mt-20 mb-8 text-lg font-medium">Phim khác bạn có thể thích</p>
       <div className="flex flex-wrap gap-8 max-sm:justify-center">
