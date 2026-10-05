@@ -116,7 +116,7 @@ const AddShows = () => {
       const payload = {
         movieId: selectedMovie,
         showsInput,
-        showPrice: Number(showPrice),
+        showPrice: Number(showPrice.replace(/\./g, "")),
       };
 
       const { data } = await axios.post("/api/show/add", payload, {
@@ -201,10 +201,12 @@ const AddShows = () => {
         <label className="block mb-2 text-sm font-medium">Giá vé</label>
         <div className="inline-flex items-center gap-2 px-3 py-2 border border-gray-600 rounded-md">
           <input
-            min={0}
-            type="number"
+            type="text"
             value={showPrice}
-            onChange={(e) => setShowPrice(e.target.value)}
+            onChange={(e) => {
+              const rawValue = e.target.value.replace(/\D/g, "");
+              setShowPrice(rawValue ? Number(rawValue).toLocaleString("vi-VN") : "");
+            }}
             placeholder="Nhập giá vé"
             className="outline-none"
           />
