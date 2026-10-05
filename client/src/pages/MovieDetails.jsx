@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BlurCircle from "../components/BlurCircle";
-import { Heart, PlayCircleIcon, StarIcon } from "lucide-react";
+import { Heart, PlayCircleIcon, StarIcon, XIcon } from "lucide-react";
 import timeFormat from "../lib/timeFormat";
 import DateSelect from "../components/DateSelect";
 import MovieCard from "../components/MovieCard";
 import Loading from "../components/Loading";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
+import ReactPlayer from "react-player";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [show, setShow] = useState(null);
+  const [trailerUrl, setTrailerUrl] = useState("");
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
 
   const {
     shows,
@@ -56,12 +59,51 @@ const MovieDetails = () => {
     }
   };
 
+  const handleWatchTrailer = async () => {
+    try {
+      const { data } = await axios.get(`/api/show/trailer/${id}`);
+      if (data.success && data.url) {
+        setTrailerUrl(data.url);
+        setShowTrailerModal(true);
+      } else {
+        toast.error("Không tìm thấy trailer cho bộ phim này!");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Lỗi khi tải trailer");
+    }
+  };
+
   useEffect(() => {
     getShow();
   }, [id]);
 
   return show ? (
-    <div className="px-6 md:px-16 lg:px-40 pt-30 md:pt-50">
+    <div className="px-6 md:px-16 lg:px-40 pt-30 md:pt-50 relative">
+      {/* Trailer Modal Overlay */}
+      {showTrailerModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-4xl p-4">
+            <button
+              onClick={() => setShowTrailerModal(false)}
+              className="absolute z-10 p-2 text-white bg-gray-800 rounded-full cursor-pointer -top-10 right-4 hover:bg-gray-700"
+            >
+              <XIcon className="w-6 h-6" />
+            </button>
+            <div className="relative pt-[56.25%] bg-black rounded-lg overflow-hidden">
+              <ReactPlayer
+                url={trailerUrl}
+                controls={true}
+                playing={true}
+                width="100%"
+                height="100%"
+                className="absolute top-0 left-0"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col max-w-6xl gap-8 mx-auto md:flex-row">
         <img
           src={image_base_url + show.movie.poster_path}
@@ -97,7 +139,7 @@ const MovieDetails = () => {
 
           <div className="flex flex-wrap items-center gap-4 mt-4">
             <button 
-              onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(show.movie.title + ' trailer')}`, '_blank')}
+              onClick={handleWatchTrailer}
               className="flex items-center gap-2 py-3 text-sm font-medium transition bg-gray-800 rounded-md cursor-pointer px-7 hover:bg-gray-900 active:scale-95"
             >
               <PlayCircleIcon className="w-5 h-5" />
