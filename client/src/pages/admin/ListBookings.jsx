@@ -5,9 +5,13 @@ import Title from "../../components/admin/Title";
 import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const ListBookings = () => {
   const { axios, getToken, user } = useAppContext();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const showIdFilter = searchParams.get("showId");
 
   const currency = import.meta.env.VITE_CURRENCY;
 
@@ -69,7 +73,17 @@ const ListBookings = () => {
 
   return !isLoading ? (
     <>
-      <Title text1="Danh sách" text2="Vé đã đặt" />
+      <div className="flex items-center justify-between">
+        <Title text1="Danh sách" text2="Vé đã đặt" />
+        {showIdFilter && (
+          <button 
+            onClick={() => navigate('/admin/list-shows')}
+            className="px-4 py-2 text-sm text-gray-300 border border-gray-600 rounded-lg hover:bg-gray-800 transition"
+          >
+            Quay lại Danh sách suất chiếu
+          </button>
+        )}
+      </div>
       {error && (
         <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-md">
           {error}
@@ -91,7 +105,11 @@ const ListBookings = () => {
 
           <tbody className="text-sm font-light">
             {bookings
-              .filter((item) => item && item.user && item.show && item.show.movie) // Filter out null/incomplete data
+              .filter((item) => {
+                if (!item || !item.user || !item.show || !item.show.movie) return false;
+                if (showIdFilter && item.show._id !== showIdFilter) return false;
+                return true;
+              })
               .map((item, index) => (
                 <tr
                   key={item._id || index}
