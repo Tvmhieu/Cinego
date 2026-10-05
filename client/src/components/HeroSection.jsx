@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarIcon, ClockIcon } from "lucide-react";
+import { ArrowRight, CalendarIcon, ClockIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
@@ -7,15 +7,16 @@ import { useEffect, useState } from "react";
 const HeroSection = () => {
   const navigate = useNavigate();
   const { axios, image_base_url } = useAppContext();
-  const [featuredMovie, setFeaturedMovie] = useState(null);
+  const [movies, setMovies] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchTopMovie = async () => {
       try {
         const { data } = await axios.get("/api/show/all");
         if (data.success && data.shows && data.shows.length > 0) {
-          // Lấy phim đầu tiên đang chiếu rạp
-          setFeaturedMovie(data.shows[0]);
+          // Lấy top 5 phim để làm carousel
+          setMovies(data.shows.slice(0, 5));
         }
       } catch (error) {
         console.error("Error fetching featured movie:", error);
@@ -23,6 +24,16 @@ const HeroSection = () => {
     };
     fetchTopMovie();
   }, [axios]);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? movies.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === movies.length - 1 ? 0 : prev + 1));
+  };
+
+  const featuredMovie = movies[currentIndex];
 
   // Nếu chưa có phim nào trong rạp, hiển thị mặc định
   if (!featuredMovie) {
@@ -48,7 +59,7 @@ const HeroSection = () => {
   // Nếu có phim trong rạp, tự động lấy ảnh và thông tin của phim đó làm Banner
   return (
     <div 
-      className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-cover bg-center h-screen relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/90 before:to-transparent'
+      className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-cover bg-center h-screen relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/90 before:to-transparent transition-all duration-700'
       style={{ backgroundImage: `url(${image_base_url + featuredMovie.backdrop_path})` }}
     >
       <div className="relative z-10">
@@ -78,6 +89,24 @@ const HeroSection = () => {
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Navigation Buttons */}
+      {movies.length > 1 && (
+        <div className="absolute right-6 md:right-16 lg:right-36 bottom-20 flex gap-4 z-10">
+          <button 
+            onClick={handlePrev} 
+            className="p-3 bg-white/10 hover:bg-primary rounded-full backdrop-blur-md transition-colors border border-white/20 cursor-pointer"
+          >
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+          <button 
+            onClick={handleNext} 
+            className="p-3 bg-white/10 hover:bg-primary rounded-full backdrop-blur-md transition-colors border border-white/20 cursor-pointer"
+          >
+            <ChevronRight className="w-6 h-6 text-white" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
