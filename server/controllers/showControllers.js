@@ -210,3 +210,32 @@ export const getShow = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to get movie trailer from TMDB
+export const getMovieTrailer = async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    const { data } = await axios.get(
+      `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      }
+    );
+    
+    // Find a Youtube Trailer
+    const trailer = data.results.find(
+      (video) => video.site === "YouTube" && video.type === "Trailer"
+    );
+
+    if (trailer) {
+      return res.json({ success: true, url: `https://www.youtube.com/watch?v=${trailer.key}` });
+    } else {
+      return res.json({ success: false, message: "Trailer not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
