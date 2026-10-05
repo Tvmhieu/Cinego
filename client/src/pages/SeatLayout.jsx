@@ -41,13 +41,13 @@ const SeatLayout = () => {
 
   const handleSeatClick = (seatId) => {
     if (!selectedTime) {
-      return toast("Please select time first");
+      return toast("Vui lòng chọn khung giờ chiếu trước");
     }
     if (!selectedSeats.includes(seatId) && selectedSeats.length >= 5) {
-      return toast("You can only select up to 5 seats");
+      return toast("Bạn chỉ được chọn tối đa 5 ghế");
     }
     if (occupiedSeats.includes(seatId)) {
-      return toast("This seat is already booked");
+      return toast("Ghế này đã có người đặt");
     }
     setSelectedSeats((prev) =>
       prev.includes(seatId)
@@ -98,10 +98,10 @@ const SeatLayout = () => {
 
   const bookTickets = async () => {
     try {
-      if (!user) return toast.error("Please login to proceed");
+      if (!user) return toast.error("Vui lòng đăng nhập để tiếp tục");
 
       if (!selectedSeats || !selectedSeats.length) {
-        return toast.error("Please select a time and seats");
+        return toast.error("Vui lòng chọn khung giờ và ghế ngồi");
       }
 
       const { data } = await axios.post(
@@ -135,7 +135,7 @@ const SeatLayout = () => {
     <div className="flex flex-col px-6 md:flex-row md:px-16 lg:px-40 py-30 md:pt-50">
       {/* Available Timings */}
       <div className="py-10 border rounded-lg w-60 bg-primary/10 border-primary/20 h-max md:sticky md:top-30">
-        <p className="px-6 text-lg font-semibold">Available Timings</p>
+        <p className="px-6 text-lg font-semibold">Khung giờ chiếu</p>
 
         <div className="mt-5 space-y-1">
           {(Array.isArray(show?.dateTime?.[date])
@@ -163,9 +163,9 @@ const SeatLayout = () => {
         <BlurCircle top="-100px" left="-100px" />
         <BlurCircle bottom="0" right="0" />
 
-        <h1 className="mb-4 text-2xl font-semibold">Select your seat</h1>
+        <h1 className="mb-4 text-2xl font-semibold">Chọn ghế ngồi</h1>
         <img src={assets.screenImage} alt="screen" />
-        <p className="mb-6 text-sm text-gray-400">SCREEN SIDE</p>
+        <p className="mb-6 text-sm text-gray-400">MÀN HÌNH CHÍNH</p>
 
         <div className="flex flex-col items-center mt-10 text-xs text-gray-300">
           <div className="grid grid-cols-2 gap-8 mb-6 md:grid-cols-1 md:gap-2">
@@ -183,7 +183,7 @@ const SeatLayout = () => {
           onClick={bookTickets}
           className="flex items-center gap-1 px-10 py-3 mt-20 text-sm font-medium transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull active:scale-95"
         >
-          Proceed to Checkout
+          Thanh toán ngay
           <ArrowRightIcon strokeWidth={3} className="w-4 h-4" />
         </button>
       </div>

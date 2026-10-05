@@ -44,7 +44,7 @@ const MyBookings = () => {
         <BlurCircle bottom="0px" left="600px" />
       </div>
 
-      <h1 className="mb-4 text-lg font-semibold">My Bookings</h1>
+      <h1 className="mb-4 text-lg font-semibold">Vé của tôi</h1>
 
       {bookings.map((item, index) => (
         <div
@@ -80,18 +80,18 @@ const MyBookings = () => {
                   to={item.paymentLink}
                   className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer"
                 >
-                  Pay Now
+                  Thanh toán
                 </Link>
               )}
             </div>
 
             <div className="text-sm">
               <p>
-                <span className="text-gray-400">Total Tickets:</span>
+                <span className="text-gray-400">Số vé: </span>
                 {item.bookedSeats.length}
               </p>
               <p>
-                <span className="text-gray-400">Seat Number:</span>
+                <span className="text-gray-400">Số ghế: </span>
                 {item.bookedSeats.join(", ")}
               </p>
             </div>

@@ -13,12 +13,12 @@ const FeaturedSection = () => {
     <div className="px-6 overflow-hidden md:px-16 lg:px-24 xl:px-44">
       <div className="relative flex items-center justify-between pt-20 pb-10">
         <BlurCircle top="0" right="-80px" />
-        <p className="text-lg font-medium text-gray-300">Now Showing</p>
+        <p className="text-lg font-medium text-gray-300">Phim đang chiếu</p>
         <button
           onClick={() => navigate("/movies")}
           className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer group"
         >
-          View All
+          Xem tất cả
           <ArrowRight className="group-hover:translate-x-0.5 transition w-4.5 h-4.5" />
         </button>
       </div>
@@ -40,7 +40,7 @@ const FeaturedSection = () => {
           }}
           className="px-10 py-3 text-sm font-medium transition rounded-md cursor-pointer bg-primary hover:bg-primary-dull"
         >
-          Show more
+          Xem thêm
         </button>
       </div>
     </div>

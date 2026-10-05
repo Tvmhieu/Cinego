@@ -10,7 +10,7 @@ const Movies = () => {
       <BlurCircle top="150px" left="0px" />
       <BlurCircle bottom="50px" right="50px" />
 
-      <h1 className="my-4 text-lg font-medium">Now Showing</h1>
+      <h1 className="my-4 text-lg font-medium">Phim đang chiếu</h1>
       <div className="flex flex-wrap gap-8 max-sm:justify-center">
         {shows.map((movie) => (
           <MovieCard movie={movie} key={movie._id} />
@@ -19,7 +19,7 @@ const Movies = () => {
     </div>
   ) : (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-3xl font-bold text-center">No movies available</h1>
+      <h1 className="text-3xl font-bold text-center">Chưa có phim nào</h1>
     </div>
   );
 };

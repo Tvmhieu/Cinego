@@ -40,7 +40,7 @@ const MovieDetails = () => {
 
   const handleFavourite = async () => {
     try {
-      if (!user) return toast.error("Please login to proceed ");
+      if (!user) return toast.error("Vui lòng đăng nhập để tiếp tục");
 
       const { data } = await axios.post(
         "/api/user/update-favourite",
