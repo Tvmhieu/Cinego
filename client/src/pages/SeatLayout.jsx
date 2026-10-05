@@ -41,6 +41,7 @@ const SeatLayout = () => {
 
   const handleSeatClick = (seatId) => {
     if (!selectedTime) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return toast("Vui lòng chọn khung giờ chiếu trước");
     }
     if (!selectedSeats.includes(seatId) && selectedSeats.length >= 5) {
@@ -101,6 +102,7 @@ const SeatLayout = () => {
       if (!user) return toast.error("Vui lòng đăng nhập để tiếp tục");
 
       if (!selectedSeats || !selectedSeats.length) {
+        if (!selectedTime) window.scrollTo({ top: 0, behavior: "smooth" });
         return toast.error("Vui lòng chọn khung giờ và ghế ngồi");
       }
 
@@ -164,12 +166,13 @@ const SeatLayout = () => {
         <BlurCircle bottom="0" right="0" />
 
         <h1 className="mb-4 text-2xl font-semibold">Chọn ghế ngồi</h1>
-        <img src={assets.screenImage} alt="screen" />
-        <p className="mb-6 text-sm text-gray-400">MÀN HÌNH CHÍNH</p>
 
-        <div className="w-full max-w-full overflow-x-auto pb-4">
-          <div className="flex flex-col items-center mt-10 text-xs text-gray-300 min-w-[600px]">
-            <div className="grid grid-cols-2 gap-8 mb-6 md:grid-cols-1 md:gap-2">
+        <div className="w-full max-w-full overflow-x-auto pb-4 no-scrollbar">
+          <div className="flex flex-col items-center text-xs text-gray-300 min-w-[600px]">
+            <img src={assets.screenImage} alt="screen" />
+            <p className="mb-6 text-sm text-gray-400">MÀN HÌNH CHÍNH</p>
+
+            <div className="grid grid-cols-2 gap-8 mb-6 md:grid-cols-1 md:gap-2 mt-4">
               {groupRows[0].map((row) => renderSeats(row))}
             </div>
 
