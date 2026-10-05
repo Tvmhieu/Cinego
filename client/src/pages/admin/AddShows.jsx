@@ -17,7 +17,8 @@ const AddShows = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [dateTimeSelection, setDataTimeSelection] = useState({});
-  const [dateTimeInput, setDataTimeInput] = useState("");
+  const [dateInput, setDateInput] = useState("");
+  const [timeInput, setTimeInput] = useState("12:00");
   const [showPrice, setShowPrice] = useState("");
   const [addingShow, setAddingShow] = useState(false);
 
@@ -62,9 +63,9 @@ const AddShows = () => {
   };
 
   const handleDateTimeAdd = () => {
-    if (!dateTimeInput) return;
-    const [date, time] = dateTimeInput.split("T");
-    if (!date || !time) return;
+    if (!dateInput || !timeInput) return;
+    const date = dateInput;
+    const time = timeInput;
 
     setDataTimeSelection((prev) => {
       const times = prev[date] || [];
@@ -220,13 +221,38 @@ const AddShows = () => {
         <label className="block mb-2 text-sm font-medium">
           Chọn ngày & giờ chiếu
         </label>
-        <div className="inline-flex gap-5 p-1 pl-3 border border-gray-600 rounded-lg">
+        <div className="inline-flex gap-5 p-1 pl-3 border border-gray-600 rounded-lg bg-primary/5">
           <input
-            type="datetime-local"
-            value={dateTimeInput}
-            onChange={(e) => setDataTimeInput(e.target.value)}
-            className="rounded-md outline-none"
+            type="date"
+            value={dateInput}
+            onChange={(e) => setDateInput(e.target.value)}
+            className="rounded-md outline-none bg-transparent"
           />
+          <div className="flex items-center gap-1 bg-transparent">
+            <select
+              value={timeInput.split(":")[0]}
+              onChange={(e) => setTimeInput(`${e.target.value}:${timeInput.split(":")[1]}`)}
+              className="bg-transparent outline-none cursor-pointer"
+            >
+              {Array.from({ length: 24 }).map((_, i) => (
+                <option key={i} value={i.toString().padStart(2, "0")} className="text-black">
+                  {i.toString().padStart(2, "0")}
+                </option>
+              ))}
+            </select>
+            <span>:</span>
+            <select
+              value={timeInput.split(":")[1]}
+              onChange={(e) => setTimeInput(`${timeInput.split(":")[0]}:${e.target.value}`)}
+              className="bg-transparent outline-none cursor-pointer"
+            >
+              {["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"].map((m) => (
+                <option key={m} value={m} className="text-black">
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
             onClick={handleDateTimeAdd}
             className="px-3 py-2 text-sm text-white rounded-lg cursor-pointer bg-primary/80 hover:bg-primary"
