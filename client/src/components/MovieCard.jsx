@@ -48,13 +48,12 @@ const MovieCard = ({ movie }) => {
         <button
           onClick={() => {
             if (movie._id) {
-              navigate(`/movies/${movie._id}`);
-              window.scrollTo(0, 0);
+              navigate(`/movies/${movie._id}`, { state: { scrollToDate: true } });
             }
           }}
           className="px-4 py-2 text-xs font-medium transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull"
         >
-          Buy Tickets
+          Mua Vé
         </button>
         <p className="flex items-center gap-1 pr-1 mt-1 text-sm text-gray-400">
           <StarIcon className="w-4 h-4 text-primary fill-primary" />{" "}

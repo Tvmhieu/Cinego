@@ -82,7 +82,7 @@ const HeroSection = () => {
         </p>
         
         <button
-          onClick={() => navigate(`/movies/${featuredMovie._id}`)}
+          onClick={() => navigate(`/movies/${featuredMovie._id}`, { state: { scrollToDate: true } })}
           className="flex items-center gap-2 px-6 py-3 mt-6 text-sm transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull font-medium shadow-lg"
         >
           Đặt vé ngay

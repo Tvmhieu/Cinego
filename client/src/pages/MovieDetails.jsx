@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import BlurCircle from "../components/BlurCircle";
 import { Heart, PlayCircleIcon, StarIcon, XIcon } from "lucide-react";
 import timeFormat from "../lib/timeFormat";
@@ -14,6 +14,7 @@ import SeatLayout from "./SeatLayout";
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const [show, setShow] = useState(null);
   const [trailerUrl, setTrailerUrl] = useState("");
   const [showTrailerModal, setShowTrailerModal] = useState(false);
@@ -79,6 +80,16 @@ const MovieDetails = () => {
   useEffect(() => {
     getShow();
   }, [id]);
+
+  useEffect(() => {
+    if (show && location.state?.scrollToDate) {
+      setTimeout(() => {
+        document.getElementById("dateSelect")?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    } else if (show && !location.state?.scrollToDate) {
+      window.scrollTo(0, 0);
+    }
+  }, [show, location]);
 
   return show ? (
     <div className="px-6 md:px-16 lg:px-40 pt-30 md:pt-50 relative">
