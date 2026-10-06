@@ -151,10 +151,9 @@ export const checkInBooking = async (req, res) => {
     const booking = await Booking.findOne({
       $or: [
         { bookingCode: bookingId },
-        // Only valid ObjectIds should be searched by _id
         ...(mongoose.Types.ObjectId.isValid(bookingId) ? [{ _id: bookingId }] : [])
       ]
-    });
+    }).populate("show");
     
     if (!booking) {
       return res.json({ success: false, message: "Không tìm thấy vé" });
@@ -162,6 +161,17 @@ export const checkInBooking = async (req, res) => {
     
     if (!booking.isPaid) {
       return res.json({ success: false, message: "Vé này chưa được thanh toán" });
+    }
+    
+    // If we are checking in (changing false to true), enforce the 15-minute rule
+    if (!booking.isCheckedIn) {
+      const showDate = new Date(booking.show.showDateTime);
+      const now = new Date();
+      const diffMins = (showDate - now) / (1000 * 60);
+      
+      if (diffMins > 15) {
+        return res.json({ success: false, message: "Chỉ được phép soát vé trước giờ chiếu 15 phút!" });
+      }
     }
     
     booking.isCheckedIn = !booking.isCheckedIn;
@@ -197,7 +207,7 @@ export const getBookingByCode = async (req, res) => {
   }
 };
 
-// API to scan and automatically check in a ticket
+// API to scan a ticket (does not auto-checkin anymore)
 export const scanTicket = async (req, res) => {
   try {
     const { code } = req.body;
@@ -225,11 +235,17 @@ export const scanTicket = async (req, res) => {
       return res.json({ success: false, status: "USED", message: "Vé này đã được sử dụng", booking });
     }
     
-    // Valid -> Update to USED
-    booking.isCheckedIn = true;
-    await booking.save();
+    // Check 15-minute rule
+    const showDate = new Date(booking.show.showDateTime);
+    const now = new Date();
+    const diffMins = (showDate - now) / (1000 * 60);
     
-    return res.json({ success: true, status: "VALID", message: "Vé hợp lệ, đã xác nhận vào rạp!", booking });
+    if (diffMins > 15) {
+      return res.json({ success: false, status: "TOO_EARLY", message: "Chưa đến giờ. Chỉ được duyệt trước 15 phút.", booking });
+    }
+    
+    // Valid and ready for manual check-in
+    return res.json({ success: true, status: "VALID", message: "Vé hợp lệ, sẵn sàng duyệt vào rạp!", booking });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });

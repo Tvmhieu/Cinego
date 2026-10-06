@@ -3,14 +3,14 @@ import { Html5QrcodeScanner, Html5QrcodeScanType } from "html5-qrcode";
 import Title from "../../components/admin/Title";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
-import { CheckCircle2Icon, XCircleIcon, AlertTriangleIcon } from "lucide-react";
+import { CheckCircle2Icon, XCircleIcon, AlertTriangleIcon, ClockIcon } from "lucide-react";
 import { dateFormat } from "../../lib/dateFormat";
 
 const ScanTicket = () => {
   const { axios, getToken } = useAppContext();
   const [scannedCode, setScannedCode] = useState(null);
   const [bookingInfo, setBookingInfo] = useState(null);
-  const [scanStatus, setScanStatus] = useState(null); // VALID, USED, CANCELLED, UNPAID, NOT_FOUND
+  const [scanStatus, setScanStatus] = useState(null); // VALID, USED, CANCELLED, UNPAID, NOT_FOUND, TOO_EARLY
   const [isProcessing, setIsProcessing] = useState(false);
   const scannerRef = useRef(null);
 
@@ -70,6 +70,8 @@ const ScanTicket = () => {
         setScanStatus(data.status);
         if (data.status === "VALID") {
           toast.success("✅ " + data.message, { duration: 4000 });
+        } else if (data.status === "TOO_EARLY") {
+          toast.error("⏳ " + data.message, { duration: 4000 });
         } else {
           toast.error("❌ " + data.message, { duration: 4000 });
         }
@@ -77,6 +79,30 @@ const ScanTicket = () => {
     } catch (error) {
       toast.error("❌ Lỗi mạng hoặc server không phản hồi");
       resetScanner();
+    }
+    setIsProcessing(false);
+  };
+  
+  const handleCheckIn = async () => {
+    if (!bookingInfo) return;
+    setIsProcessing(true);
+    
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/admin/check-in",
+        { bookingId: bookingInfo._id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setScanStatus("USED"); // Change to USED so they can't click again immediately
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Lỗi khi cập nhật trạng thái soát vé");
     }
     setIsProcessing(false);
   };
@@ -91,18 +117,26 @@ const ScanTicket = () => {
     switch (scanStatus) {
       case "VALID":
         return (
-          <div className="flex flex-col items-center justify-center p-6 bg-green-500/10 border border-green-500/50 rounded-2xl mb-6">
+          <div className="flex flex-col items-center justify-center p-6 bg-green-500/10 border border-green-500/50 rounded-2xl mb-6 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
             <CheckCircle2Icon className="w-16 h-16 text-green-500 mb-2" />
             <h2 className="text-2xl font-bold text-green-500 uppercase tracking-widest text-center">Vé Hợp Lệ</h2>
-            <p className="text-green-400/80 text-sm mt-1">Đã tự động xác nhận vào rạp</p>
+            <p className="text-green-400/80 text-sm mt-1 text-center">Vé sẵn sàng để duyệt vào rạp</p>
+          </div>
+        );
+      case "TOO_EARLY":
+        return (
+          <div className="flex flex-col items-center justify-center p-6 bg-blue-500/10 border border-blue-500/50 rounded-2xl mb-6 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+            <ClockIcon className="w-16 h-16 text-blue-500 mb-2" />
+            <h2 className="text-2xl font-bold text-blue-500 uppercase tracking-widest text-center">Chưa Đến Giờ</h2>
+            <p className="text-blue-400/80 text-sm mt-1 text-center">Chỉ được duyệt trước giờ chiếu 15 phút</p>
           </div>
         );
       case "USED":
         return (
-          <div className="flex flex-col items-center justify-center p-6 bg-red-500/10 border border-red-500/50 rounded-2xl mb-6">
+          <div className="flex flex-col items-center justify-center p-6 bg-red-500/10 border border-red-500/50 rounded-2xl mb-6 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
             <XCircleIcon className="w-16 h-16 text-red-500 mb-2" />
             <h2 className="text-2xl font-bold text-red-500 uppercase tracking-widest text-center">Đã Sử Dụng</h2>
-            <p className="text-red-400/80 text-sm mt-1">Vé này đã được quét trước đó</p>
+            <p className="text-red-400/80 text-sm mt-1 text-center">Vé này đã được duyệt vào rạp trước đó</p>
           </div>
         );
       case "CANCELLED":
@@ -110,7 +144,7 @@ const ScanTicket = () => {
           <div className="flex flex-col items-center justify-center p-6 bg-red-500/10 border border-red-500/50 rounded-2xl mb-6">
             <XCircleIcon className="w-16 h-16 text-red-500 mb-2" />
             <h2 className="text-2xl font-bold text-red-500 uppercase tracking-widest text-center">Vé Đã Bị Hủy</h2>
-            <p className="text-red-400/80 text-sm mt-1">Khách hàng đã hủy vé này</p>
+            <p className="text-red-400/80 text-sm mt-1 text-center">Khách hàng đã hủy vé này</p>
           </div>
         );
       case "UNPAID":
@@ -118,7 +152,7 @@ const ScanTicket = () => {
           <div className="flex flex-col items-center justify-center p-6 bg-yellow-500/10 border border-yellow-500/50 rounded-2xl mb-6">
             <AlertTriangleIcon className="w-16 h-16 text-yellow-500 mb-2" />
             <h2 className="text-2xl font-bold text-yellow-500 uppercase tracking-widest text-center">Chưa Thanh Toán</h2>
-            <p className="text-yellow-400/80 text-sm mt-1">Vui lòng thu tiền trước khi cho vào rạp</p>
+            <p className="text-yellow-400/80 text-sm mt-1 text-center">Vui lòng thu tiền trước khi cho vào rạp</p>
           </div>
         );
       case "NOT_FOUND":
@@ -126,7 +160,7 @@ const ScanTicket = () => {
           <div className="flex flex-col items-center justify-center p-6 bg-red-500/10 border border-red-500/50 rounded-2xl mb-6">
             <XCircleIcon className="w-16 h-16 text-red-500 mb-2" />
             <h2 className="text-2xl font-bold text-red-500 uppercase tracking-widest text-center">Không Tồn Tại</h2>
-            <p className="text-red-400/80 text-sm mt-1">Mã QR này không phải là vé của CineGo</p>
+            <p className="text-red-400/80 text-sm mt-1 text-center">Mã QR này không thuộc hệ thống CineGo</p>
           </div>
         );
       default:
@@ -153,7 +187,7 @@ const ScanTicket = () => {
             {isProcessing && !scanStatus ? (
               <div className="text-center py-12">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-400">Đang kiểm tra vé...</p>
+                <p className="text-gray-400">Đang xử lý...</p>
               </div>
             ) : scanStatus ? (
               <div className="flex flex-col">
@@ -184,10 +218,20 @@ const ScanTicket = () => {
                   </div>
                 )}
 
-                <div className="mt-6">
+                <div className="mt-6 flex flex-col gap-3">
+                  {scanStatus === "VALID" && (
+                    <button 
+                      onClick={handleCheckIn}
+                      disabled={isProcessing}
+                      className="w-full py-4 bg-green-600 hover:bg-green-700 active:scale-95 text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-600/20 uppercase tracking-widest flex items-center justify-center disabled:opacity-50"
+                    >
+                      {isProcessing ? "Đang xử lý..." : "Duyệt Vào Rạp"}
+                    </button>
+                  )}
                   <button 
                     onClick={resetScanner}
-                    className="w-full py-4 bg-primary hover:bg-primary-dull active:scale-95 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary/20 uppercase tracking-widest"
+                    disabled={isProcessing}
+                    className={`w-full py-4 active:scale-95 font-bold rounded-2xl transition-all uppercase tracking-widest ${scanStatus === "VALID" ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-primary hover:bg-primary-dull text-white shadow-lg shadow-primary/20"}`}
                   >
                     Quét Vé Tiếp Theo
                   </button>
