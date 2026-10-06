@@ -106,7 +106,9 @@ const AddShows = () => {
         Object.keys(dateTimeSelection).length === 0 ||
         !showPrice
       ) {
-        return toast("Missing required fields");
+        toast("Vui lòng điền đầy đủ các thông tin bắt buộc (chọn phim, giờ chiếu và giá vé)");
+        setAddingShow(false);
+        return;
       }
 
       const showsInput = Object.entries(dateTimeSelection).map(
