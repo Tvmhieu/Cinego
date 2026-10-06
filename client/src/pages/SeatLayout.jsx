@@ -190,13 +190,13 @@ const SeatLayout = ({ propId, propDate }) => {
             <img src={assets.screenImage} alt="screen" />
             <p className="mb-6 text-sm text-gray-400">MÀN HÌNH CHÍNH</p>
 
-            <div className="grid grid-cols-2 gap-8 mb-6 md:grid-cols-1 md:gap-2 mt-4">
+            <div className="flex flex-col gap-2 mt-4 mb-6">
               {groupRows[0].map((row) => renderSeats(row))}
             </div>
 
-            <div className="grid grid-cols-2 gap-11">
+            <div className="flex flex-col gap-2">
               {groupRows.slice(1).map((group, idx) => (
-                <div key={idx}>{group.map((row) => renderSeats(row))}</div>
+                <div key={idx} className="flex flex-col gap-2 mb-6">{group.map((row) => renderSeats(row))}</div>
               ))}
             </div>
           </div>
