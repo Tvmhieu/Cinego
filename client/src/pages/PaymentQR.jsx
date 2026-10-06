@@ -13,6 +13,8 @@ const PaymentQR = () => {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isExpired, setIsExpired] = useState(false);
 
   // Bank Info from ENV or Hardcoded for now
   const BANK_ID = "MB";
@@ -54,6 +56,35 @@ const PaymentQR = () => {
     return () => clearInterval(intervalId);
   }, [bookingId]);
 
+  useEffect(() => {
+    if (booking && !booking.isPaid) {
+      const createdAt = new Date(booking.createdAt).getTime();
+      const expireTime = createdAt + 5 * 60 * 1000;
+      
+      const updateTimer = () => {
+        const now = new Date().getTime();
+        const diff = Math.floor((expireTime - now) / 1000);
+        
+        if (diff <= 0) {
+          setTimeLeft(0);
+          setIsExpired(true);
+        } else {
+          setTimeLeft(diff);
+        }
+      };
+      
+      updateTimer();
+      const timerId = setInterval(updateTimer, 1000);
+      return () => clearInterval(timerId);
+    }
+  }, [booking]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   const handleManualCheck = () => {
     setStatusLoading(true);
     fetchBooking();
@@ -80,11 +111,26 @@ const PaymentQR = () => {
         </button>
 
         <h1 className="text-2xl font-bold text-center text-white mb-2">Thanh toán vé xem phim</h1>
-        <p className="text-center text-gray-400 mb-6">Quét mã QR bằng ứng dụng ngân hàng để thanh toán.</p>
+        
+        {isExpired ? (
+          <div className="text-center p-4 mb-6 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <h2 className="text-red-500 font-bold mb-2">Hết thời gian thanh toán!</h2>
+            <p className="text-red-400 text-sm">Vé của bạn đã bị hủy do quá thời gian 5 phút. Vui lòng quay lại để đặt lại vé.</p>
+          </div>
+        ) : (
+          <>
+            <p className="text-center text-gray-400 mb-2">Quét mã QR bằng ứng dụng ngân hàng để thanh toán.</p>
+            <div className="text-center mb-6">
+              <span className="inline-block px-4 py-1.5 bg-red-500/20 text-red-400 font-bold rounded-full animate-pulse">
+                Thời gian còn lại: {formatTime(timeLeft)}
+              </span>
+            </div>
 
-        <div className="bg-white p-4 rounded-xl mb-6 flex justify-center">
-          <img src={qrUrl} alt="VietQR Code" className="max-w-[250px] w-full object-contain" />
-        </div>
+            <div className="bg-white p-4 rounded-xl mb-6 flex justify-center">
+              <img src={qrUrl} alt="VietQR Code" className="max-w-[250px] w-full object-contain" />
+            </div>
+          </>
+        )}
 
         <div className="space-y-3 mb-8 bg-gray-800 p-4 rounded-lg">
           <div className="flex justify-between">
@@ -102,8 +148,8 @@ const PaymentQR = () => {
 
         <button
           onClick={handleManualCheck}
-          disabled={statusLoading}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 font-medium transition rounded-full bg-primary hover:bg-primary-dull active:scale-95 disabled:opacity-70"
+          disabled={statusLoading || isExpired}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 font-medium transition rounded-full bg-primary hover:bg-primary-dull active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {statusLoading ? (
             <RefreshCcw className="w-5 h-5 animate-spin" />
@@ -113,9 +159,11 @@ const PaymentQR = () => {
           {statusLoading ? "Đang kiểm tra..." : "Kiểm tra trạng thái thanh toán"}
         </button>
         
-        <p className="text-xs text-center text-gray-500 mt-4">
-          Hệ thống sẽ tự động cập nhật sau mỗi 10 giây nếu nhận được tiền.
-        </p>
+        {!isExpired && (
+          <p className="text-xs text-center text-gray-500 mt-4">
+            Hệ thống sẽ tự động cập nhật sau mỗi 10 giây nếu nhận được tiền.
+          </p>
+        )}
       </div>
     </div>
   );
