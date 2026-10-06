@@ -173,3 +173,26 @@ export const checkInBooking = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to get booking details for scanning
+export const getBookingByCode = async (req, res) => {
+  try {
+    const { code } = req.params;
+    
+    const booking = await Booking.findOne({
+      $or: [
+        { bookingCode: code },
+        ...(mongoose.Types.ObjectId.isValid(code) ? [{ _id: code }] : [])
+      ]
+    }).populate({ path: "show", populate: { path: "movie" } }).populate("user");
+    
+    if (!booking) {
+      return res.json({ success: false, message: "Không tìm thấy vé hợp lệ" });
+    }
+    
+    res.json({ success: true, booking });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
