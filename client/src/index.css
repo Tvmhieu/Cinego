@@ -29,3 +29,9 @@ input::-webkit-inner-spin-button {
 ::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
+/* Hide annoying QR Scanner status messages */
+#qr-reader__status_span,
+#qr-reader__header_message {
+  display: none !important;
+}
