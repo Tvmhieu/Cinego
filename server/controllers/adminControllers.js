@@ -196,3 +196,42 @@ export const getBookingByCode = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to scan and automatically check in a ticket
+export const scanTicket = async (req, res) => {
+  try {
+    const { code } = req.body;
+    
+    const booking = await Booking.findOne({
+      $or: [
+        { bookingCode: code },
+        ...(mongoose.Types.ObjectId.isValid(code) ? [{ _id: code }] : [])
+      ]
+    }).populate({ path: "show", populate: { path: "movie" } }).populate("user");
+    
+    if (!booking) {
+      return res.json({ success: false, status: "NOT_FOUND", message: "Vé không tồn tại trên hệ thống" });
+    }
+    
+    if (booking.isCancelled) {
+      return res.json({ success: false, status: "CANCELLED", message: "Vé này đã bị hủy", booking });
+    }
+
+    if (!booking.isPaid) {
+      return res.json({ success: false, status: "UNPAID", message: "Vé chưa được thanh toán", booking });
+    }
+    
+    if (booking.isCheckedIn) {
+      return res.json({ success: false, status: "USED", message: "Vé này đã được sử dụng", booking });
+    }
+    
+    // Valid -> Update to USED
+    booking.isCheckedIn = true;
+    await booking.save();
+    
+    return res.json({ success: true, status: "VALID", message: "Vé hợp lệ, đã xác nhận vào rạp!", booking });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};

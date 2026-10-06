@@ -10,6 +10,7 @@ import {
   updateUserRole,
   checkInBooking,
   getBookingByCode,
+  scanTicket,
 } from "../controllers/adminControllers.js";
 import { confirmPayment } from "../controllers/bookingControllers.js";
 
@@ -25,6 +26,7 @@ adminRouter.get("/users", protectAdmin, getAllUsers);
 adminRouter.post("/update-role", protectAdmin, updateUserRole);
 adminRouter.post("/check-in", protectAdmin, checkInBooking);
 adminRouter.get("/booking/:code", protectAdmin, getBookingByCode);
+adminRouter.post("/scan-ticket", protectAdmin, scanTicket);
 
 export default adminRouter;
 
