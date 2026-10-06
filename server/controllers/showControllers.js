@@ -3,27 +3,27 @@ import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 import { inngest } from "../inngest/index.js";
 
-// API to get now playing movies from TMDB API
+// API to get now playing and upcoming movies from TMDB API for Vietnam
 export const getNowPlayingMovies = async (req, res) => {
   try {
-    const { data } = await axios.get(
-      "https://api.themoviedb.org/3/movie/now_playing?language=vi-VN",
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-        },
-      },
-    );
+    const headers = { Authorization: `Bearer ${process.env.TMDB_API_KEY}` };
+    const [nowPlayingRes, upcomingRes] = await Promise.all([
+      axios.get("https://api.themoviedb.org/3/movie/now_playing?language=vi-VN&region=VN", { headers }),
+      axios.get("https://api.themoviedb.org/3/movie/upcoming?language=vi-VN&region=VN", { headers })
+    ]);
 
-    const movies = data.results;
-    res.json({ success: true, movies: movies });
+    // Combine and remove duplicates
+    const allMovies = [...nowPlayingRes.data.results, ...upcomingRes.data.results];
+    const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.id, m])).values());
+
+    res.json({ success: true, movies: uniqueMovies });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
 
-// API to search movies from TMDB API
+// API to search movies from TMDB API (restricted to now playing and upcoming in VN)
 export const searchMovies = async (req, res) => {
   try {
     const { q } = req.query;
@@ -31,16 +31,22 @@ export const searchMovies = async (req, res) => {
       return res.json({ success: true, movies: [] });
     }
 
-    const { data } = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(q)}&language=vi-VN`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-        },
-      },
+    const headers = { Authorization: `Bearer ${process.env.TMDB_API_KEY}` };
+    const [nowPlayingRes, upcomingRes] = await Promise.all([
+      axios.get("https://api.themoviedb.org/3/movie/now_playing?language=vi-VN&region=VN", { headers }),
+      axios.get("https://api.themoviedb.org/3/movie/upcoming?language=vi-VN&region=VN", { headers })
+    ]);
+
+    const allMovies = [...nowPlayingRes.data.results, ...upcomingRes.data.results];
+    const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.id, m])).values());
+
+    // Filter locally by search query
+    const filteredMovies = uniqueMovies.filter(m => 
+      m.title.toLowerCase().includes(q.toLowerCase()) || 
+      (m.original_title && m.original_title.toLowerCase().includes(q.toLowerCase()))
     );
 
-    res.json({ success: true, movies: data.results });
+    res.json({ success: true, movies: filteredMovies });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
