@@ -127,8 +127,8 @@ const MyBookings = () => {
 
       {/* Ticket Modal Overlay */}
       {selectedTicket && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-[280px] sm:max-w-[320px] mx-auto animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-[340px] sm:max-w-sm mx-auto animate-in zoom-in-95 duration-300">
             <button 
               onClick={() => setSelectedTicket(null)}
               className="absolute -top-12 right-0 md:-right-12 text-white/70 hover:text-white bg-gray-800/50 hover:bg-gray-700 p-2 rounded-full transition z-20"
@@ -137,7 +137,7 @@ const MyBookings = () => {
             </button>
             
             {/* The Gorgeous Compact Ticket UI */}
-            <div className="relative flex flex-col w-full bg-[#1a1a1a] rounded-[20px] overflow-hidden shadow-2xl border border-gray-700">
+            <div className="relative flex flex-col w-full bg-[#1a1a1a] rounded-[24px] overflow-hidden shadow-2xl border border-gray-700">
               {/* Top: Movie Poster */}
               <div className="relative w-full aspect-[21/9] shrink-0">
                 <img
@@ -146,58 +146,58 @@ const MyBookings = () => {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent"></div>
-                <div className="absolute top-2 left-2 bg-primary/90 backdrop-blur-md text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest shadow-lg">
+                <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-md text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg">
                   CineGo
                 </div>
               </div>
 
               {/* Middle: Ticket Details */}
-              <div className="flex-1 px-4 pt-1 pb-4 relative z-10 bg-transparent border-b-2 border-dashed border-gray-700/50">
-                <h2 className="text-base sm:text-lg font-bold uppercase mb-1 text-white line-clamp-2 leading-tight drop-shadow-md">
+              <div className="flex-1 px-5 pt-1 pb-4 relative z-10 bg-transparent border-b-2 border-dashed border-gray-700/50">
+                <h2 className="text-lg sm:text-xl font-bold uppercase mb-1 text-white line-clamp-2 leading-tight drop-shadow-md">
                   {selectedTicket.show.movie.title}
                 </h2>
-                <p className="text-[10px] sm:text-xs font-medium text-gray-400 mb-3 flex items-center gap-1.5">
-                  <span className="px-1 py-0.5 bg-gray-800 rounded text-[9px]">2D</span>
+                <p className="text-xs sm:text-sm font-medium text-gray-400 mb-3 flex items-center gap-1.5">
+                  <span className="px-1.5 py-0.5 bg-gray-800 rounded text-[10px]">2D</span>
                   {timeFormat(selectedTicket.show.movie.runtime)}
                 </p>
                 
                 <div className="grid grid-cols-2 gap-y-3 gap-x-2">
                   <div>
-                    <p className="text-[8px] sm:text-[9px] text-gray-500 uppercase tracking-widest mb-0.5">Giờ chiếu</p>
-                    <p className="text-[11px] sm:text-xs font-bold text-gray-200">{dateFormat(selectedTicket.show.showDateTime)}</p>
+                    <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Giờ chiếu</p>
+                    <p className="text-xs sm:text-sm font-bold text-gray-200">{dateFormat(selectedTicket.show.showDateTime)}</p>
                   </div>
                   <div>
-                    <p className="text-[8px] sm:text-[9px] text-gray-500 uppercase tracking-widest mb-0.5">Ghế ngồi</p>
-                    <p className="text-base sm:text-lg font-black text-primary drop-shadow-md leading-none">{selectedTicket.bookedSeats.join(", ")}</p>
+                    <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Ghế ngồi</p>
+                    <p className="text-lg sm:text-xl font-black text-primary drop-shadow-md leading-none">{selectedTicket.bookedSeats.join(", ")}</p>
                   </div>
                   <div>
-                    <p className="text-[8px] sm:text-[9px] text-gray-500 uppercase tracking-widest mb-0.5">Khách hàng</p>
-                    <p className="text-[11px] sm:text-xs font-bold text-gray-300 truncate">{selectedTicket.customerName || user?.name || "Ẩn danh"}</p>
+                    <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Khách hàng</p>
+                    <p className="text-xs sm:text-sm font-bold text-gray-300 truncate">{selectedTicket.customerName || user?.name || "Ẩn danh"}</p>
                   </div>
                   <div>
-                    <p className="text-[8px] sm:text-[9px] text-gray-500 uppercase tracking-widest mb-0.5">Tổng tiền</p>
-                    <p className="text-[11px] sm:text-xs font-bold text-gray-300">{selectedTicket.amount.toLocaleString("vi-VN")} {currency}</p>
+                    <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Tổng tiền</p>
+                    <p className="text-xs sm:text-sm font-bold text-gray-300">{selectedTicket.amount.toLocaleString("vi-VN")} {currency}</p>
                   </div>
                 </div>
               </div>
 
               {/* Bottom: Large QR Code */}
-              <div className="w-full bg-white p-4 flex flex-col items-center justify-center relative shrink-0">
+              <div className="w-full bg-white p-5 sm:p-6 flex flex-col items-center justify-center relative shrink-0">
                 {/* Cutouts for ticket effect */}
-                <div className="absolute -top-3 -left-3 w-6 h-6 bg-black/80 rounded-full border-b border-r border-gray-700/50"></div>
-                <div className="absolute -top-3 -right-3 w-6 h-6 bg-black/80 rounded-full border-b border-l border-gray-700/50"></div>
+                <div className="absolute -top-4 -left-4 w-8 h-8 bg-black/80 rounded-full border-b border-r border-gray-700/50"></div>
+                <div className="absolute -top-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-b border-l border-gray-700/50"></div>
                 
-                <h3 className="text-black font-bold text-center mb-2 uppercase tracking-widest text-[10px] sm:text-xs">Quét mã để vào rạp</h3>
-                <div className="w-24 sm:w-28 aspect-square relative bg-white border-[3px] border-primary rounded-xl overflow-hidden p-1 shadow-[0_0_10px_rgba(229,9,20,0.2)]">
+                <h3 className="text-black font-bold text-center mb-3 uppercase tracking-widest text-xs sm:text-sm">Quét mã để vào rạp</h3>
+                <div className="w-40 sm:w-48 aspect-square relative bg-white border-4 border-primary rounded-xl overflow-hidden p-1.5 shadow-[0_0_15px_rgba(229,9,20,0.3)]">
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${selectedTicket.bookingCode || selectedTicket._id}`} 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${selectedTicket.bookingCode || selectedTicket._id}`} 
                     alt="QR Code" 
                     className="w-full h-full object-contain" 
                   />
                 </div>
                 
-                <p className="text-[8px] sm:text-[9px] text-gray-500 uppercase tracking-widest mt-2 mb-0.5 text-center">Mã đặt vé</p>
-                <p className="font-mono font-bold text-base sm:text-lg text-black tracking-widest text-center leading-none">
+                <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-4 mb-1 text-center">Mã đặt vé</p>
+                <p className="font-mono font-bold text-xl sm:text-2xl text-black tracking-widest text-center leading-none">
                   {selectedTicket.bookingCode || selectedTicket._id.slice(-6).toUpperCase()}
                 </p>
               </div>
