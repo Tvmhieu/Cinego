@@ -23,8 +23,12 @@ const checkSeatsAvailability = async (showId, selectedSeats) => {
 export const createBooking = async (req, res) => {
   try {
     const { userId } = req.auth();
-    const { showId, selectedSeats } = req.body;
+    const { showId, selectedSeats, customerName, customerPhone } = req.body;
     const { origin } = req.headers;
+
+    if (!customerName || !customerPhone) {
+      return res.json({ success: false, message: "Vui lòng nhập họ tên và số điện thoại" });
+    }
 
     // Check if the seat is available for the selected show
     const isAvailable = await checkSeatsAvailability(showId, selectedSeats);
@@ -49,6 +53,8 @@ export const createBooking = async (req, res) => {
       bookedSeats: selectedSeats,
       bookingCode: bookingCode,
       isPaid: false,
+      customerName,
+      customerPhone,
     });
 
     selectedSeats.map((seat) => {

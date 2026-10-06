@@ -25,6 +25,8 @@ const SeatLayout = ({ propId, propDate }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [show, setShow] = useState(null);
   const [occupiedSeats, setOccupiedSeats] = useState([]);
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
 
   const navigate = useNavigate();
 
@@ -109,9 +111,22 @@ const SeatLayout = ({ propId, propDate }) => {
         return toast.error("Vui lòng chọn khung giờ và ghế ngồi");
       }
 
+      if (!customerName.trim() || !customerPhone.trim()) {
+        return toast.error("Vui lòng nhập họ tên và số điện thoại");
+      }
+
+      if (!/^\d{9,11}$/.test(customerPhone.trim())) {
+        return toast.error("Số điện thoại không hợp lệ");
+      }
+
       const { data } = await axios.post(
         "/api/booking/create",
-        { showId: selectedTime.showId, selectedSeats },
+        { 
+          showId: selectedTime.showId, 
+          selectedSeats,
+          customerName: customerName.trim(),
+          customerPhone: customerPhone.trim()
+        },
         { headers: { Authorization: `Bearer ${await getToken()}` } }
       );
 
@@ -187,9 +202,33 @@ const SeatLayout = ({ propId, propDate }) => {
           </div>
         </div>
 
+        <div className="w-full max-w-md mt-10 space-y-4">
+          <h2 className="text-lg font-semibold text-white">Thông tin khách hàng</h2>
+          <div>
+            <label className="block mb-1 text-sm text-gray-400">Họ và tên *</label>
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder="Nhập họ và tên..."
+              className="w-full px-4 py-2 border rounded-md bg-transparent border-gray-600 focus:border-primary outline-none text-white"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm text-gray-400">Số điện thoại *</label>
+            <input
+              type="tel"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              placeholder="Nhập số điện thoại..."
+              className="w-full px-4 py-2 border rounded-md bg-transparent border-gray-600 focus:border-primary outline-none text-white"
+            />
+          </div>
+        </div>
+
         <button
           onClick={bookTickets}
-          className="flex items-center gap-1 px-10 py-3 mt-20 text-sm font-medium transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull active:scale-95"
+          className="flex items-center gap-1 px-10 py-3 mt-8 text-sm font-medium transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull active:scale-95"
         >
           Thanh toán ngay
           <ArrowRightIcon strokeWidth={3} className="w-4 h-4" />

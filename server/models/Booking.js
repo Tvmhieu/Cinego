@@ -9,6 +9,8 @@ const bookingSchema = new mongoose.Schema(
     isPaid: { type: Boolean, required: false },
     paymentLink: { type: String },
     bookingCode: { type: String },
+    customerName: { type: String, required: true },
+    customerPhone: { type: String, required: true },
   },
   { timestamps: true }
 );

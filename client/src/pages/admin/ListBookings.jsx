@@ -115,7 +115,12 @@ const ListBookings = () => {
                   key={item._id || index}
                   className="border-b border-primary/20 bg-primary/5 even:bg-primary/10"
                 >
-                  <td className="p-2 pl-5 min-w-45">{item.user?.name || "Khách ẩn danh"}</td>
+                  <td className="p-2 pl-5 min-w-45">
+                    {item.customerName || item.user?.name || "Khách ẩn danh"}
+                    {item.customerPhone && (
+                      <div className="text-xs text-gray-400">{item.customerPhone}</div>
+                    )}
+                  </td>
                   <td className="p-2">{item.show.movie?.title || "Phim không xác định"}</td>
                   <td className="p-2">{dateFormat(item.show?.showDateTime)}</td>
                   <td className="p-2">{item.bookedSeats?.join(", ") || "N/A"}</td>
