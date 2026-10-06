@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5QrcodeScanner, Html5QrcodeScanType } from "html5-qrcode";
 import Title from "../../components/admin/Title";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
@@ -19,7 +19,11 @@ const ScanTicket = () => {
     if (!scannedCode && !scannerRef.current) {
       const scanner = new Html5QrcodeScanner(
         "qr-reader",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
+        { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+        },
         false
       );
       
@@ -60,7 +64,7 @@ const ScanTicket = () => {
 
       if (data.status === "NOT_FOUND") {
         toast.error("❌ " + data.message, { duration: 4000 });
-        resetScanner();
+        setScanStatus("NOT_FOUND");
       } else {
         setBookingInfo(data.booking);
         setScanStatus(data.status);
@@ -117,6 +121,14 @@ const ScanTicket = () => {
             <p className="text-yellow-400/80 text-sm mt-1">Vui lòng thu tiền trước khi cho vào rạp</p>
           </div>
         );
+      case "NOT_FOUND":
+        return (
+          <div className="flex flex-col items-center justify-center p-6 bg-red-500/10 border border-red-500/50 rounded-2xl mb-6">
+            <XCircleIcon className="w-16 h-16 text-red-500 mb-2" />
+            <h2 className="text-2xl font-bold text-red-500 uppercase tracking-widest text-center">Không Tồn Tại</h2>
+            <p className="text-red-400/80 text-sm mt-1">Mã QR này không phải là vé của CineGo</p>
+          </div>
+        );
       default:
         return null;
     }
@@ -138,37 +150,39 @@ const ScanTicket = () => {
           </>
         ) : (
           <div className="flex flex-col animate-in fade-in zoom-in duration-300">
-            {isProcessing && !bookingInfo ? (
+            {isProcessing && !scanStatus ? (
               <div className="text-center py-12">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p className="text-gray-400">Đang kiểm tra vé...</p>
               </div>
-            ) : bookingInfo ? (
+            ) : scanStatus ? (
               <div className="flex flex-col">
                 
                 {renderStatusAlert()}
 
-                <div className="bg-[#111] rounded-2xl p-5 border border-gray-800/60 shadow-inner">
-                  <div className="text-center border-b border-gray-800/80 pb-4 mb-4">
-                    <h3 className="text-xl font-bold text-white mb-1 line-clamp-2">{bookingInfo.show?.movie?.title}</h3>
-                    <p className="text-sm text-gray-400">{dateFormat(bookingInfo.show?.showDateTime)}</p>
+                {bookingInfo && (
+                  <div className="bg-[#111] rounded-2xl p-5 border border-gray-800/60 shadow-inner">
+                    <div className="text-center border-b border-gray-800/80 pb-4 mb-4">
+                      <h3 className="text-xl font-bold text-white mb-1 line-clamp-2">{bookingInfo.show?.movie?.title}</h3>
+                      <p className="text-sm text-gray-400">{dateFormat(bookingInfo.show?.showDateTime)}</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-y-5 gap-x-4 text-sm">
+                      <div>
+                        <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Mã đặt vé</p>
+                        <p className="font-mono text-primary font-bold text-base">{bookingInfo.bookingCode || bookingInfo._id.slice(-6).toUpperCase()}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Ghế ngồi</p>
+                        <p className="font-bold text-lg text-white">{bookingInfo.bookedSeats?.join(", ")}</p>
+                      </div>
+                      <div className="col-span-2 border-t border-gray-800/50 pt-4">
+                        <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Khách hàng</p>
+                        <p className="font-semibold text-gray-300">{bookingInfo.customerName || bookingInfo.user?.name}</p>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-y-5 gap-x-4 text-sm">
-                    <div>
-                      <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Mã đặt vé</p>
-                      <p className="font-mono text-primary font-bold text-base">{bookingInfo.bookingCode || bookingInfo._id.slice(-6).toUpperCase()}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Ghế ngồi</p>
-                      <p className="font-bold text-lg text-white">{bookingInfo.bookedSeats?.join(", ")}</p>
-                    </div>
-                    <div className="col-span-2 border-t border-gray-800/50 pt-4">
-                      <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Khách hàng</p>
-                      <p className="font-semibold text-gray-300">{bookingInfo.customerName || bookingInfo.user?.name}</p>
-                    </div>
-                  </div>
-                </div>
+                )}
 
                 <div className="mt-6">
                   <button 
