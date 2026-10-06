@@ -182,16 +182,18 @@ export const sepayWebhook = async (req, res) => {
       booking.isPaid = true;
       await booking.save();
       
-      // Send Confirmation Email via Inngest
-      try {
-        if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
-          await inngest.send({
-            name: "app/show.booked",
-            data: { bookingId: booking._id.toString() },
-          });
+      // Send Confirmation Email via Inngest (only if it wasn't cancelled)
+      if (!booking.isCancelled) {
+        try {
+          if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
+            await inngest.send({
+              name: "app/show.booked",
+              data: { bookingId: booking._id.toString() },
+            });
+          }
+        } catch (err) {
+          console.warn("Skipping confirmation email task (Inngest keys missing)");
         }
-      } catch (err) {
-        console.warn("Skipping confirmation email task (Inngest keys missing)");
       }
     }
 
@@ -228,7 +230,8 @@ export const cancelBooking = async (req, res) => {
       await show.save();
     }
 
-    await Booking.findByIdAndDelete(bookingId);
+    booking.isCancelled = true;
+    await booking.save();
 
     res.json({ success: true, message: "Đã hủy vé thành công" });
   } catch (error) {

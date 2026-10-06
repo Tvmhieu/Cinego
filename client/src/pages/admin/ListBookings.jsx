@@ -128,7 +128,15 @@ const ListBookings = () => {
                     {(item.amount || 0).toLocaleString("vi-VN")} {currency}
                   </td>
                   <td className="p-2">
-                    {item.isPaid ? (
+                    {item.isCancelled && !item.isPaid ? (
+                      <span className="px-2 py-1 text-xs font-medium text-red-400 rounded-full bg-red-500/20">
+                        Đã hủy
+                      </span>
+                    ) : item.isCancelled && item.isPaid ? (
+                      <span className="px-2 py-1 text-xs font-medium text-purple-400 rounded-full bg-purple-500/20">
+                        Thanh toán muộn (Cần xử lý)
+                      </span>
+                    ) : item.isPaid ? (
                       <span className="px-2 py-1 text-xs font-medium text-green-400 rounded-full bg-green-500/20">
                         Đã thanh toán
                       </span>
@@ -139,7 +147,7 @@ const ListBookings = () => {
                     )}
                   </td>
                   <td className="p-2">
-                    {!item.isPaid && (
+                    {!item.isPaid && !item.isCancelled && (
                       <button
                         onClick={() => handleConfirmPayment(item._id)}
                         className="px-3 py-1 text-xs font-medium text-white transition rounded-md cursor-pointer bg-green-600 hover:bg-green-700 active:scale-95"
