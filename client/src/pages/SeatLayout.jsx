@@ -202,7 +202,25 @@ const SeatLayout = ({ propId, propDate }) => {
           </div>
         </div>
 
-        <div className="w-full max-w-md mt-10 space-y-4">
+        {selectedSeats.length > 0 && selectedTime && (
+          <div className="w-full max-w-md mt-8 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+            <h2 className="text-lg font-semibold text-white mb-3">Thông tin đặt vé</h2>
+            <div className="flex justify-between text-sm text-gray-300 mb-1">
+              <span>Ghế đã chọn:</span>
+              <span className="font-semibold text-white">{selectedSeats.join(", ")}</span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-300 mb-2">
+              <span>Số lượng:</span>
+              <span className="font-semibold text-white">{selectedSeats.length} vé</span>
+            </div>
+            <div className="flex justify-between text-base font-semibold text-primary mt-3 pt-3 border-t border-primary/20">
+              <span>Tổng tiền:</span>
+              <span>{(selectedSeats.length * (selectedTime.price || 250000)).toLocaleString("vi-VN")} VNĐ</span>
+            </div>
+          </div>
+        )}
+
+        <div className="w-full max-w-md mt-6 space-y-4">
           <h2 className="text-lg font-semibold text-white">Thông tin khách hàng</h2>
           <div>
             <label className="block mb-1 text-sm text-gray-400">Họ và tên *</label>
