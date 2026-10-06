@@ -43,7 +43,7 @@ export const createBooking = async (req, res) => {
     // Get the show details
     const showData = await Show.findById(showId).populate("movie");
 
-    const bookingCode = "CG" + Math.floor(100000 + Math.random() * 900000);
+    const bookingCode = "DH" + Math.floor(100000 + Math.random() * 900000);
 
     // Create a new booking
     const booking = await Booking.create({
@@ -161,8 +161,8 @@ export const sepayWebhook = async (req, res) => {
       return res.json({ success: true });
     }
 
-    // Extract bookingCode from transferContent (e.g. CINEGO CG123456)
-    const match = transferContent.match(/CG\d{6}/i);
+    // Extract bookingCode from transferContent (e.g. DH123456)
+    const match = transferContent.match(/DH\d{6}/i);
     if (!match) {
       return res.json({ success: true, message: "No booking code found" });
     }

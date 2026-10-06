@@ -63,7 +63,7 @@ const PaymentQR = () => {
   if (!booking) return <div className="text-center mt-20">Không tìm thấy vé</div>;
 
   const amount = booking.amount;
-  const content = `CINEGO ${booking.bookingCode}`;
+  const content = `${booking.bookingCode}`;
   
   // Create VietQR URL
   const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
