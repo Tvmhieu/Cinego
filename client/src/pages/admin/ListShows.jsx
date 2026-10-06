@@ -110,10 +110,10 @@ const ListShows = () => {
                   <td className="p-2 pl-5 min-w-45">{show.movie.title}</td>
                   <td className="p-2">{dateFormat(show.showDateTime)}</td>
                   <td className="p-2">
-                    {Object.keys(show.occupiedSeats).length}
+                    {show.paidTickets || 0}
                   </td>
                   <td className="p-2">
-                    {(Object.keys(show.occupiedSeats).length * show.showPrice).toLocaleString("vi-VN")} {currency}
+                    {(show.revenue || 0).toLocaleString("vi-VN")} {currency}
                   </td>
                   <td className="p-2">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${status.color}`}>

@@ -39,9 +39,22 @@ export const getAllShows = async (req, res) => {
       // showDateTime: { $gte: new Date() },
     })
       .populate("movie")
-      .sort();
+      .sort({ showDateTime: -1 });
 
-    res.json({ success: true, shows });
+    const showsWithRevenue = await Promise.all(
+      shows.map(async (show) => {
+        const paidBookings = await Booking.find({ show: show._id, isPaid: true });
+        const revenue = paidBookings.reduce((acc, b) => acc + (b.amount || 0), 0);
+        const paidTickets = paidBookings.reduce((acc, b) => acc + (b.bookedSeats?.length || 0), 0);
+        return {
+          ...show.toObject(),
+          revenue,
+          paidTickets,
+        };
+      })
+    );
+
+    res.json({ success: true, shows: showsWithRevenue });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
