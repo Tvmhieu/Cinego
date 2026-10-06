@@ -63,6 +63,23 @@ const Navbar = () => {
           </Link>
         )}
 
+        <a
+          href="/my-bookings"
+          onClick={(e) => {
+            e.preventDefault();
+            setIsOpen(false);
+            if (!user) {
+              openSignIn();
+            } else {
+              navigate("/my-bookings");
+              scrollTo(0, 0);
+            }
+          }}
+          className="cursor-pointer"
+        >
+          Vé của tôi
+        </a>
+
         {isAdmin && (
           <Link
             onClick={() => {
@@ -87,15 +104,7 @@ const Navbar = () => {
             Đăng nhập
           </button>
         ) : (
-          <UserButton>
-            <UserButton.MenuItems>
-              <UserButton.Action
-                label="Vé của tôi"
-                labelIcon={<TicketPlus width={15} />}
-                onClick={() => navigate("/my-bookings")}
-              />
-            </UserButton.MenuItems>
-          </UserButton>
+          <UserButton />
         )}
       </div>
 
