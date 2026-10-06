@@ -137,72 +137,70 @@ const MyBookings = () => {
             </button>
             
             {/* The Gorgeous Ticket UI */}
-            <div className="relative flex flex-col md:flex-row w-full bg-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl border border-gray-700">
-              {/* Left: Movie Poster */}
-              <div className="relative w-full md:w-1/3 aspect-video md:aspect-auto shrink-0">
+            {/* The Gorgeous Ticket UI */}
+            <div className="relative flex flex-col w-full max-w-sm mx-auto bg-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl border border-gray-700">
+              {/* Top: Movie Poster */}
+              <div className="relative w-full aspect-video shrink-0">
                 <img
-                  src={image_base_url + selectedTicket.show.movie.poster_path}
+                  src={image_base_url + (selectedTicket.show.movie.backdrop_path || selectedTicket.show.movie.poster_path)}
                   alt=""
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#1a1a1a] via-[#1a1a1a]/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent"></div>
                 <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                   CineGo Ticket
                 </div>
               </div>
 
               {/* Middle: Ticket Details */}
-              <div className="flex-1 flex flex-col md:flex-row relative z-10 -mt-12 md:mt-0 bg-gradient-to-t md:bg-none from-[#1a1a1a] via-[#1a1a1a] to-transparent pt-12 md:pt-0">
-                <div className="flex-1 p-6 md:p-8 flex flex-col justify-center relative border-b-2 md:border-b-0 md:border-r-2 border-dashed border-gray-700/50">
-                  
-                  {/* Cutouts for ticket effect */}
-                  <div className="hidden md:block absolute -top-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-b border-l border-gray-700"></div>
-                  <div className="hidden md:block absolute -bottom-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-t border-l border-gray-700"></div>
-                  
-                  <h2 className="text-xl md:text-2xl font-bold uppercase mb-2 text-white line-clamp-4 leading-snug">
-                    {selectedTicket.show.movie.title}
-                  </h2>
-                  <p className="text-sm font-medium text-gray-400 mb-6 flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-gray-800 rounded text-xs">2D</span>
-                    Thời lượng: {timeFormat(selectedTicket.show.movie.runtime)}
-                  </p>
-                  
-                  <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Giờ chiếu</p>
-                      <p className="text-base font-bold text-gray-200">{dateFormat(selectedTicket.show.showDateTime)}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Ghế ngồi</p>
-                      <p className="text-2xl font-black text-primary drop-shadow-md">{selectedTicket.bookedSeats.join(", ")}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Khách hàng</p>
-                      <p className="text-sm font-bold text-gray-300 truncate">{selectedTicket.customerName || user?.name || "Khách ẩn danh"}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Tổng tiền</p>
-                      <p className="text-sm font-bold text-gray-300">{selectedTicket.amount.toLocaleString("vi-VN")} {currency}</p>
-                    </div>
+              <div className="flex-1 p-6 relative z-10 -mt-8 bg-transparent border-b-2 border-dashed border-gray-700/50">
+                <h2 className="text-xl font-bold uppercase mb-2 text-white line-clamp-3 leading-snug drop-shadow-md">
+                  {selectedTicket.show.movie.title}
+                </h2>
+                <p className="text-sm font-medium text-gray-400 mb-6 flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-gray-800 rounded text-xs">2D</span>
+                  Thời lượng: {timeFormat(selectedTicket.show.movie.runtime)}
+                </p>
+                
+                <div className="grid grid-cols-2 gap-y-5 gap-x-4">
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Giờ chiếu</p>
+                    <p className="text-sm font-bold text-gray-200">{dateFormat(selectedTicket.show.showDateTime)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Ghế ngồi</p>
+                    <p className="text-xl font-black text-primary drop-shadow-md">{selectedTicket.bookedSeats.join(", ")}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Khách hàng</p>
+                    <p className="text-sm font-bold text-gray-300 truncate">{selectedTicket.customerName || user?.name || "Khách ẩn danh"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Tổng tiền</p>
+                    <p className="text-sm font-bold text-gray-300">{selectedTicket.amount.toLocaleString("vi-VN")} {currency}</p>
                   </div>
                 </div>
+              </div>
 
-                {/* Right: Large QR Code */}
-                <div className="w-full md:w-64 bg-white p-6 md:p-8 flex flex-col items-center justify-center relative shrink-0">
-                  <h3 className="text-black font-bold text-center mb-4 uppercase tracking-widest text-sm">Quét mã để vào rạp</h3>
-                  <div className="w-full aspect-square relative bg-white border-4 border-primary rounded-xl overflow-hidden p-2 shadow-[0_0_15px_rgba(229,9,20,0.3)]">
-                    <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${selectedTicket.bookingCode || selectedTicket._id}`} 
-                      alt="QR Code" 
-                      className="w-full h-full object-contain" 
-                    />
-                  </div>
-                  
-                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-6 mb-1 text-center">Mã đặt vé</p>
-                  <p className="font-mono font-bold text-2xl text-black tracking-widest text-center">
-                    {selectedTicket.bookingCode || selectedTicket._id.slice(-6).toUpperCase()}
-                  </p>
+              {/* Bottom: Large QR Code */}
+              <div className="w-full bg-white p-6 flex flex-col items-center justify-center relative shrink-0">
+                {/* Cutouts for ticket effect */}
+                <div className="absolute -top-4 -left-4 w-8 h-8 bg-black/80 rounded-full border-b border-r border-gray-700/50"></div>
+                <div className="absolute -top-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-b border-l border-gray-700/50"></div>
+                
+                <h3 className="text-black font-bold text-center mb-4 uppercase tracking-widest text-sm">Quét mã để vào rạp</h3>
+                <div className="w-48 aspect-square relative bg-white border-4 border-primary rounded-xl overflow-hidden p-2 shadow-[0_0_15px_rgba(229,9,20,0.3)]">
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${selectedTicket.bookingCode || selectedTicket._id}`} 
+                    alt="QR Code" 
+                    className="w-full h-full object-contain" 
+                  />
                 </div>
+                
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-4 mb-1 text-center">Mã đặt vé</p>
+                <p className="font-mono font-bold text-xl text-black tracking-widest text-center">
+                  {selectedTicket.bookingCode || selectedTicket._id.slice(-6).toUpperCase()}
+                </p>
               </div>
             </div>
           </div>

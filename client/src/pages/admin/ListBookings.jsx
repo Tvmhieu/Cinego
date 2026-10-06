@@ -90,7 +90,11 @@ const ListBookings = () => {
 
   const filteredBookings = bookings.filter((item) => {
     if (!item || !item.show || !item.show.movie) return false;
-    if (showIdFilter && item.show._id !== showIdFilter) return false;
+    if (showIdFilter) {
+      if (item.show._id !== showIdFilter) return false;
+      // Only show valid, paid tickets when viewing a specific show
+      if (!item.isPaid || item.isCancelled) return false;
+    }
     return true;
   });
 

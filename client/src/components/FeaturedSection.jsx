@@ -23,7 +23,7 @@ const FeaturedSection = () => {
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-8 mt-8 max-sm:justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
         {shows
           .filter((show) => show && show._id) // Filter out null shows and shows without IDs
           .slice(0, 4)
