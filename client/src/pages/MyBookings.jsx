@@ -5,6 +5,7 @@ import timeFormat from "../lib/timeFormat";
 import { dateFormat } from "../lib/dateFormat";
 import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const MyBookings = () => {
   const { axios, getToken, user, image_base_url } = useAppContext();
@@ -28,6 +29,24 @@ const MyBookings = () => {
     }
     setIsLoading(false);
   }, [axios, getToken]);
+
+  const handleCancel = async (bookingId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn hủy vé này? Hủy xong sẽ không thể khôi phục.")) return;
+    
+    try {
+      const { data } = await axios.post(`/api/booking/cancel/${bookingId}`, {}, {
+        headers: { Authorization: `Bearer ${await getToken()}` }
+      });
+      if (data.success) {
+        toast.success(data.message);
+        getMyBookings();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi hủy vé");
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -76,12 +95,20 @@ const MyBookings = () => {
                   {item.amount.toLocaleString("vi-VN")} {currency}
                 </p>
                 {!item.isPaid && (
-                  <Link
-                    to={item.paymentLink}
-                    className="bg-primary px-4 py-1.5 text-sm rounded-full font-medium cursor-pointer"
-                  >
-                    Thanh toán
-                  </Link>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleCancel(item._id)}
+                      className="bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white px-4 py-1.5 text-sm rounded-full font-medium transition cursor-pointer"
+                    >
+                      Hủy vé
+                    </button>
+                    <Link
+                      to={`/payment/${item._id}`}
+                      className="bg-primary px-4 py-1.5 text-sm rounded-full font-medium cursor-pointer"
+                    >
+                      Thanh toán
+                    </Link>
+                  </div>
                 )}
               </div>
               <span className={`text-xs px-2 py-1 mt-1 rounded ${item.isPaid ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>

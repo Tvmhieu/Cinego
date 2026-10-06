@@ -202,3 +202,37 @@ export const sepayWebhook = async (req, res) => {
   }
 };
 
+// API for user to cancel unpaid booking
+export const cancelBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const userId = req.auth().userId;
+
+    const booking = await Booking.findOne({ _id: bookingId, user: userId });
+    
+    if (!booking) {
+      return res.json({ success: false, message: "Không tìm thấy vé" });
+    }
+
+    if (booking.isPaid) {
+      return res.json({ success: false, message: "Không thể hủy vé đã thanh toán" });
+    }
+
+    // Release seats
+    const show = await Show.findById(booking.show);
+    if (show) {
+      booking.bookedSeats.forEach((seat) => {
+        delete show.occupiedSeats[seat];
+      });
+      show.markModified("occupiedSeats");
+      await show.save();
+    }
+
+    await Booking.findByIdAndDelete(bookingId);
+
+    res.json({ success: true, message: "Đã hủy vé thành công" });
+  } catch (error) {
+    console.error(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
