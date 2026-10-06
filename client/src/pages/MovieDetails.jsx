@@ -209,9 +209,12 @@ const MovieDetails = () => {
       {selectedDate && <SeatLayout propId={id} propDate={selectedDate} />}
 
       <p className="mt-20 mb-8 text-lg font-medium">Phim khác bạn có thể thích</p>
-      <div className="flex flex-wrap gap-8 max-sm:justify-center">
-        {shows.slice(0, 4).map((movie, index) => (
-          <MovieCard key={index} movie={movie} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {shows
+          .filter((show) => show && show._id)
+          .slice(0, 4)
+          .map((show) => (
+          <MovieCard key={show._id} movie={show} />
         ))}
       </div>
 
