@@ -141,3 +141,28 @@ export const updateUserRole = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to check-in a booking
+export const checkInBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.body;
+    
+    const booking = await Booking.findById(bookingId);
+    
+    if (!booking) {
+      return res.json({ success: false, message: "Không tìm thấy vé" });
+    }
+    
+    if (!booking.isPaid) {
+      return res.json({ success: false, message: "Vé này chưa được thanh toán" });
+    }
+    
+    booking.isCheckedIn = !booking.isCheckedIn;
+    await booking.save();
+    
+    res.json({ success: true, message: booking.isCheckedIn ? "Đã soát vé thành công" : "Đã hủy soát vé", isCheckedIn: booking.isCheckedIn });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};

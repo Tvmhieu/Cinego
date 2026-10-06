@@ -65,6 +65,26 @@ const ListBookings = () => {
     }
   };
 
+  const handleCheckIn = async (bookingId) => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/admin/check-in",
+        { bookingId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getAllBookings(); // Refresh list
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Lỗi khi cập nhật trạng thái soát vé");
+    }
+  };
+
   useEffect(() => {
     if (user) {
       getAllBookings();
@@ -93,7 +113,8 @@ const ListBookings = () => {
         <table className="w-full overflow-hidden border-collapse rounded-md text-nowrap">
           <thead>
             <tr className="text-left text-white bg-primary/20">
-              <th className="p-2 pl-5 font-medium">Tên khách hàng</th>
+              <th className="p-2 pl-5 font-medium">Mã vé</th>
+              <th className="p-2 font-medium">Tên khách hàng</th>
               <th className="p-2 font-medium">Tên phim</th>
               <th className="p-2 font-medium">Giờ chiếu</th>
               <th className="p-2 font-medium">Ghế</th>
@@ -115,7 +136,10 @@ const ListBookings = () => {
                   key={item._id || index}
                   className="border-b border-primary/20 bg-primary/5 even:bg-primary/10"
                 >
-                  <td className="p-2 pl-5 min-w-45">
+                  <td className="p-2 pl-5 font-mono font-bold text-primary">
+                    {item.bookingCode || item._id.slice(-6).toUpperCase()}
+                  </td>
+                  <td className="p-2">
                     {item.customerName || item.user?.name || "Khách ẩn danh"}
                     {item.customerPhone && (
                       <div className="text-xs text-gray-400">{item.customerPhone}</div>
@@ -134,7 +158,11 @@ const ListBookings = () => {
                       </span>
                     ) : item.isCancelled && item.isPaid ? (
                       <span className="px-2 py-1 text-xs font-medium text-purple-400 rounded-full bg-purple-500/20">
-                        Thanh toán muộn (Cần xử lý)
+                        Hủy (Chưa hoàn tiền)
+                      </span>
+                    ) : item.isCheckedIn ? (
+                      <span className="px-2 py-1 text-xs font-medium text-blue-400 rounded-full bg-blue-500/20">
+                        Đã vào rạp
                       </span>
                     ) : item.isPaid ? (
                       <span className="px-2 py-1 text-xs font-medium text-green-400 rounded-full bg-green-500/20">
@@ -146,13 +174,21 @@ const ListBookings = () => {
                       </span>
                     )}
                   </td>
-                  <td className="p-2">
+                  <td className="p-2 flex gap-2">
                     {!item.isPaid && !item.isCancelled && (
                       <button
                         onClick={() => handleConfirmPayment(item._id)}
                         className="px-3 py-1 text-xs font-medium text-white transition rounded-md cursor-pointer bg-green-600 hover:bg-green-700 active:scale-95"
                       >
                         Xác nhận
+                      </button>
+                    )}
+                    {item.isPaid && !item.isCancelled && (
+                      <button
+                        onClick={() => handleCheckIn(item._id)}
+                        className={`px-3 py-1 text-xs font-medium transition rounded-md cursor-pointer active:scale-95 ${item.isCheckedIn ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                      >
+                        {item.isCheckedIn ? "Hủy soát vé" : "Soát vé"}
                       </button>
                     )}
                   </td>

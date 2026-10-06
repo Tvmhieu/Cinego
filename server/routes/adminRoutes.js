@@ -8,6 +8,7 @@ import {
   isAdmin,
   getAllUsers,
   updateUserRole,
+  checkInBooking,
 } from "../controllers/adminControllers.js";
 import { confirmPayment } from "../controllers/bookingControllers.js";
 
@@ -21,6 +22,7 @@ adminRouter.post("/confirm-payment", protectAdmin, confirmPayment);
 adminRouter.post("/cancel-show", protectAdmin, cancelShow);
 adminRouter.get("/users", protectAdmin, getAllUsers);
 adminRouter.post("/update-role", protectAdmin, updateUserRole);
+adminRouter.post("/check-in", protectAdmin, checkInBooking);
 
 export default adminRouter;
 
