@@ -152,12 +152,12 @@ const SeatLayout = ({ propId, propDate }) => {
   }, [selectedTime]);
 
   return show ? (
-    <div className={`flex flex-col md:flex-row ${propId ? 'mt-10' : 'px-6 md:px-16 lg:px-40 py-30 md:pt-50'}`}>
+    <div className={`flex flex-col ${propId ? 'mt-10' : 'px-6 md:px-16 lg:px-40 py-30 md:pt-50'}`}>
       {/* Available Timings */}
-      <div className="py-10 border rounded-lg w-60 bg-primary/10 border-primary/20 h-max md:sticky md:top-30">
-        <p className="px-6 text-lg font-semibold">Khung giờ chiếu</p>
+      <div className="flex flex-col items-center mb-12 w-full">
+        <p className="text-lg font-semibold mb-4">Khung giờ chiếu</p>
 
-        <div className="mt-5 space-y-1">
+        <div className="flex flex-wrap justify-center gap-3">
           {(Array.isArray(show?.dateTime?.[date])
             ? show.dateTime[date]
             : []
@@ -165,10 +165,10 @@ const SeatLayout = ({ propId, propDate }) => {
             <div
               key={item.time}
               onClick={() => setSelectedTime(item)}
-              className={`flex items-center gap-2 px-6 py-2 w-max rounded-r-md cursor-pointer transition ${
+              className={`flex items-center gap-2 px-6 py-2 rounded-full cursor-pointer transition border border-primary/20 ${
                 selectedTime?.time === item.time
                   ? "bg-primary text-white"
-                  : "hover:bg-primary/20"
+                  : "bg-gray-800/50 hover:bg-primary/20 text-gray-300"
               }`}
             >
               <ClockIcon className="w-4 h-4" />
