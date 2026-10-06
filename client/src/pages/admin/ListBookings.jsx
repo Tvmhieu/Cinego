@@ -89,7 +89,7 @@ const ListBookings = () => {
   }, [user]);
 
   const filteredBookings = bookings.filter((item) => {
-    if (!item || !item.user || !item.show || !item.show.movie) return false;
+    if (!item || !item.show || !item.show.movie) return false;
     if (showIdFilter && item.show._id !== showIdFilter) return false;
     return true;
   });
