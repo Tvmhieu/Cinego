@@ -4,6 +4,7 @@ import {
   ListIcon,
   PlusSquareIcon,
   UsersIcon,
+  ScanLineIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../../assets/assets";
@@ -28,6 +29,11 @@ const AdminSideBar = () => {
       name: "Tài khoản",
       path: "/admin/users",
       icon: UsersIcon,
+    },
+    {
+      name: "Quét vé",
+      path: "/admin/scan",
+      icon: ScanLineIcon,
     },
   ];
 

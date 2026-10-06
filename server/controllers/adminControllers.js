@@ -2,6 +2,7 @@ import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import User from "../models/User.js";
 import { clerkClient } from "@clerk/express";
+import mongoose from "mongoose";
 
 // API to check if user is admin
 export const isAdmin = async (req, res) => {
@@ -147,7 +148,13 @@ export const checkInBooking = async (req, res) => {
   try {
     const { bookingId } = req.body;
     
-    const booking = await Booking.findById(bookingId);
+    const booking = await Booking.findOne({
+      $or: [
+        { bookingCode: bookingId },
+        // Only valid ObjectIds should be searched by _id
+        ...(mongoose.Types.ObjectId.isValid(bookingId) ? [{ _id: bookingId }] : [])
+      ]
+    });
     
     if (!booking) {
       return res.json({ success: false, message: "Không tìm thấy vé" });
