@@ -15,6 +15,7 @@ const ListShows = () => {
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: 'showDateTime', direction: 'desc' });
 
   const getAllShows = async () => {
     try {
@@ -57,10 +58,18 @@ const ListShows = () => {
     const showDate = new Date(showDateTime);
     const diffMins = (now - showDate) / (1000 * 60);
 
-    if (diffMins < 0) return { text: "Sắp chiếu", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" };
-    if (diffMins >= 0 && diffMins <= 15) return { text: "Đang mở bán", color: "text-green-400 bg-green-500/10 border-green-500/20" };
-    if (diffMins > 15 && diffMins < runtime) return { text: "Đang chiếu", color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" };
-    return { text: "Đã chiếu", color: "text-gray-400 bg-gray-500/10 border-gray-500/20" };
+    if (diffMins < 0) return { text: "Sắp chiếu", color: "text-blue-400 bg-blue-500/10 border-blue-500/20", value: 3 };
+    if (diffMins >= 0 && diffMins <= 15) return { text: "Đang mở bán", color: "text-green-400 bg-green-500/10 border-green-500/20", value: 2 };
+    if (diffMins > 15 && diffMins < runtime) return { text: "Đang chiếu", color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20", value: 1 };
+    return { text: "Đã chiếu", color: "text-gray-400 bg-gray-500/10 border-gray-500/20", value: 0 };
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
   };
 
   useEffect(() => {
@@ -71,11 +80,50 @@ const ListShows = () => {
 
   const filteredShows = shows.filter((show) => {
     const term = searchTerm.toLowerCase();
-    const title = show.movie.title.toLowerCase();
+    const title = show.movie?.title?.toLowerCase() || "";
     const code = show.showCode?.toLowerCase() || "";
     const date = dateFormat(show.showDateTime).toLowerCase();
     return title.includes(term) || code.includes(term) || date.includes(term);
+  }).sort((a, b) => {
+    if (sortConfig.key === 'showCode') {
+      const valA = a.showCode || "";
+      const valB = b.showCode || "";
+      return sortConfig.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    if (sortConfig.key === 'movie.title') {
+      const valA = a.movie?.title || "";
+      const valB = b.movie?.title || "";
+      return sortConfig.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    if (sortConfig.key === 'showDateTime') {
+      const dateA = new Date(a.showDateTime).getTime();
+      const dateB = new Date(b.showDateTime).getTime();
+      return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
+    }
+    if (sortConfig.key === 'paidTickets') {
+      const valA = a.paidTickets || 0;
+      const valB = b.paidTickets || 0;
+      return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
+    }
+    if (sortConfig.key === 'revenue') {
+      const valA = a.revenue || 0;
+      const valB = b.revenue || 0;
+      return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
+    }
+    if (sortConfig.key === 'status') {
+      const statusA = getShowStatus(a.showDateTime, a.movie?.runtime).value;
+      const statusB = getShowStatus(b.showDateTime, b.movie?.runtime).value;
+      return sortConfig.direction === 'asc' ? statusA - statusB : statusB - statusA;
+    }
+    return 0;
   });
+
+  const renderSortIndicator = (key) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+    }
+    return '';
+  };
 
   return !loading ? (
     <div className="flex flex-col h-full animate-in fade-in duration-500">
@@ -98,6 +146,12 @@ const ListShows = () => {
 
       {/* Mobile Card Layout */}
       <div className="md:hidden flex flex-col gap-4 pb-6">
+        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar text-xs">
+          <span className="text-gray-500 whitespace-nowrap">Sắp xếp:</span>
+          <button onClick={() => handleSort('showDateTime')} className={`whitespace-nowrap ${sortConfig.key === 'showDateTime' ? 'text-primary font-bold' : 'text-gray-400'}`}>Ngày giờ {renderSortIndicator('showDateTime')}</button>
+          <button onClick={() => handleSort('showCode')} className={`whitespace-nowrap ${sortConfig.key === 'showCode' ? 'text-primary font-bold' : 'text-gray-400'}`}>Mã {renderSortIndicator('showCode')}</button>
+          <button onClick={() => handleSort('paidTickets')} className={`whitespace-nowrap ${sortConfig.key === 'paidTickets' ? 'text-primary font-bold' : 'text-gray-400'}`}>Vé {renderSortIndicator('paidTickets')}</button>
+        </div>
         {filteredShows.length === 0 ? (
           <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
             <FilmIcon className="w-12 h-12 text-gray-700 mb-2" />
@@ -105,7 +159,7 @@ const ListShows = () => {
           </div>
         ) : (
           filteredShows.map((show) => {
-            const status = getShowStatus(show.showDateTime, show.movie.runtime);
+            const status = getShowStatus(show.showDateTime, show.movie?.runtime);
             return (
               <div 
                 key={show._id} 
@@ -114,8 +168,8 @@ const ListShows = () => {
               >
                 <div className="flex justify-between items-start mb-3 border-b border-gray-800/60 pb-3">
                   <div className="flex-1 pr-2">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Tên Phim {show.showCode && `- ${show.showCode}`}</p>
-                    <p className="font-bold text-white text-base leading-tight">{show.movie.title}</p>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Mã: <span className="font-mono text-gray-300 font-bold">{show.showCode || "N/A"}</span></p>
+                    <p className="font-bold text-white text-base leading-tight">{show.movie?.title}</p>
                   </div>
                   <span className={`flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full border ${status.color}`}>
                     {status.text}
@@ -164,13 +218,13 @@ const ListShows = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="bg-gray-900/50 border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
-                <th className="px-6 py-4 font-medium">Mã</th>
-                <th className="px-6 py-4 font-medium">Tên phim</th>
-                <th className="px-6 py-4 font-medium">Giờ chiếu</th>
-                <th className="px-6 py-4 font-medium">Tổng vé bán</th>
-                <th className="px-6 py-4 font-medium">Doanh thu</th>
-                <th className="px-6 py-4 font-medium">Trạng thái</th>
+              <tr className="bg-gray-900/50 border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider select-none">
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showCode')}>Mã{renderSortIndicator('showCode')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('movie.title')}>Tên phim{renderSortIndicator('movie.title')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showDateTime')}>Giờ chiếu{renderSortIndicator('showDateTime')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('paidTickets')}>Tổng vé bán{renderSortIndicator('paidTickets')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('revenue')}>Doanh thu{renderSortIndicator('revenue')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('status')}>Trạng thái{renderSortIndicator('status')}</th>
                 <th className="px-6 py-4 font-medium text-right">Thao tác</th>
               </tr>
             </thead>
@@ -184,7 +238,7 @@ const ListShows = () => {
                 </tr>
               ) : (
                 filteredShows.map((show, index) => {
-                  const status = getShowStatus(show.showDateTime, show.movie.runtime);
+                  const status = getShowStatus(show.showDateTime, show.movie?.runtime);
                   return (
                     <tr
                       key={index}
@@ -197,7 +251,7 @@ const ListShows = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-bold text-white group-hover:text-primary transition-colors max-w-[250px] truncate" title={show.movie.title}>{show.movie.title}</p>
+                        <p className="font-bold text-white group-hover:text-primary transition-colors max-w-[250px] truncate" title={show.movie?.title}>{show.movie?.title}</p>
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-medium text-gray-300">{dateFormat(show.showDateTime)}</p>

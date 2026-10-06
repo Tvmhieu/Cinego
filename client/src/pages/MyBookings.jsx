@@ -188,9 +188,9 @@ const MyBookings = () => {
                 <div className="absolute -top-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-b border-l border-gray-700/50"></div>
                 
                 <h3 className="text-black font-bold text-center mb-3 uppercase tracking-widest text-xs sm:text-sm">Quét mã để vào rạp</h3>
-                <div className="w-40 sm:w-48 aspect-square relative bg-white border-4 border-primary rounded-xl overflow-hidden p-1.5 shadow-[0_0_15px_rgba(229,9,20,0.3)]">
+                <div className="w-48 aspect-square relative bg-white">
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${selectedTicket.bookingCode || selectedTicket._id}`} 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${selectedTicket.bookingCode || selectedTicket._id}`} 
                     alt="QR Code" 
                     className="w-full h-full object-contain" 
                   />
