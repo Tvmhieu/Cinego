@@ -19,6 +19,12 @@ const showSchema = new mongoose.Schema(
       required: true,
     },
 
+    showCode: {
+      type: String,
+      unique: true,
+      default: () => "SC" + Math.floor(100000 + Math.random() * 900000).toString(),
+    },
+
     occupiedSeats: {
       type: Object,
       default: {},

@@ -5,7 +5,7 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { FilmIcon, CalendarClockIcon, UsersIcon, CircleDollarSignIcon, Trash2Icon, EyeIcon } from "lucide-react";
+import { FilmIcon, CalendarClockIcon, UsersIcon, CircleDollarSignIcon, Trash2Icon, EyeIcon, SearchIcon } from "lucide-react";
 
 const ListShows = () => {
   const { axios, getToken, user } = useAppContext();
@@ -14,6 +14,7 @@ const ListShows = () => {
 
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getAllShows = async () => {
     try {
@@ -68,21 +69,42 @@ const ListShows = () => {
     }
   }, [user]);
 
+  const filteredShows = shows.filter((show) => {
+    const term = searchTerm.toLowerCase();
+    const title = show.movie.title.toLowerCase();
+    const code = show.showCode?.toLowerCase() || "";
+    const date = dateFormat(show.showDateTime).toLowerCase();
+    return title.includes(term) || code.includes(term) || date.includes(term);
+  });
+
   return !loading ? (
     <div className="flex flex-col h-full animate-in fade-in duration-500">
-      <div className="mb-6">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <Title text1="Danh sách" text2="Suất chiếu" />
+        
+        <div className="relative w-full md:w-80">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <SearchIcon className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2 border border-gray-800 rounded-xl leading-5 bg-[#161616] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
+            placeholder="Tìm theo tên phim, mã, ngày chiếu..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Mobile Card Layout */}
       <div className="md:hidden flex flex-col gap-4 pb-6">
-        {shows.length === 0 ? (
+        {filteredShows.length === 0 ? (
           <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
             <FilmIcon className="w-12 h-12 text-gray-700 mb-2" />
-            <p className="text-gray-500">Chưa có suất chiếu nào</p>
+            <p className="text-gray-500">Không tìm thấy suất chiếu nào</p>
           </div>
         ) : (
-          shows.map((show) => {
+          filteredShows.map((show) => {
             const status = getShowStatus(show.showDateTime, show.movie.runtime);
             return (
               <div 
@@ -92,7 +114,7 @@ const ListShows = () => {
               >
                 <div className="flex justify-between items-start mb-3 border-b border-gray-800/60 pb-3">
                   <div className="flex-1 pr-2">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Tên Phim</p>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Tên Phim {show.showCode && `- ${show.showCode}`}</p>
                     <p className="font-bold text-white text-base leading-tight">{show.movie.title}</p>
                   </div>
                   <span className={`flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full border ${status.color}`}>
@@ -143,6 +165,7 @@ const ListShows = () => {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-gray-900/50 border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
+                <th className="px-6 py-4 font-medium">Mã</th>
                 <th className="px-6 py-4 font-medium">Tên phim</th>
                 <th className="px-6 py-4 font-medium">Giờ chiếu</th>
                 <th className="px-6 py-4 font-medium">Tổng vé bán</th>
@@ -153,14 +176,14 @@ const ListShows = () => {
             </thead>
 
             <tbody className="divide-y divide-gray-800/60">
-              {shows.length === 0 ? (
+              {filteredShows.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
-                    Chưa có suất chiếu nào
+                  <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                    Không tìm thấy suất chiếu nào
                   </td>
                 </tr>
               ) : (
-                shows.map((show, index) => {
+                filteredShows.map((show, index) => {
                   const status = getShowStatus(show.showDateTime, show.movie.runtime);
                   return (
                     <tr
@@ -169,7 +192,12 @@ const ListShows = () => {
                       className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     >
                       <td className="px-6 py-4">
-                        <p className="font-bold text-white group-hover:text-primary transition-colors">{show.movie.title}</p>
+                        <span className="font-mono text-xs font-bold text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
+                          {show.showCode || "N/A"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-white group-hover:text-primary transition-colors max-w-[250px] truncate" title={show.movie.title}>{show.movie.title}</p>
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-medium text-gray-300">{dateFormat(show.showDateTime)}</p>

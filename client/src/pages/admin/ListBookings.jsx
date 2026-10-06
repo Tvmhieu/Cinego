@@ -5,7 +5,7 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon } from "lucide-react";
+import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon } from "lucide-react";
 
 const ListBookings = () => {
   const { axios, getToken, user } = useAppContext();
@@ -18,6 +18,7 @@ const ListBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getAllBookings = async () => {
     const abortController = new AbortController();
@@ -90,11 +91,28 @@ const ListBookings = () => {
 
   const filteredBookings = bookings.filter((item) => {
     if (!item || !item.show || !item.show.movie) return false;
+    
+    // Show ID filter (from ListShows)
     if (showIdFilter) {
       if (item.show._id !== showIdFilter) return false;
       // Only show valid, paid tickets when viewing a specific show
       if (!item.isPaid || item.isCancelled) return false;
     }
+    
+    // Search Term filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const bookingCode = item.bookingCode?.toLowerCase() || item._id.toLowerCase();
+      const movieTitle = item.show.movie.title.toLowerCase();
+      const customerName = (item.customerName || item.user?.name || "").toLowerCase();
+      const customerPhone = item.customerPhone || "";
+      const showCode = item.show.showCode?.toLowerCase() || "";
+      
+      if (!bookingCode.includes(term) && !movieTitle.includes(term) && !customerName.includes(term) && !customerPhone.includes(term) && !showCode.includes(term)) {
+        return false;
+      }
+    }
+    
     return true;
   });
 
@@ -138,14 +156,30 @@ const ListBookings = () => {
     <div className="flex flex-col h-full animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <Title text1="Danh sách" text2="Vé đã đặt" />
-        {showIdFilter && (
-          <button 
-            onClick={() => navigate('/admin/list-shows')}
-            className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800/50 border border-gray-700 rounded-xl hover:bg-gray-700 transition shadow-sm w-full md:w-auto"
-          >
-            <ArrowLeftIcon className="w-4 h-4" /> Quay lại DS Suất chiếu
-          </button>
-        )}
+        
+        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+          <div className="relative w-full md:w-80">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <SearchIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-800 rounded-xl leading-5 bg-[#161616] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
+              placeholder="Tìm mã vé, khách hàng, tên phim, mã suất..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {showIdFilter && (
+            <button 
+              onClick={() => navigate('/admin/list-shows')}
+              className="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800/50 border border-gray-700 rounded-xl hover:bg-gray-700 transition shadow-sm whitespace-nowrap"
+            >
+              <ArrowLeftIcon className="w-4 h-4" /> DS Suất chiếu
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -175,6 +209,7 @@ const ListBookings = () => {
               
               <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-4">
                 <div className="col-span-2">
+                  <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Phim & Suất Chiếu {item.show.showCode && `- ${item.show.showCode}`}</p>
                   <p className="text-sm font-bold text-white mb-1 leading-tight">{item.show.movie?.title}</p>
                   <p className="text-xs text-gray-400 flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-primary/70"></div> {dateFormat(item.show?.showDateTime)}</p>
                 </div>
@@ -255,7 +290,10 @@ const ListBookings = () => {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-white mb-0.5">{item.show.movie?.title || "Phim không xác định"}</p>
+                      <p className="font-medium text-white mb-0.5">
+                        {item.show.movie?.title || "Phim không xác định"} 
+                        {item.show.showCode && <span className="ml-2 font-mono text-xs text-gray-500">({item.show.showCode})</span>}
+                      </p>
                       <p className="text-xs text-gray-400">{dateFormat(item.show?.showDateTime)}</p>
                     </td>
                     <td className="px-6 py-4">
