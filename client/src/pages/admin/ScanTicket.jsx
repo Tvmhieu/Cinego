@@ -197,7 +197,7 @@ const ScanTicket = () => {
                 {bookingInfo && (
                   <div className="bg-[#111] rounded-2xl p-5 border border-gray-800/60 shadow-inner">
                     <div className="text-center border-b border-gray-800/80 pb-4 mb-4">
-                      <h3 className="text-xl font-bold text-white mb-1 line-clamp-2">{bookingInfo.show?.movie?.title}</h3>
+                      <h3 className="text-lg font-bold text-white mb-2 line-clamp-3 leading-snug">{bookingInfo.show?.movie?.title}</h3>
                       <p className="text-sm text-gray-400">{dateFormat(bookingInfo.show?.showDateTime)}</p>
                     </div>
                     

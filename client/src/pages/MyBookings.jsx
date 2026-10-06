@@ -159,7 +159,7 @@ const MyBookings = () => {
                   <div className="hidden md:block absolute -top-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-b border-l border-gray-700"></div>
                   <div className="hidden md:block absolute -bottom-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-t border-l border-gray-700"></div>
                   
-                  <h2 className="text-2xl md:text-3xl font-extrabold uppercase mb-1 text-white line-clamp-2">
+                  <h2 className="text-xl md:text-2xl font-bold uppercase mb-2 text-white line-clamp-4 leading-snug">
                     {selectedTicket.show.movie.title}
                   </h2>
                   <p className="text-sm font-medium text-gray-400 mb-6 flex items-center gap-2">
