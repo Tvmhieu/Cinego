@@ -65,74 +65,100 @@ const MyBookings = () => {
 
       <h1 className="mb-4 text-lg font-semibold">Vé của tôi</h1>
 
-      {bookings.map((item, index) => (
-        <div
-          key={index}
-          className="flex flex-col justify-between max-w-3xl p-2 mt-4 border rounded-lg md:flex-row bg-primary/8 border-primary/20"
-        >
-          <div className="flex flex-col md:flex-row">
-            <img
-              src={image_base_url + item.show.movie.poster_path}
-              alt=""
-              className="object-cover object-bottom h-auto rounded md:max-w-45 aspect-video"
-            />
-
-            <div className="flex flex-col p-4">
-              <p className="text-lg font-semibold">{item.show.movie.title}</p>
-              <p className="text-sm text-gray-400">
-                {timeFormat(item.show.movie.runtime)}
-              </p>
-              <p className="mt-auto text-sm text-gray-400">
-                {dateFormat(item.show.showDateTime)}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-between p-4 md:items-end md:text-right">
-            <div className="flex flex-col items-end">
-              <div className="flex items-center gap-4">
-                <p className="mb-1 text-2xl font-semibold">
-                  {item.amount.toLocaleString("vi-VN")} {currency}
-                </p>
-                {!item.isPaid && !item.isCancelled && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleCancel(item._id)}
-                      className="bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white px-4 py-1.5 text-sm rounded-full font-medium transition cursor-pointer"
-                    >
-                      Hủy vé
-                    </button>
-                    <Link
-                      to={`/payment/${item._id}`}
-                      className="bg-primary px-4 py-1.5 text-sm rounded-full font-medium cursor-pointer"
-                    >
-                      Thanh toán
-                    </Link>
-                  </div>
-                )}
+      <div className="grid gap-8 mt-8">
+        {bookings.map((item, index) => (
+          <div
+            key={index}
+            className="relative flex flex-col md:flex-row w-full max-w-4xl mx-auto bg-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl border border-gray-800/60 group transition hover:border-primary/50"
+          >
+            {/* Left: Movie Poster */}
+            <div className="relative w-full md:w-1/3 aspect-video md:aspect-auto shrink-0">
+              <img
+                src={image_base_url + item.show.movie.poster_path}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#1a1a1a] via-[#1a1a1a]/40 to-transparent"></div>
+              <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
+                CineGo Ticket
               </div>
-              <span className={`text-xs px-2 py-1 mt-1 rounded ${item.isCancelled ? 'bg-red-500/20 text-red-400' : item.isPaid ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
-              </span>
             </div>
 
-            <div className="text-sm mt-3">
-              <p>
-                <span className="text-gray-400">Số vé: </span>
-                {item.bookedSeats.length}
-              </p>
-              <p>
-                <span className="text-gray-400">Số ghế: </span>
-                {item.bookedSeats.join(", ")}
-              </p>
-              <p>
-                <span className="text-gray-400">Ngày đặt: </span>
-                {dateFormat(item.createdAt)}
-              </p>
+            {/* Middle: Ticket Details */}
+            <div className="flex-1 flex flex-col md:flex-row relative z-10 -mt-12 md:mt-0 bg-gradient-to-t md:bg-none from-[#1a1a1a] via-[#1a1a1a] to-transparent pt-12 md:pt-0">
+              <div className="flex-1 p-6 md:p-8 flex flex-col justify-center relative border-b-2 md:border-b-0 md:border-r-2 border-dashed border-gray-700/50">
+                
+                {/* Cutouts for ticket effect */}
+                <div className="hidden md:block absolute -top-4 -right-4 w-8 h-8 bg-background rounded-full border-b border-l border-gray-800/60"></div>
+                <div className="hidden md:block absolute -bottom-4 -right-4 w-8 h-8 bg-background rounded-full border-t border-l border-gray-800/60"></div>
+                
+                <h2 className="text-2xl md:text-3xl font-extrabold uppercase mb-1 text-white line-clamp-2">
+                  {item.show.movie.title}
+                </h2>
+                <p className="text-sm font-medium text-gray-400 mb-6 flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-gray-800 rounded text-xs">2D</span>
+                  Thời lượng: {timeFormat(item.show.movie.runtime)}
+                </p>
+                
+                <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Giờ chiếu</p>
+                    <p className="text-base font-bold text-gray-200">{dateFormat(item.show.showDateTime)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Ghế ngồi</p>
+                    <p className="text-2xl font-black text-primary drop-shadow-md">{item.bookedSeats.join(", ")}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Khách hàng</p>
+                    <p className="text-sm font-bold text-gray-300 truncate">{item.customerName || user?.name || "Khách ẩn danh"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-1">Tổng tiền</p>
+                    <p className="text-sm font-bold text-gray-300">{item.amount.toLocaleString("vi-VN")} {currency}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Stub / Actions */}
+              <div className="w-full md:w-56 bg-[#1f1f1f] p-6 flex flex-col items-center justify-center relative shrink-0">
+                <div className="bg-white p-2 rounded-lg mb-4">
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${item.bookingCode || item._id}`} alt="QR Code" className="w-16 h-16 opacity-90 mix-blend-multiply" />
+                </div>
+                
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Mã đặt vé</p>
+                <p className="font-mono font-bold text-lg text-white tracking-widest mb-5">
+                  {item.bookingCode || item._id.slice(-6).toUpperCase()}
+                </p>
+                
+                {/* Status & Actions */}
+                <div className="w-full space-y-3">
+                  <div className={`w-full text-center text-[11px] font-bold py-2 rounded-md uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
+                    {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                  </div>
+                  
+                  {!item.isPaid && !item.isCancelled && (
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        to={`/payment/${item._id}`}
+                        className="w-full text-center bg-primary hover:bg-primary-dull text-white py-2 rounded-md text-xs font-bold transition shadow-lg shadow-primary/20"
+                      >
+                        Thanh toán
+                      </Link>
+                      <button
+                        onClick={() => handleCancel(item._id)}
+                        className="w-full text-center border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white py-2 rounded-md text-xs font-bold transition"
+                      >
+                        Hủy vé
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   ) : (
     <Loading />
