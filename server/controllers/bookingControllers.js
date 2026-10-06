@@ -154,15 +154,15 @@ export const confirmPayment = async (req, res) => {
 // API for SePay Webhook
 export const sepayWebhook = async (req, res) => {
   try {
-    const { transferType, transferContent, amountTransfer } = req.body;
+    const { transferType, content, transferAmount } = req.body;
     
     // Check if it's an incoming transfer
-    if (transferType !== "in" || !transferContent) {
+    if (transferType !== "in" || !content) {
       return res.json({ success: true });
     }
 
-    // Extract bookingCode from transferContent (e.g. DH123456)
-    const match = transferContent.match(/DH\d{6}/i);
+    // Extract bookingCode from content (e.g. DH123456)
+    const match = content.match(/DH\d{6}/i);
     if (!match) {
       return res.json({ success: true, message: "No booking code found" });
     }
@@ -178,7 +178,7 @@ export const sepayWebhook = async (req, res) => {
     }
 
     // Verify amount
-    if (parseInt(amountTransfer) >= booking.amount) {
+    if (parseInt(transferAmount) >= booking.amount) {
       booking.isPaid = true;
       await booking.save();
       

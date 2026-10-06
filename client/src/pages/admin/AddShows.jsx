@@ -118,7 +118,7 @@ const AddShows = () => {
       const payload = {
         movieId: selectedMovie,
         showsInput,
-        showPrice: Number(showPrice.replace(/\./g, "")),
+        showPrice: Number(String(showPrice).replace(/\D/g, "")),
       };
 
       const { data } = await axios.post("/api/show/add", payload, {
@@ -205,7 +205,15 @@ const AddShows = () => {
           <input
             type="text"
             value={showPrice}
+            onFocus={(e) => {
+              const rawValue = e.target.value.replace(/\D/g, "");
+              setShowPrice(rawValue);
+            }}
             onChange={(e) => {
+              const rawValue = e.target.value.replace(/\D/g, "");
+              setShowPrice(rawValue);
+            }}
+            onBlur={(e) => {
               const rawValue = e.target.value.replace(/\D/g, "");
               setShowPrice(rawValue ? Number(rawValue).toLocaleString("vi-VN") : "");
             }}

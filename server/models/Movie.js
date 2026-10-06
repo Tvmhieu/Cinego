@@ -6,7 +6,7 @@ const movieSchema = new mongoose.Schema(
     title: { type: String, required: true },
     overview: { type: String, required: true },
     poster_path: { type: String, required: true },
-    backdrop_path: { type: String, required: true },
+    backdrop_path: { type: String, required: false },
     release_date: { type: String, required: true },
     original_language: { type: String },
     tagline: { type: String },
