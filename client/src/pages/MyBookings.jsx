@@ -94,7 +94,7 @@ const MyBookings = () => {
                 <p className="mb-1 text-2xl font-semibold">
                   {item.amount.toLocaleString("vi-VN")} {currency}
                 </p>
-                {!item.isPaid && (
+                {!item.isPaid && !item.isCancelled && (
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleCancel(item._id)}
@@ -111,8 +111,8 @@ const MyBookings = () => {
                   </div>
                 )}
               </div>
-              <span className={`text-xs px-2 py-1 mt-1 rounded ${item.isPaid ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                {item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+              <span className={`text-xs px-2 py-1 mt-1 rounded ${item.isCancelled ? 'bg-red-500/20 text-red-400' : item.isPaid ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
               </span>
             </div>
 
