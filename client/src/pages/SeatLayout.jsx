@@ -131,8 +131,8 @@ const SeatLayout = ({ propId, propDate }) => {
       );
 
       if (data.success) {
-        // Redirect to VNPay payment page
-        window.location.href = data.url;
+        // Redirect to QR payment page
+        navigate(`/payment/${data.bookingId}`);
       } else {
         toast.error(data.message);
       }

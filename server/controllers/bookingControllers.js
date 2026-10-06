@@ -64,24 +64,7 @@ export const createBooking = async (req, res) => {
     showData.markModified("occupiedSeats");
     await showData.save();
 
-    // Get client IP for VNPay
-    const ipAddr =
-      req.headers["x-forwarded-for"] ||
-      req.connection?.remoteAddress ||
-      req.socket?.remoteAddress ||
-      "127.0.0.1";
-
-    // VNPay return URL (backend endpoint)
-    const serverUrl = process.env.SERVER_URL || `${req.protocol}://${req.get("host")}`;
-    const returnUrl = `${serverUrl}/api/vnpay/return`;
-
-    // Generate VNPay payment URL
-    const paymentUrl = createVnpayUrl(booking, ipAddr, returnUrl);
-
-    booking.paymentLink = paymentUrl;
-    await booking.save();
-
-    // Run Inngest Scheduler Function to check payment status after 10 minutes
+    // Run Inngest Scheduler Function to check payment status after 10 minutes (Optional, could just be auto-cancel)
     try {
       if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
         await inngest.send({
@@ -95,7 +78,7 @@ export const createBooking = async (req, res) => {
       console.warn("Skipping background check payment task (Inngest keys missing)");
     }
 
-    res.json({ success: true, url: paymentUrl });
+    res.json({ success: true, bookingId: booking._id });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
@@ -164,6 +147,57 @@ export const confirmPayment = async (req, res) => {
     res.json({ success: true, message: "Payment confirmed successfully" });
   } catch (error) {
     console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API for SePay Webhook
+export const sepayWebhook = async (req, res) => {
+  try {
+    const { transferType, transferContent, amountTransfer } = req.body;
+    
+    // Check if it's an incoming transfer
+    if (transferType !== "in" || !transferContent) {
+      return res.json({ success: true });
+    }
+
+    // Extract bookingCode from transferContent (e.g. CINEGO CG123456)
+    const match = transferContent.match(/CG\d{6}/i);
+    if (!match) {
+      return res.json({ success: true, message: "No booking code found" });
+    }
+    const bookingCode = match[0].toUpperCase();
+
+    const booking = await Booking.findOne({ bookingCode });
+    if (!booking) {
+      return res.json({ success: true, message: "Booking not found" });
+    }
+
+    if (booking.isPaid) {
+      return res.json({ success: true, message: "Already paid" });
+    }
+
+    // Verify amount
+    if (parseInt(amountTransfer) >= booking.amount) {
+      booking.isPaid = true;
+      await booking.save();
+      
+      // Send Confirmation Email via Inngest
+      try {
+        if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
+          await inngest.send({
+            name: "app/show.booked",
+            data: { bookingId: booking._id.toString() },
+          });
+        }
+      } catch (err) {
+        console.warn("Skipping confirmation email task (Inngest keys missing)");
+      }
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
