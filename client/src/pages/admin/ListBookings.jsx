@@ -5,7 +5,7 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon, ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon, ArrowUpIcon, ArrowDownIcon, LayoutGridIcon, TableIcon } from "lucide-react";
 
 const ListBookings = () => {
   const { axios, getToken, user } = useAppContext();
@@ -23,6 +23,7 @@ const ListBookings = () => {
   const [sortConfig, setSortConfig] = useState({ key: 'show.showDateTime', direction: 'desc' });
 
   const [activeTab, setActiveTab] = useState("valid"); // 'valid', 'cancelled'
+  const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
 
   const getAllBookings = async () => {
     const abortController = new AbortController();
@@ -251,6 +252,22 @@ const ListBookings = () => {
         <Title text1="Danh sách" text2="Vé đã đặt" />
         
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+          {/* Toggle View Mode */}
+          <div className="flex bg-[#161616] p-1 border border-gray-800 rounded-lg w-full md:w-auto overflow-x-auto no-scrollbar snap-x">
+            <button
+              onClick={() => setViewMode('card')}
+              className={`flex-none md:flex-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors snap-start ${viewMode === 'card' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+            >
+              <LayoutGridIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Dạng Thẻ
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`flex-none md:flex-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors snap-start ${viewMode === 'table' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+            >
+              <TableIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Bảng
+            </button>
+          </div>
+
           <div className="relative w-full md:w-80">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <SearchIcon className="h-5 w-5 text-gray-400" />
@@ -303,110 +320,112 @@ const ListBookings = () => {
         </div>
       )}
 
-      {/* Mobile Card Layout */}
-      <div className="md:hidden flex flex-col gap-4 pb-6">
-        <div className="flex items-center justify-between gap-2 pb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-xs whitespace-nowrap">Sắp xếp:</span>
-            <select
-              value={sortConfig.key}
-              onChange={(e) => setSortConfig({ ...sortConfig, key: e.target.value })}
-              className="bg-[#161616] border border-gray-800 text-gray-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
+      {viewMode === 'card' && (
+        <div className="flex flex-col gap-4 pb-6">
+          <div className="flex items-center justify-between gap-2 pb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500 text-xs whitespace-nowrap">Sắp xếp:</span>
+              <select
+                value={sortConfig.key}
+                onChange={(e) => setSortConfig({ ...sortConfig, key: e.target.value })}
+                className="bg-[#161616] border border-gray-800 text-gray-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
+              >
+                <option value="show.showDateTime">Ngày chiếu</option>
+                <option value="bookingCode">Mã vé</option>
+                <option value="status">Trạng thái</option>
+              </select>
+            </div>
+            <button 
+              onClick={() => setSortConfig({ ...sortConfig, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}
+              className="flex items-center justify-center gap-1 px-2 py-1.5 bg-[#161616] border border-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors text-xs"
             >
-              <option value="show.showDateTime">Ngày chiếu</option>
-              <option value="bookingCode">Mã vé</option>
-              <option value="status">Trạng thái</option>
-            </select>
+              {sortConfig.direction === 'asc' ? (
+                <><ArrowUpIcon className="w-3.5 h-3.5" /> Tăng dần</>
+              ) : (
+                <><ArrowDownIcon className="w-3.5 h-3.5" /> Giảm dần</>
+              )}
+            </button>
           </div>
-          <button 
-            onClick={() => setSortConfig({ ...sortConfig, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}
-            className="flex items-center justify-center gap-1 px-2 py-1.5 bg-[#161616] border border-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors text-xs"
-          >
-            {sortConfig.direction === 'asc' ? (
-              <><ArrowUpIcon className="w-3.5 h-3.5" /> Tăng dần</>
-            ) : (
-              <><ArrowDownIcon className="w-3.5 h-3.5" /> Giảm dần</>
-            )}
-          </button>
-        </div>
-        {filteredBookings.length === 0 ? (
-          <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
-            <TicketIcon className="w-12 h-12 text-gray-700 mb-2" />
-            <p className="text-gray-500">Chưa có vé nào được đặt</p>
-          </div>
-        ) : (
-          filteredBookings.map((item) => (
-            <div key={item._id} className="flex flex-col bg-[#161616] rounded-xl border border-gray-800 p-3 shadow-sm">
-              <div className="flex justify-between items-center mb-2">
-                <p className="font-mono font-bold text-primary text-sm">{item.bookingCode || item._id.slice(-6).toUpperCase()}</p>
-                <div className="flex flex-col items-end gap-1">
-                  {renderStatus(item)}
-                  {item.isCancelled && item.cancellationReason && (
-                    <span className="text-[10px] text-gray-500 max-w-[120px] truncate" title={item.cancellationReason}>
-                      {item.cancellationReason}
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-1.5 mb-3 border-y border-gray-800/60 py-2">
-                <div className="flex justify-between items-start text-xs">
-                  <span className="text-gray-500 font-medium">Khách/Mã:</span>
-                  <div className="text-right">
-                    <span className="text-gray-200 font-medium block">{item.customerName || item.user?.name || "Khách ẩn danh"}</span>
-                    <span className="text-gray-500 text-[10px]">KH-{item.user?._id?.slice(-6).toUpperCase() || "GUEST"}</span>
+          {filteredBookings.length === 0 ? (
+            <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
+              <TicketIcon className="w-12 h-12 text-gray-700 mb-2" />
+              <p className="text-gray-500">Chưa có vé nào được đặt</p>
+            </div>
+          ) : (
+            filteredBookings.map((item) => (
+              <div key={item._id} className="flex flex-col bg-[#161616] rounded-xl border border-gray-800 p-3 shadow-sm">
+                <div className="flex justify-between items-center mb-2">
+                  <p className="font-mono font-bold text-primary text-sm">{item.bookingCode || item._id.slice(-6).toUpperCase()}</p>
+                  <div className="flex flex-col items-end gap-1">
+                    {renderStatus(item)}
+                    {item.isCancelled && item.cancellationReason && (
+                      <span className="text-[10px] text-gray-500 max-w-[120px] truncate" title={item.cancellationReason}>
+                        {item.cancellationReason}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="flex justify-between items-start text-xs">
-                  <span className="text-gray-500 font-medium">Phim:</span>
-                  <span className="text-white text-right max-w-[180px] truncate">{item.show.movie?.title}</span>
+                
+                <div className="flex flex-col gap-1.5 mb-3 border-y border-gray-800/60 py-2">
+                  <div className="flex justify-between items-start text-xs">
+                    <span className="text-gray-500 font-medium">Khách/Mã:</span>
+                    <div className="text-right">
+                      <span className="text-gray-200 font-medium block">{item.customerName || item.user?.name || "Khách ẩn danh"}</span>
+                      <span className="text-gray-500 text-[10px]">KH-{item.user?._id?.slice(-6).toUpperCase() || "GUEST"}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-start text-xs">
+                    <span className="text-gray-500 font-medium">Phim:</span>
+                    <span className="text-white text-right max-w-[180px] truncate">{item.show.movie?.title}</span>
+                  </div>
+                  <div className="flex justify-between items-start text-xs">
+                    <span className="text-gray-500 font-medium">Lịch chiếu:</span>
+                    <span className="text-gray-300 text-right">{dateFormat(item.show?.showDateTime)}</span>
+                  </div>
+                  <div className="flex justify-between items-start text-xs">
+                    <span className="text-gray-500 font-medium">Ghế:</span>
+                    <span className="text-gray-200 font-bold text-right">{item.bookedSeats?.join(", ")}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-start text-xs">
-                  <span className="text-gray-500 font-medium">Lịch chiếu:</span>
-                  <span className="text-gray-300 text-right">{dateFormat(item.show?.showDateTime)}</span>
-                </div>
-                <div className="flex justify-between items-start text-xs">
-                  <span className="text-gray-500 font-medium">Ghế:</span>
-                  <span className="text-gray-200 font-bold text-right">{item.bookedSeats?.join(", ")}</span>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-primary font-bold text-sm">{(item.amount || 0).toLocaleString("vi-VN")} {currency}</span>
+                  <div className="flex gap-2">
+                    {!item.isCancelled && (
+                      <button
+                        onClick={() => handleCancelBooking(item._id)}
+                        className="px-3 py-1.5 bg-red-600/10 text-red-500 border border-red-600/20 rounded-lg text-xs font-bold transition active:scale-95"
+                      >
+                        Hủy Vé
+                      </button>
+                    )}
+                    {!item.isPaid && !item.isCancelled && (
+                      <button
+                        onClick={() => handleConfirmPayment(item._id)}
+                        className="px-3 py-1.5 bg-green-600/20 text-green-500 border border-green-600/30 rounded-lg text-xs font-bold transition active:scale-95"
+                      >
+                        Xác nhận TT
+                      </button>
+                    )}
+                    {item.isPaid && !item.isCancelled && (
+                      <button
+                        onClick={() => handleCheckIn(item._id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border active:scale-95 ${item.isCheckedIn ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-blue-600/20 text-blue-500 border-blue-600/30'}`}
+                      >
+                        {item.isCheckedIn ? "Hủy Soát Vé" : "Soát Vé"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
+            ))
+          )}
+        </div>
+      )}
 
-              <div className="flex justify-between items-center">
-                <span className="text-primary font-bold text-sm">{(item.amount || 0).toLocaleString("vi-VN")} {currency}</span>
-                <div className="flex gap-2">
-                  {!item.isCancelled && (
-                    <button
-                      onClick={() => handleCancelBooking(item._id)}
-                      className="px-3 py-1.5 bg-red-600/10 text-red-500 border border-red-600/20 rounded-lg text-xs font-bold transition active:scale-95"
-                    >
-                      Hủy Vé
-                    </button>
-                  )}
-                  {!item.isPaid && !item.isCancelled && (
-                    <button
-                      onClick={() => handleConfirmPayment(item._id)}
-                      className="px-3 py-1.5 bg-green-600/20 text-green-500 border border-green-600/30 rounded-lg text-xs font-bold transition active:scale-95"
-                    >
-                      Xác nhận TT
-                    </button>
-                  )}
-                  {item.isPaid && !item.isCancelled && (
-                    <button
-                      onClick={() => handleCheckIn(item._id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border active:scale-95 ${item.isCheckedIn ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-blue-600/20 text-blue-500 border-blue-600/30'}`}
-                    >
-                      {item.isCheckedIn ? "Hủy Soát Vé" : "Soát Vé"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Desktop Table Layout */}
-      <div className="hidden md:block w-full overflow-hidden bg-[#161616] rounded-2xl border border-gray-800 shadow-xl">
+      {/* Table Layout */}
+      {viewMode === 'table' && (
+      <div className="w-full overflow-hidden bg-[#161616] rounded-2xl border border-gray-800 shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
@@ -503,6 +522,7 @@ const ListBookings = () => {
           </table>
         </div>
       </div>
+      )}
     </div>
   ) : (
     <Loading />

@@ -139,18 +139,24 @@ const ListShows = () => {
         
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           {/* Toggle View Mode */}
-          <div className="flex bg-[#161616] p-1 border border-gray-800 rounded-lg w-full md:w-auto">
+          <div className="flex bg-[#161616] p-1 border border-gray-800 rounded-lg w-full md:w-auto overflow-x-auto no-scrollbar snap-x">
             <button
-              onClick={() => setViewMode('list')}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'list' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+              onClick={() => setViewMode('card')}
+              className={`flex-none md:flex-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors snap-start ${viewMode === 'card' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
             >
-              <ListIcon className="w-4 h-4" /> Danh sách
+              <LayoutGridIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Dạng Thẻ
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`flex-none md:flex-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors snap-start ${viewMode === 'table' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+            >
+              <TableIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Bảng
             </button>
             <button
               onClick={() => setViewMode('calendar')}
-              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'calendar' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+              className={`flex-none md:flex-auto flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors snap-start ${viewMode === 'calendar' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
             >
-              <CalendarIcon className="w-4 h-4" /> Lịch
+              <CalendarIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Lịch
             </button>
           </div>
 
@@ -174,101 +180,103 @@ const ListShows = () => {
       ) : (
         <>
 
-      {/* Mobile Card Layout */}
-      <div className="md:hidden flex flex-col gap-4 pb-6">
-        <div className="flex items-center justify-between gap-2 pb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-xs whitespace-nowrap">Sắp xếp:</span>
-            <select
-              value={sortConfig.key}
-              onChange={(e) => setSortConfig({ ...sortConfig, key: e.target.value })}
-              className="bg-[#161616] border border-gray-800 text-gray-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
-            >
-              <option value="showDateTime">Ngày giờ</option>
-              <option value="showCode">Mã</option>
-              <option value="paidTickets">Vé đã bán</option>
-            </select>
-          </div>
-          <button 
-            onClick={() => setSortConfig({ ...sortConfig, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}
-            className="flex items-center justify-center gap-1 px-2 py-1.5 bg-[#161616] border border-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors text-xs"
-          >
-            {sortConfig.direction === 'asc' ? (
-              <><ArrowUpIcon className="w-3.5 h-3.5" /> Tăng dần</>
-            ) : (
-              <><ArrowDownIcon className="w-3.5 h-3.5" /> Giảm dần</>
-            )}
-          </button>
-        </div>
-        {filteredShows.length === 0 ? (
-          <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
-            <FilmIcon className="w-12 h-12 text-gray-700 mb-2" />
-            <p className="text-gray-500">Không tìm thấy suất chiếu nào</p>
-          </div>
-        ) : (
-          filteredShows.map((show) => {
-            const status = getShowStatus(show.showDateTime, show.movie?.runtime);
-            return (
-              <div 
-                key={show._id} 
-                onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
-                className="flex flex-col bg-[#161616] rounded-2xl border border-gray-800 p-4 shadow-md transition active:scale-95 cursor-pointer"
+      {viewMode === 'card' && (
+        <div className="flex flex-col gap-4 pb-6">
+          <div className="flex items-center justify-between gap-2 pb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500 text-xs whitespace-nowrap">Sắp xếp:</span>
+              <select
+                value={sortConfig.key}
+                onChange={(e) => setSortConfig({ ...sortConfig, key: e.target.value })}
+                className="bg-[#161616] border border-gray-800 text-gray-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
               >
-                <div className="flex justify-between items-start mb-3 border-b border-gray-800/60 pb-3">
-                  <div className="flex-1 pr-2">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Mã: <span className="font-mono text-gray-300 font-bold">{show.showCode || "N/A"}</span></p>
-                    <p className="font-bold text-white text-base leading-tight">{show.movie?.title}</p>
+                <option value="showDateTime">Ngày giờ</option>
+                <option value="showCode">Mã</option>
+                <option value="paidTickets">Vé đã bán</option>
+              </select>
+            </div>
+            <button 
+              onClick={() => setSortConfig({ ...sortConfig, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}
+              className="flex items-center justify-center gap-1 px-2 py-1.5 bg-[#161616] border border-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors text-xs"
+            >
+              {sortConfig.direction === 'asc' ? (
+                <><ArrowUpIcon className="w-3.5 h-3.5" /> Tăng dần</>
+              ) : (
+                <><ArrowDownIcon className="w-3.5 h-3.5" /> Giảm dần</>
+              )}
+            </button>
+          </div>
+          {filteredShows.length === 0 ? (
+            <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
+              <FilmIcon className="w-12 h-12 text-gray-700 mb-2" />
+              <p className="text-gray-500">Không tìm thấy suất chiếu nào</p>
+            </div>
+          ) : (
+            filteredShows.map((show) => {
+              const status = getShowStatus(show.showDateTime, show.movie?.runtime);
+              return (
+                <div 
+                  key={show._id} 
+                  onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
+                  className="flex flex-col bg-[#161616] rounded-2xl border border-gray-800 p-4 shadow-md transition active:scale-95 cursor-pointer"
+                >
+                  <div className="flex justify-between items-start mb-3 border-b border-gray-800/60 pb-3">
+                    <div className="flex-1 pr-2">
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Mã: <span className="font-mono text-gray-300 font-bold">{show.showCode || "N/A"}</span></p>
+                      <p className="font-bold text-white text-base leading-tight">{show.movie?.title}</p>
+                    </div>
+                    <span className={`flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full border ${status.color}`}>
+                      {status.text}
+                    </span>
                   </div>
-                  <span className={`flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full border ${status.color}`}>
-                    {status.text}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-4">
-                  <div className="col-span-2 flex justify-between items-start">
+                  
+                  <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-4">
+                    <div className="col-span-2 flex justify-between items-start">
+                      <div>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Thời Gian</p>
+                        <p className="text-sm font-medium text-gray-300 flex items-center gap-1.5"><CalendarClockIcon className="w-4 h-4 text-primary" /> {dateFormat(show.showDateTime)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Giá Vé</p>
+                        <p className="text-sm font-bold text-white">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</p>
+                      </div>
+                    </div>
+                    
                     <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Thời Gian</p>
-                      <p className="text-sm font-medium text-gray-300 flex items-center gap-1.5"><CalendarClockIcon className="w-4 h-4 text-primary" /> {dateFormat(show.showDateTime)}</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Vé Đã Bán</p>
+                      <p className="text-base font-bold text-white flex items-center gap-1.5"><UsersIcon className="w-4 h-4 text-gray-400" /> {show.paidTickets || 0}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Giá Vé</p>
-                      <p className="text-sm font-bold text-white">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</p>
+                    
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Doanh Thu</p>
+                      <p className="text-base font-bold text-green-400 flex items-center gap-1.5"><CircleDollarSignIcon className="w-4 h-4 text-green-500" /> {(show.revenue || 0).toLocaleString("vi-VN")} {currency}</p>
                     </div>
                   </div>
-                  
-                  <div>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Vé Đã Bán</p>
-                    <p className="text-base font-bold text-white flex items-center gap-1.5"><UsersIcon className="w-4 h-4 text-gray-400" /> {show.paidTickets || 0}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Doanh Thu</p>
-                    <p className="text-base font-bold text-green-400 flex items-center gap-1.5"><CircleDollarSignIcon className="w-4 h-4 text-green-500" /> {(show.revenue || 0).toLocaleString("vi-VN")} {currency}</p>
+
+                  <div className="flex gap-2 mt-2 pt-3 border-t border-gray-800/60">
+                    <button
+                      onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
+                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-[#222] text-white hover:bg-[#333] rounded-xl text-sm font-bold transition"
+                    >
+                      <EyeIcon className="w-4 h-4" /> Xem Vé
+                    </button>
+                    <button
+                      onClick={(e) => handleCancelShow(e, show._id)}
+                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-bold transition"
+                    >
+                      <Trash2Icon className="w-4 h-4" /> Xóa
+                    </button>
                   </div>
                 </div>
+              );
+            })
+          )}
+        </div>
+      )}
 
-                <div className="flex gap-2 mt-2 pt-3 border-t border-gray-800/60">
-                  <button
-                    onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
-                    className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-[#222] text-white hover:bg-[#333] rounded-xl text-sm font-bold transition"
-                  >
-                    <EyeIcon className="w-4 h-4" /> Xem Vé
-                  </button>
-                  <button
-                    onClick={(e) => handleCancelShow(e, show._id)}
-                    className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-bold transition"
-                  >
-                    <Trash2Icon className="w-4 h-4" /> Xóa
-                  </button>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* Desktop Table Layout */}
-      <div className="hidden md:block w-full overflow-hidden bg-[#161616] rounded-2xl border border-gray-800 shadow-xl">
+      {/* Table Layout */}
+      {viewMode === 'table' && (
+      <div className="w-full overflow-hidden bg-[#161616] rounded-2xl border border-gray-800 shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
@@ -347,6 +355,7 @@ const ListShows = () => {
           </table>
         </div>
       </div>
+      )}
         </>
       )}
     </div>
