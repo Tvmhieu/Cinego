@@ -10,7 +10,7 @@
     <img src="https://img.shields.io/badge/-Express-black?style=for-the-badge&logoColor=white&logo=express"/>
     <img src="https://img.shields.io/badge/-MongoDB-00A35C?style=for-the-badge&logoColor=white&logo=mongodb"/>
     <br/>
-    <img src="https://img.shields.io/badge/-Stripe-626CD9?style=for-the-badge&logoColor=white&logo=stripe"/>
+    <img src="https://img.shields.io/badge/-SePay-0056b3?style=for-the-badge&logoColor=white"/>
     <img src="https://img.shields.io/badge/-Clerk-000000?style=for-the-badge&logoColor=white&logo=clerk"/>
     <img src="https://img.shields.io/badge/-TailwindCSS-38B2AC?style=for-the-badge&logoColor=white&logo=tailwindcss"/>
     <img src="https://img.shields.io/badge/-Inngest-black?style=for-the-badge&logoColor=white&logo=inngest"/>
@@ -83,7 +83,7 @@ The system also integrates **TMDB movie data** and **Inngest workflows** to auto
 
 * **Node.js + Express 5** – Backend API framework
 * **MongoDB + Mongoose** – Database and schema management
-* **Stripe** – Secure payment processing
+* **SePay** – Automated QR bank transfer processing
 * **Clerk** – Authentication and user management
 * **TMDB API** – Movie data provider
 * **Cloudinary** – Media storage for images
@@ -95,7 +95,7 @@ The system also integrates **TMDB movie data** and **Inngest workflows** to auto
 ## 🔋 Features
 
 - 🎟️ **Smart Booking System** – Real-time seat availability and interactive seat layouts
-- 💳 **Secure Payments** – Integrated with **Stripe Checkout** and webhooks
+- 💳 **Secure Payments** – Integrated with **SePay** for automated bank transfers and webhooks
 - 👥 **User Management** – Authentication, profiles, and favorites powered by **Clerk**
 - 🧑‍💼 **Admin Dashboard** – Manage movies, shows, and bookings from a centralized admin panel
 - 🎬 **Movie Catalog** – Browse movies with posters, ratings, runtime, and details
@@ -186,9 +186,7 @@ INNGEST_SIGNING_KEY=
 
 TMDB_API_KEY=
 
-STRIPE_PUBLISHABLE_KEY=
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
+SEPAY_WEBHOOK_TOKEN=
 
 SENDER_EMAIL=
 SMTP_USER=
@@ -275,7 +273,7 @@ QuickShow/
 | `/api/admin/add-show`        | POST   | Add a new show              |
 | `/api/admin/all-bookings`    | GET    | Get all bookings            |
 | `/api/admin/dashboard`       | GET    | Admin analytics             |
-| `/api/stripe/webhook`        | POST   | Stripe payment webhook      |
+| `/api/booking/sepay-webhook` | POST   | SePay payment webhook       |
 
 ---
 
@@ -361,7 +359,7 @@ All trademarks, logos, and assets belong to their respective owners.
 - [Node.js](https://nodejs.org/) – Backend runtime
 - [Tailwind CSS](https://tailwindcss.com/) – Styling framework
 - [Vercel](https://vercel.com/) – Hosting platform
-- [Stripe](https://stripe.com/) – Payment gateway
+- [SePay](https://sepay.vn/) – Banking API gateway
 - [Clerk](https://clerk.com/) – Authentication
 - [Cloudinary](https://cloudinary.com/) – Media storage
 - [Inngest](https://inngest.com/) – Background workflows
