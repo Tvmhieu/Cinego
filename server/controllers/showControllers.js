@@ -226,7 +226,14 @@ export const getShow = async (req, res) => {
       if (!dateTime[date]) {
         dateTime[date] = [];
       }
-      dateTime[date].push({ time: show.showDateTime, showId: show._id, price: show.showPrice });
+      const occupiedCount = Object.keys(show.occupiedSeats || {}).length;
+      dateTime[date].push({ 
+        time: show.showDateTime, 
+        showId: show._id, 
+        price: show.showPrice,
+        occupiedSeatsCount: occupiedCount,
+        totalSeats: 90
+      });
     });
 
     res.json({ success: true, movie, dateTime });

@@ -185,8 +185,17 @@ const SeatLayout = ({ propId, propDate }) => {
                   : "bg-white/5 hover:bg-white/10 text-gray-300 border-white/10 hover:border-white/30"
               }`}
             >
-              <ClockIcon className="w-4 h-4" />
-              <p className="text-sm font-semibold tracking-wider">{isoTimeFormat(item.time)}</p>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-2">
+                  <ClockIcon className="w-4 h-4" />
+                  <p className="text-sm font-semibold tracking-wider">{isoTimeFormat(item.time)}</p>
+                </div>
+                {item.totalSeats !== undefined && (
+                  <p className={`text-[10px] mt-1 font-medium ${selectedTime?.time === item.time ? 'text-white/90' : 'text-gray-400'}`}>
+                    còn {Math.max(0, item.totalSeats - (item.occupiedSeatsCount || 0))}/{item.totalSeats} ghế
+                  </p>
+                )}
+              </div>
             </div>
           ))}
         </div>
