@@ -171,7 +171,7 @@ const SeatLayout = ({ propId, propDate }) => {
           Chọn suất chiếu
         </p>
 
-        <div className={`flex flex-wrap justify-center gap-3 md:gap-4 p-5 md:p-6 rounded-3xl transition-all duration-500 bg-white/5 backdrop-blur-md border border-white/5 ${!selectedTime ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#09090b] animate-pulse shadow-[0_0_30px_rgba(248,69,101,0.3)]' : ''}`}>
+        <div className={`flex flex-wrap justify-center gap-3 md:gap-4 p-5 md:p-6 rounded-3xl transition-all duration-500 bg-white/5 backdrop-blur-md border border-white/5 ${!selectedTime ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#09090b] shadow-[0_0_30px_rgba(248,69,101,0.3)]' : ''}`}>
           {(Array.isArray(show?.dateTime?.[date])
             ? show.dateTime[date]
             : []
@@ -201,7 +201,7 @@ const SeatLayout = ({ propId, propDate }) => {
           Sơ đồ ghế
         </h1>
 
-        <div className={`w-full max-w-full overflow-x-auto pb-6 no-scrollbar p-6 md:p-10 rounded-3xl transition-all duration-500 bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl ${selectedTime && selectedSeats.length === 0 ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#09090b] animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_40px_rgba(248,69,101,0.2)] bg-primary/5' : ''}`}>
+        <div className={`w-full max-w-full overflow-x-auto pb-6 no-scrollbar p-6 md:p-10 rounded-3xl transition-all duration-500 bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl ${selectedTime && selectedSeats.length === 0 ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#09090b] shadow-[0_0_40px_rgba(248,69,101,0.2)] bg-primary/5' : ''}`}>
           <div className={`flex flex-col items-center text-xs text-gray-300 min-w-[600px] transition-all duration-500 ${!selectedTime ? 'opacity-30 grayscale blur-[2px]' : ''}`}>
             
             {/* Cinematic Screen */}
