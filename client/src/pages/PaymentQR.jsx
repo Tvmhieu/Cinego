@@ -105,7 +105,7 @@ const PaymentQR = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-20 mt-10 md:mt-0 relative overflow-hidden">
       {/* Background glow for ambiance */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-primary/20 blur-[100px] md:blur-[150px] rounded-full pointer-events-none" />
+
 
       <div className="relative w-full max-w-md p-6 md:p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl shadow-2xl">
         <button 

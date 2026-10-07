@@ -98,7 +98,7 @@ const MovieDetails = () => {
         className="absolute inset-0 bg-cover bg-center opacity-[0.03] blur-3xl"
         style={{ backgroundImage: `url(${image_base_url + show.movie.backdrop_path})` }}
       />
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
+
 
       {/* Trailer Modal Overlay */}
       {showTrailerModal && (

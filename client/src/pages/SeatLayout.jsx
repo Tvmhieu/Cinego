@@ -162,7 +162,7 @@ const SeatLayout = ({ propId, propDate }) => {
   return show ? (
     <div className={`flex flex-col relative ${propId ? 'mt-10' : 'px-4 md:px-12 lg:px-24 py-24 md:pt-40'}`}>
       {/* Ambient background glow */}
-      {!propId && <div className="absolute top-40 right-20 w-96 h-96 bg-primary/10 blur-[150px] rounded-full pointer-events-none" />}
+
       
       {/* Available Timings */}
       <div className="flex flex-col items-center mb-10 md:mb-16 w-full relative z-10" id="timeSelect">
