@@ -33,7 +33,21 @@ export const getAllMovies = async (req, res) => {
         { isBanner: true }
       ]
     });
-    res.json({ success: true, movies });
+
+    const allShows = await Show.find({ movie: { $in: movies.map(m => m._id) } });
+
+    const moviesWithShows = movies.map(movie => {
+      const movieShows = allShows.filter(show => show.movie.toString() === movie._id.toString());
+      const showDates = [...new Set(movieShows.map(show => new Date(show.showDateTime).toLocaleDateString("vi-VN")))];
+      
+      return {
+        ...movie.toObject(),
+        showCount: movieShows.length,
+        showDates: showDates.length > 3 ? `${showDates.slice(0, 3).join(", ")}... (+${showDates.length - 3})` : showDates.join(", ")
+      };
+    });
+
+    res.json({ success: true, movies: moviesWithShows });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
