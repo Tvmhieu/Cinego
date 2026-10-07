@@ -88,12 +88,22 @@ const ListBookings = () => {
   };
 
   const handleCancelBooking = async (bookingId) => {
-    if (!window.confirm("Bạn có chắc muốn hủy vé này? Hành động này không thể hoàn tác.")) return;
+    const reason = window.prompt("Nhập lý do hủy vé (Bắt buộc):");
+    
+    if (reason === null) return; // User clicked Cancel
+    
+    if (reason.trim() === "") {
+      toast.error("Vui lòng nhập lý do hủy vé");
+      return;
+    }
+    
+    if (!window.confirm(`Bạn có chắc muốn hủy vé này với lý do: "${reason.trim()}"? Hành động này không thể hoàn tác.`)) return;
+
     try {
       const token = await getToken();
       const { data } = await axios.post(
         "/api/admin/cancel-booking",
-        { bookingId },
+        { bookingId, reason: reason.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

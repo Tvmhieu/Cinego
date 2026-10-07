@@ -359,12 +359,17 @@ export const scanTicket = async (req, res) => {
 // API to cancel booking by Admin
 export const adminCancelBooking = async (req, res) => {
   try {
-    const { bookingId } = req.body;
+    const { bookingId, reason } = req.body;
+    
+    if (!reason || reason.trim() === "") {
+      return res.json({ success: false, message: "Bắt buộc phải nhập lý do hủy vé" });
+    }
     
     // Clerk user info injected from auth middleware
     const { userId } = req.auth();
     const adminUser = await clerkClient.users.getUser(userId);
-    const adminEmail = adminUser.emailAddresses[0]?.emailAddress || "Admin";
+    const adminName = `${adminUser.firstName || ''} ${adminUser.lastName || ''}`.trim() || "Admin";
+    const adminEmail = adminUser.emailAddresses[0]?.emailAddress || "Không rõ Email";
 
     const booking = await Booking.findById(bookingId);
     if (!booking) {
@@ -386,7 +391,7 @@ export const adminCancelBooking = async (req, res) => {
     }
 
     booking.isCancelled = true;
-    booking.cancellationReason = `Email ${adminEmail} hủy`;
+    booking.cancellationReason = `Lý do: ${reason.trim()} - (Hủy bởi: ${adminName} - ${adminEmail})`;
     await booking.save();
 
     res.json({ success: true, message: "Đã hủy vé thành công" });
