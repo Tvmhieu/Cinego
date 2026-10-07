@@ -182,8 +182,12 @@ const MyBookings = () => {
 
       {/* Ticket Modal Overlay */}
       {selectedTicket && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-[340px] sm:max-w-sm mx-auto animate-in zoom-in-95 duration-300">
+        <>
+          <div 
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" 
+            onClick={() => setSelectedTicket(null)}
+          />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[340px] sm:max-w-sm z-[101] animate-in zoom-in-95 duration-300">
             <button 
               onClick={() => setSelectedTicket(null)}
               className="absolute -top-12 right-0 md:-right-12 text-white/70 hover:text-white bg-gray-800/50 hover:bg-gray-700 p-2 rounded-full transition z-20"
@@ -258,7 +262,7 @@ const MyBookings = () => {
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   ) : (
