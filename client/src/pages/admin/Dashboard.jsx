@@ -149,9 +149,8 @@ const Dashboard = () => {
                   tick={{ fill: '#9ca3af', fontSize: 11, fontWeight: 600 }}
                   tickLine={false}
                   axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
+                  height={30}
+                  tickFormatter={(value) => value.length > 12 ? value.substring(0, 12) + '...' : value}
                 />
                 <YAxis 
                   yAxisId="left" 
