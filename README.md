@@ -86,7 +86,7 @@ The system also integrates **TMDB movie data** and **Inngest workflows** to auto
 * **SePay** – Automated QR bank transfer processing
 * **Clerk** – Authentication and user management
 * **TMDB API** – Movie data provider
-
+* **Cloudinary** – Media storage for images
 * **Nodemailer** – Email notifications
 * **Inngest** – Background jobs and workflow automation
 
@@ -108,7 +108,7 @@ The system also integrates **TMDB movie data** and **Inngest workflows** to auto
   - payment verification
   - show reminders
   - automated movie updates
-
+- ☁️ **Cloud Storage** – Media storage handled using **Cloudinary**
 - 📱 **Responsive UI** – Optimized for desktop, tablet, and mobile devices
 
 ---
@@ -361,7 +361,7 @@ All trademarks, logos, and assets belong to their respective owners.
 - [Vercel](https://vercel.com/) – Hosting platform
 - [SePay](https://sepay.vn/) – Banking API gateway
 - [Clerk](https://clerk.com/) – Authentication
-
+- [Cloudinary](https://cloudinary.com/) – Media storage
 - [Inngest](https://inngest.com/) – Background workflows
 
 ---
