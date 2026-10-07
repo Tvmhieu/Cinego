@@ -29,74 +29,72 @@ const AdminSideBar = () => {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex flex-col items-center pt-8 max-w-60 w-full h-[calc(100vh-64px)] border-r border-gray-300/20 text-sm">
-        <img
-          className="h-14 w-14 rounded-full mx-auto"
-          src={user.imageUrl}
-          alt="sidebar"
-        />
-        <p className="mt-2 text-base">
+      <div className="hidden md:flex flex-col items-center pt-10 pb-6 max-w-[280px] w-full h-[calc(100vh-64px)] border-r border-white/5 bg-black/20 backdrop-blur-xl text-sm relative z-20">
+        <div className="relative group">
+          <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <img
+            className="h-16 w-16 rounded-full mx-auto relative ring-2 ring-white/10 group-hover:ring-primary transition-all duration-300"
+            src={user.imageUrl}
+            alt="sidebar"
+          />
+        </div>
+        <p className="mt-3 text-base font-bold tracking-wide">
           {user.firstName} {user.lastName}
         </p>
+        <p className="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-md mt-1 border border-primary/20 uppercase tracking-widest">Administrator</p>
 
-        <div className="w-full mt-6">
+        <div className="w-full mt-10 px-4 space-y-2">
           {adminNavlinks.map((link, index) => (
             <NavLink
               key={index}
               to={link.path}
               end
               className={({ isActive }) =>
-                `relative flex items-center gap-2 w-full py-2.5 pl-10 text-gray-400 hover:text-gray-200 transition ${
-                  isActive && "bg-primary/15 text-primary group"
+                `relative flex items-center gap-3 w-full px-5 py-3.5 rounded-2xl text-gray-400 hover:text-white transition-all duration-300 group overflow-hidden ${
+                  isActive ? "bg-white/10 text-white shadow-[0_10px_20px_rgba(0,0,0,0.2)] border border-white/10" : "hover:bg-white/5 border border-transparent"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <link.icon className="w-5 h-5" />
-                  <p>{link.name}</p>
-                  <span
-                    className={`w-1.5 h-10 rounded-l right-0 absolute ${
-                      isActive && "bg-primary"
-                    }`}
-                  />
+                  <div className={`absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 transition-opacity duration-300 ${isActive ? 'opacity-100' : 'group-hover:opacity-100'}`} />
+                  <link.icon className={`w-5 h-5 relative z-10 transition-colors ${isActive ? 'text-primary' : 'group-hover:text-primary'}`} />
+                  <p className="relative z-10 font-medium">{link.name}</p>
                 </>
               )}
             </NavLink>
           ))}
-          {/* Scan QR Button on Desktop */}
-          <NavLink
-            to="/admin/scan"
-            end
-            className={({ isActive }) =>
-              `relative flex items-center gap-2 w-full py-2.5 pl-10 mt-2 text-gray-400 hover:text-gray-200 transition ${
-                isActive && "bg-primary/15 text-primary group"
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <ScanLineIcon className="w-5 h-5" />
-                <p>Quét vé</p>
-                <span
-                  className={`w-1.5 h-10 rounded-l right-0 absolute ${
-                    isActive && "bg-primary"
-                  }`}
-                />
-              </>
-            )}
-          </NavLink>
+          
+          <div className="pt-4 mt-4 border-t border-white/5">
+            {/* Scan QR Button on Desktop */}
+            <NavLink
+              to="/admin/scan"
+              end
+              className={({ isActive }) =>
+                `relative flex items-center gap-3 w-full px-5 py-3.5 rounded-2xl transition-all duration-300 group overflow-hidden ${
+                  isActive ? "bg-primary text-white shadow-[0_0_20px_rgba(248,69,101,0.4)]" : "bg-white/5 text-white hover:bg-primary/20 hover:text-white border border-white/10"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <ScanLineIcon className={`w-5 h-5 relative z-10 ${isActive ? 'text-white' : 'text-primary group-hover:text-primary'}`} />
+                  <p className="relative z-10 font-bold tracking-wide">Quét vé ngay</p>
+                </>
+              )}
+            </NavLink>
+          </div>
         </div>
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 w-full h-16 bg-[#111] border-t border-gray-800 z-50 flex items-center justify-between px-2 pb-safe">
+      <div className="md:hidden fixed bottom-0 left-0 w-full h-16 bg-black/80 backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-between px-2 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         {/* Left Side Links */}
         <div className="flex flex-1 justify-around">
-          <NavLink to="/admin" end className={({ isActive }) => `flex flex-col items-center p-2 ${isActive ? 'text-primary' : 'text-gray-500'}`}>
+          <NavLink to="/admin" end className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
             <LayoutDashboardIcon className="w-6 h-6" />
           </NavLink>
-          <NavLink to="/admin/list-shows" className={({ isActive }) => `flex flex-col items-center p-2 ${isActive ? 'text-primary' : 'text-gray-500'}`}>
+          <NavLink to="/admin/list-shows" className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
             <ListIcon className="w-6 h-6" />
           </NavLink>
         </div>
@@ -105,18 +103,18 @@ const AdminSideBar = () => {
         <div className="relative -top-6 flex justify-center w-20">
           <NavLink 
             to="/admin/scan"
-            className={({ isActive }) => `flex items-center justify-center w-14 h-14 rounded-full shadow-[0_0_15px_rgba(229,9,20,0.5)] transition-transform active:scale-95 ${isActive ? 'bg-white text-primary' : 'bg-primary text-white'}`}
+            className={({ isActive }) => `flex items-center justify-center w-14 h-14 rounded-full shadow-[0_10px_20px_rgba(248,69,101,0.4)] transition-all duration-300 active:scale-95 ${isActive ? 'bg-white text-primary ring-4 ring-black' : 'bg-primary text-white ring-4 ring-black hover:bg-white hover:text-primary'}`}
           >
-            <ScanLineIcon className="w-8 h-8" strokeWidth={2.5} />
+            <ScanLineIcon className="w-7 h-7" strokeWidth={2.5} />
           </NavLink>
         </div>
 
         {/* Right Side Links */}
         <div className="flex flex-1 justify-around">
-          <NavLink to="/admin/list-bookings" className={({ isActive }) => `flex flex-col items-center p-2 ${isActive ? 'text-primary' : 'text-gray-500'}`}>
+          <NavLink to="/admin/list-bookings" className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
             <ListCollapseIcon className="w-6 h-6" />
           </NavLink>
-          <NavLink to="/admin/users" className={({ isActive }) => `flex flex-col items-center p-2 ${isActive ? 'text-primary' : 'text-gray-500'}`}>
+          <NavLink to="/admin/users" className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
             <UsersIcon className="w-6 h-6" />
           </NavLink>
         </div>

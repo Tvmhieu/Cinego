@@ -42,33 +42,33 @@ const Dashboard = () => {
       title: "Tổng số vé đặt",
       value: dashboardData.totalBookings || "0",
       icon: ChartLineIcon,
-      color: "from-blue-500/20 to-blue-500/5",
-      borderColor: "border-blue-500/30",
-      iconColor: "text-blue-500",
+      color: "from-white/5 to-transparent",
+      borderColor: "border-white/10 group-hover:border-primary/50",
+      iconColor: "text-white group-hover:text-primary transition-colors duration-300",
     },
     {
       title: "Tổng doanh thu",
       value: `${(dashboardData.totalRevenue || 0).toLocaleString("vi-VN")} ${currency}`,
       icon: CircleDollarSignIcon,
-      color: "from-green-500/20 to-green-500/5",
-      borderColor: "border-green-500/30",
-      iconColor: "text-green-500",
+      color: "from-white/5 to-transparent",
+      borderColor: "border-white/10 group-hover:border-primary/50",
+      iconColor: "text-white group-hover:text-primary transition-colors duration-300",
     },
     {
       title: "Suất chiếu đang mở",
       value: dashboardData.activeShows?.length || "0",
       icon: PlayCircleIcon,
-      color: "from-purple-500/20 to-purple-500/5",
-      borderColor: "border-purple-500/30",
-      iconColor: "text-purple-500",
+      color: "from-white/5 to-transparent",
+      borderColor: "border-white/10 group-hover:border-primary/50",
+      iconColor: "text-white group-hover:text-primary transition-colors duration-300",
     },
     {
       title: "Số phim đang chiếu",
       value: dashboardData.activeMoviesCount || "0",
       icon: FilmIcon,
-      color: "from-primary/20 to-primary/5",
-      borderColor: "border-primary/30",
-      iconColor: "text-primary",
+      color: "from-white/5 to-transparent",
+      borderColor: "border-white/10 group-hover:border-primary/50",
+      iconColor: "text-white group-hover:text-primary transition-colors duration-300",
     },
   ];
 
@@ -99,58 +99,56 @@ const Dashboard = () => {
   }, [user]);
 
   return !loading ? (
-    <div className="flex flex-col h-full animate-in fade-in duration-500">
-      <div className="mb-6">
-        <Title text1="Bảng" text2="Điều khiển" />
+    <div className="flex flex-col h-full animate-in fade-in duration-500 max-w-7xl mx-auto pb-10">
+      <div className="mb-8 flex items-center gap-3">
+        <span className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(248,69,101,0.5)]"></span>
+        <h1 className="text-3xl font-black text-white tracking-wide">Bảng Điều Khiển</h1>
       </div>
 
       <div className="relative">
         <BlurCircle top="-100px" left="10%" />
         
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
           {dashboardCards.map((card, index) => (
             <div
               key={index}
-              className={`flex items-center justify-between w-full p-5 md:p-6 rounded-2xl bg-gradient-to-br ${card.color} border ${card.borderColor} backdrop-blur-md shadow-lg transition-transform hover:-translate-y-1`}
+              className={`group flex items-center justify-between w-full p-6 rounded-3xl bg-gradient-to-br ${card.color} border ${card.borderColor} backdrop-blur-xl shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(248,69,101,0.15)] relative overflow-hidden`}
             >
-              <div>
-                <h1 className="text-sm font-medium text-gray-400 mb-1">{card.title}</h1>
-                <p className="text-2xl md:text-3xl font-bold text-white">{card.value}</p>
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <h1 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">{card.title}</h1>
+                <p className="text-2xl md:text-3xl font-black text-white tracking-tight">{card.value}</p>
               </div>
-              <div className={`p-3 rounded-full bg-[#111]/50 shadow-inner ${card.iconColor}`}>
-                <card.icon className="w-8 h-8" strokeWidth={1.5} />
+              <div className={`relative z-10 p-4 rounded-2xl bg-white/5 border border-white/5 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/20 group-hover:border-primary/30 ${card.iconColor}`}>
+                <card.icon className="w-7 h-7" strokeWidth={2} />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-10 mb-4 flex items-center justify-between z-10 relative">
-        <h2 className="text-xl font-bold text-white">Hiệu suất theo Phim</h2>
+      <div className="mt-12 mb-6 flex items-center justify-between z-10 relative">
+        <h2 className="text-xl font-bold text-white tracking-wide">Hiệu suất theo Phim</h2>
       </div>
       
       {/* Movie Performance Chart */}
-      <div className="relative w-full z-10 bg-[#161616] p-6 rounded-2xl border border-gray-800 shadow-xl overflow-hidden mb-6">
+      <div className="relative w-full z-10 bg-white/5 backdrop-blur-xl p-6 md:p-8 rounded-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden mb-6 group">
+        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
         <BlurCircle top="100px" left="-10%" />
         {dashboardData.moviePerformance && dashboardData.moviePerformance.length > 0 ? (
-          <div className="h-[400px] w-full">
+          <div className="h-[450px] w-full relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={dashboardData.moviePerformance}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 70,
-                }}
+                margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                 <XAxis 
                   dataKey="title" 
-                  tick={{ fill: '#9ca3af', fontSize: 12 }}
-                  tickLine={{ stroke: '#555' }}
-                  axisLine={{ stroke: '#555' }}
+                  tick={{ fill: '#9ca3af', fontSize: 11, fontWeight: 600 }}
+                  tickLine={false}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                   angle={-45}
                   textAnchor="end"
                   height={80}
@@ -158,38 +156,38 @@ const Dashboard = () => {
                 <YAxis 
                   yAxisId="left" 
                   orientation="left" 
-                  stroke="#primary"
-                  tick={{ fill: '#e50914', fontSize: 12 }}
-                  tickLine={{ stroke: '#555' }}
-                  axisLine={{ stroke: '#555' }}
+                  stroke="rgba(255,255,255,0.1)"
+                  tick={{ fill: '#f84565', fontSize: 12, fontWeight: 700 }}
+                  tickLine={false}
+                  axisLine={false}
                   tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
                 />
                 <YAxis 
                   yAxisId="right" 
                   orientation="right" 
-                  stroke="#3b82f6" 
-                  tick={{ fill: '#3b82f6', fontSize: 12 }}
-                  tickLine={{ stroke: '#555' }}
-                  axisLine={{ stroke: '#555' }}
+                  stroke="rgba(255,255,255,0.1)" 
+                  tick={{ fill: '#fff', fontSize: 12, fontWeight: 700 }}
+                  tickLine={false}
+                  axisLine={false}
                 />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#1a1a1a', borderColor: '#333', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)' }}
+                  contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.5)', padding: '12px 16px' }}
                   itemStyle={{ fontWeight: 'bold' }}
-                  labelStyle={{ color: '#fff', fontWeight: 'bold', marginBottom: '8px' }}
+                  labelStyle={{ color: '#fff', fontWeight: '900', marginBottom: '12px', fontSize: '14px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '8px' }}
                   formatter={(value, name) => {
                     if (name === 'Doanh thu') return [`${value.toLocaleString("vi-VN")} ${currency}`, name];
                     return [value, name];
                   }}
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+                  cursor={{ fill: 'rgba(248,69,101,0.05)' }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '13px', fontWeight: 'bold' }} />
                 <Bar 
                   yAxisId="left" 
                   dataKey="revenue" 
                   name="Doanh thu" 
-                  fill="#e50914" 
-                  radius={[4, 4, 0, 0]} 
-                  barSize={40}
+                  fill="#f84565" 
+                  radius={[6, 6, 0, 0]} 
+                  barSize={32}
                   onClick={(data) => setSelectedMoviePerf(data)}
                   cursor="pointer"
                 />
@@ -197,9 +195,9 @@ const Dashboard = () => {
                   yAxisId="right" 
                   dataKey="ticketsSold" 
                   name="Vé bán ra" 
-                  fill="#3b82f6" 
-                  radius={[4, 4, 0, 0]} 
-                  barSize={40}
+                  fill="#ffffff" 
+                  radius={[6, 6, 0, 0]} 
+                  barSize={32}
                   onClick={(data) => setSelectedMoviePerf(data)}
                   cursor="pointer"
                 />
@@ -207,9 +205,9 @@ const Dashboard = () => {
                   yAxisId="right" 
                   dataKey="showCount" 
                   name="Số suất chiếu" 
-                  fill="#10b981" 
-                  radius={[4, 4, 0, 0]} 
-                  barSize={40}
+                  fill="rgba(255,255,255,0.3)" 
+                  radius={[6, 6, 0, 0]} 
+                  barSize={32}
                   onClick={(data) => setSelectedMoviePerf(data)}
                   cursor="pointer"
                 />
@@ -217,9 +215,9 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
         ) : (
-          <div className="w-full p-10 flex flex-col items-center justify-center bg-gray-900/30 border border-gray-800 border-dashed rounded-2xl">
-            <ChartLineIcon className="w-12 h-12 text-gray-600 mb-2" />
-            <p className="text-gray-500">Chưa có dữ liệu thống kê</p>
+          <div className="w-full p-16 flex flex-col items-center justify-center bg-white/5 border border-white/10 border-dashed rounded-3xl">
+            <ChartLineIcon className="w-16 h-16 text-gray-600 mb-4" strokeWidth={1} />
+            <p className="text-gray-400 font-medium tracking-wide">Chưa có dữ liệu thống kê</p>
           </div>
         )}
       </div>
