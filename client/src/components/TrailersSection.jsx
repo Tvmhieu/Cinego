@@ -56,41 +56,49 @@ const TrailersSection = () => {
   }
   
   return (
-    <div className="px-6 py-20 overflow-hidden md:px-16 lg:px-24 xl:px-44">
-      <p className="max-w-[960px] mx-auto text-lg font-medium text-gray-300">
-        Trailer Nổi Bật
+    <div className="px-4 py-16 overflow-hidden md:px-16 lg:px-24 xl:px-44">
+      <p className="max-w-4xl mx-auto text-lg md:text-2xl font-black text-white italic tracking-wide mb-6 md:mb-8">
+        Trailer <span className="text-primary">Nổi Bật</span>
       </p>
 
-      <div className="relative mt-6">
+      {/* Main Video Player */}
+      <div className="relative w-full max-w-4xl mx-auto mt-4 rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)] ring-1 ring-white/10 bg-black aspect-video">
         <BlurCircle top="-100px" right="-100px" />
         <ReactPlayer
           url={currentTrailer?.trailerUrl}
           controls={true}
-          className="max-w-full mx-auto"
-          width="960px"
-          height="540px"
+          className="absolute top-0 left-0"
+          width="100%"
+          height="100%"
         />
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mx-auto mt-8 group md:gap-8 max-w-3xl">
+      {/* Thumbnail List */}
+      <div className="flex overflow-x-auto md:grid md:grid-cols-4 gap-3 md:gap-5 mx-auto mt-6 md:mt-8 group max-w-4xl pb-4 md:pb-0 no-scrollbar snap-x snap-mandatory">
         {moviesWithTrailer.map((movie) => (
           <div
             key={movie._id}
-            className={`relative transition duration-300 cursor-pointer max-md:h-60 md:max-h-60 rounded-lg overflow-hidden ${currentTrailer?._id === movie._id ? 'ring-2 ring-primary opacity-100' : 'opacity-60 hover:opacity-100 group-hover:not-hover:opacity-50'}`}
+            className={`relative flex-none w-[45vw] md:w-auto aspect-video md:aspect-[4/3] transition-all duration-300 cursor-pointer rounded-xl md:rounded-2xl overflow-hidden snap-start bg-black/50 ${
+              currentTrailer?._id === movie._id 
+                ? 'ring-2 ring-primary opacity-100 shadow-[0_0_15px_rgba(248,69,101,0.3)]' 
+                : 'opacity-50 hover:opacity-100'
+            }`}
             onClick={() => setCurrentTrailer(movie)}
           >
             <img
               src={image_base_url + (movie.backdrop_path || movie.poster_path)}
               alt="trailer"
-              className="object-cover w-full h-full brightness-75"
+              className="object-cover w-full h-full brightness-75 group-hover:brightness-90 transition-all duration-500"
             />
             <PlayCircleIcon
-              strokeWidth={1.6}
-              className="absolute w-5 h-5 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 md:w-8 md:h-12 text-white/80"
+              strokeWidth={1.5}
+              className={`absolute w-8 h-8 md:w-10 md:h-10 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 drop-shadow-lg transition-all duration-300 ${currentTrailer?._id === movie._id ? 'text-primary scale-110' : 'text-white/70'}`}
             />
-            <p className="absolute bottom-2 left-2 right-2 text-xs font-medium text-white truncate text-center drop-shadow-md">
-              {movie.title}
-            </p>
+            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-6 pb-2 px-2">
+              <p className="text-[10px] md:text-xs font-bold text-white truncate text-center drop-shadow-md">
+                {movie.title}
+              </p>
+            </div>
           </div>
         ))}
       </div>
