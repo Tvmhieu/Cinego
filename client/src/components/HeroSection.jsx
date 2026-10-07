@@ -93,20 +93,23 @@ const HeroSection = () => {
   // Nếu chưa có phim nào trong rạp, hiển thị mặc định
   if (!featuredMovie) {
     return (
-      <div className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-[url("/backgroundImage.png")] bg-cover bg-center h-screen'>
-        <h1 className="text-5xl md:text-[70px] md:leading-[80px] font-semibold max-w-[600px] mt-20">
-          Chào mừng đến với <br /> CineGo
-        </h1>
-        <p className="max-w-md text-gray-300">
-          Hệ thống đặt vé xem phim trực tuyến tiện lợi nhất. Hãy khám phá các bộ phim đang được chiếu tại rạp ngay hôm nay.
-        </p>
-        <button
-          onClick={() => navigate("/movies")}
-          className="flex items-center gap-1 px-6 py-3 text-sm transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull font-medium"
-        >
-          Khám phá Phim
-          <ArrowRight className="w-5 h-5" />
-        </button>
+      <div className='flex flex-col items-start justify-center gap-6 px-6 md:px-16 lg:px-36 bg-[url("/backgroundImage.png")] bg-cover bg-center h-[100svh] relative'>
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
+        <div className="relative z-10">
+          <h1 className="text-4xl sm:text-5xl md:text-[80px] md:leading-[90px] font-black tracking-tight max-w-[600px] mt-10">
+            Chào mừng đến với <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">CineGo</span>
+          </h1>
+          <p className="max-w-md mt-6 text-base md:text-lg text-gray-300 font-medium leading-relaxed">
+            Hệ thống đặt vé xem phim trực tuyến tiện lợi nhất. Hãy khám phá các bộ phim đang được chiếu tại rạp ngay hôm nay.
+          </p>
+          <button
+            onClick={() => navigate("/movies")}
+            className="group flex items-center gap-2 px-8 py-3.5 mt-8 text-sm md:text-base font-bold tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-white text-black hover:bg-primary hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(248,69,101,0.4)] active:scale-95"
+          >
+            Khám phá Phim
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
       </div>
     );
   }
@@ -114,7 +117,7 @@ const HeroSection = () => {
   // Nếu có phim trong rạp, tự động lấy ảnh và thông tin của phim đó làm Banner
   return (
     <div 
-      className='flex flex-col items-start justify-center gap-4 px-16 md:px-24 lg:px-36 bg-cover bg-center h-screen relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/90 before:to-transparent transition-all duration-700 select-none'
+      className='flex flex-col items-start justify-center px-6 md:px-24 lg:px-36 bg-cover bg-center h-[100svh] relative transition-all duration-1000 ease-in-out select-none group/hero'
       style={{ backgroundImage: `url(${image_base_url + featuredMovie.backdrop_path})` }}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -122,33 +125,39 @@ const HeroSection = () => {
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp} // Handle case where mouse leaves the element while dragging
+      onMouseLeave={onMouseUp}
     >
-      <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-start">
-        <h1 className="text-5xl md:text-[70px] md:leading-[80px] font-semibold max-w-[800px] mt-20 drop-shadow-lg">
+      {/* Deep vignette gradients */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent pointer-events-none" />
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-start pt-10">
+        <h1 className="text-4xl sm:text-5xl md:text-[75px] md:leading-[1.1] font-black tracking-tight text-white max-w-[800px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
           {featuredMovie.title}
         </h1>
 
-        <div className="flex items-center gap-4 mt-4 text-gray-200">
-          <span>{featuredMovie.genres?.map(g => g.name).join(" | ")}</span>
-          <div className="flex items-center gap-1">
-            <CalendarIcon className="w-4.5 h-4.5" /> {featuredMovie.release_date?.substring(0, 4)}
+        <div className="flex flex-wrap items-center gap-4 mt-5 text-sm md:text-base font-medium text-gray-200">
+          <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-md border border-white/10 tracking-wider">
+            {featuredMovie.genres?.map(g => g.name).join(" | ")}
+          </span>
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-black/40 backdrop-blur-md rounded-md">
+            <CalendarIcon className="w-4 h-4 text-primary" /> {featuredMovie.release_date?.substring(0, 4)}
           </div>
-          <div className="flex items-center gap-1">
-            <ClockIcon className="w-4.5 h-4.5" /> {Math.floor(featuredMovie.runtime / 60)}h {featuredMovie.runtime % 60}m
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-black/40 backdrop-blur-md rounded-md">
+            <ClockIcon className="w-4 h-4 text-primary" /> {Math.floor(featuredMovie.runtime / 60)}h {featuredMovie.runtime % 60}m
           </div>
         </div>
 
-        <p className="max-w-xl mt-4 text-gray-300 drop-shadow-md line-clamp-3">
+        <p className="max-w-2xl mt-5 text-base md:text-lg text-gray-300 drop-shadow-md line-clamp-3 leading-relaxed font-medium">
           {featuredMovie.overview}
         </p>
         
         <button
           onClick={() => navigate(`/movies/${featuredMovie._id}`, { state: { scrollToDate: true } })}
-          className="flex items-center gap-2 px-6 py-3 mt-6 text-sm transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull font-medium shadow-lg"
+          className="group flex items-center gap-2 px-8 py-4 mt-8 text-sm md:text-base font-bold tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
         >
           Đặt vé ngay
-          <ArrowRight className="w-5 h-5" />
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
 
@@ -157,23 +166,24 @@ const HeroSection = () => {
         <>
           <button 
             onClick={handlePrev} 
-            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-black/40 hover:bg-primary rounded-full backdrop-blur-md transition-colors border border-white/20 cursor-pointer z-20 group"
+            className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/30 hover:bg-primary rounded-full backdrop-blur-md transition-all duration-300 border border-white/10 hover:border-transparent cursor-pointer z-20 md:opacity-0 md:group-hover/hero:opacity-100 hover:scale-110"
           >
-            <ChevronLeft className="w-8 h-8 text-white/70 group-hover:text-white transition-colors" />
+            <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 text-white/80 hover:text-white" />
           </button>
           <button 
             onClick={handleNext} 
-            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-black/40 hover:bg-primary rounded-full backdrop-blur-md transition-colors border border-white/20 cursor-pointer z-20 group"
+            className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/30 hover:bg-primary rounded-full backdrop-blur-md transition-all duration-300 border border-white/10 hover:border-transparent cursor-pointer z-20 md:opacity-0 md:group-hover/hero:opacity-100 hover:scale-110"
           >
-            <ChevronRight className="w-8 h-8 text-white/70 group-hover:text-white transition-colors" />
+            <ChevronRight className="w-6 h-6 md:w-8 md:h-8 text-white/80 hover:text-white" />
           </button>
           
           {/* Pagination Indicators */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
             {movies.map((_, idx) => (
               <div 
                 key={idx} 
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? "w-8 bg-primary" : "w-2 bg-white/40"}`}
+                className={`h-1.5 rounded-full transition-all duration-500 ease-out ${idx === currentIndex ? "w-10 bg-primary shadow-[0_0_10px_rgba(248,69,101,0.8)]" : "w-2.5 bg-white/30 hover:bg-white/60 cursor-pointer"}`}
+                onClick={() => setCurrentIndex(idx)}
               />
             ))}
           </div>

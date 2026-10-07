@@ -64,18 +64,26 @@ const SeatLayout = ({ propId, propDate }) => {
 
   const renderSeats = (row, count = 9) => {
     return (
-      <div key={row} className="flex gap-2 mt-2">
-        <div className="flex flex-wrap items-center justify-center gap-2">
+      <div key={row} className="flex gap-2 md:gap-3 mt-2">
+        <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
           {Array.from({ length: count }, (_, i) => {
             const seatId = `${row}${i + 1}`;
+            const isSelected = selectedSeats.includes(seatId);
+            const isOccupied = occupiedSeats.includes(seatId);
+            
             return (
               <button
                 key={seatId}
                 onClick={() => handleSeatClick(seatId)}
-                className={`h-8 w-8 rounded border border-primary/60 cursor-pointer
+                disabled={isOccupied}
+                className={`h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-[10px] md:text-xs font-bold transition-all duration-300 border 
                    ${
-                     selectedSeats.includes(seatId) && "bg-primary text-white"
-                   } ${occupiedSeats.includes(seatId) && "opacity-50"}`}
+                     isSelected
+                       ? "bg-primary text-white border-primary shadow-[0_0_15px_rgba(248,69,101,0.6)] scale-110"
+                       : isOccupied
+                       ? "bg-white/5 text-white/20 border-white/5 opacity-40 cursor-not-allowed"
+                       : "bg-white/5 text-white/70 border-white/15 cursor-pointer hover:border-primary hover:text-primary hover:shadow-[0_0_10px_rgba(248,69,101,0.3)] hover:-translate-y-1"
+                   }`}
               >
                 {seatId}
               </button>
@@ -152,15 +160,18 @@ const SeatLayout = ({ propId, propDate }) => {
   }, [selectedTime]);
 
   return show ? (
-    <div className={`flex flex-col ${propId ? 'mt-10' : 'px-6 md:px-16 lg:px-40 py-30 md:pt-50'}`}>
+    <div className={`flex flex-col relative ${propId ? 'mt-10' : 'px-4 md:px-12 lg:px-24 py-24 md:pt-40'}`}>
+      {/* Ambient background glow */}
+      {!propId && <div className="absolute top-40 right-20 w-96 h-96 bg-primary/10 blur-[150px] rounded-full pointer-events-none" />}
+      
       {/* Available Timings */}
-      <div className="flex flex-col items-center mb-12 w-full" id="timeSelect">
-        <p className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-          Chọn khung giờ chiếu
+      <div className="flex flex-col items-center mb-10 md:mb-16 w-full relative z-10" id="timeSelect">
+        <p className="text-lg md:text-xl font-bold mb-6 flex items-center gap-3 tracking-wide">
+          <span className="bg-white/10 text-primary border border-primary/30 w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-[0_0_10px_rgba(248,69,101,0.2)]">2</span>
+          Chọn suất chiếu
         </p>
 
-        <div className={`flex flex-wrap justify-center gap-3 p-4 rounded-xl transition-all duration-500 ${!selectedTime ? 'ring-2 ring-primary ring-offset-4 ring-offset-black animate-pulse shadow-[0_0_20px_rgba(229,9,20,0.4)]' : ''}`}>
+        <div className={`flex flex-wrap justify-center gap-3 md:gap-4 p-5 md:p-6 rounded-3xl transition-all duration-500 bg-white/5 backdrop-blur-md border border-white/5 ${!selectedTime ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#09090b] animate-pulse shadow-[0_0_30px_rgba(248,69,101,0.3)]' : ''}`}>
           {(Array.isArray(show?.dateTime?.[date])
             ? show.dateTime[date]
             : []
@@ -168,94 +179,109 @@ const SeatLayout = ({ propId, propDate }) => {
             <div
               key={item.time}
               onClick={() => setSelectedTime(item)}
-              className={`flex items-center gap-2 px-6 py-2 rounded-full cursor-pointer transition border border-primary/20 ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full cursor-pointer transition-all duration-300 border ${
                 selectedTime?.time === item.time
-                  ? "bg-primary text-white scale-110 shadow-[0_0_15px_rgba(229,9,20,0.5)]"
-                  : "bg-gray-800/50 hover:bg-primary/20 text-gray-300"
+                  ? "bg-primary text-white border-primary scale-105 shadow-[0_0_20px_rgba(248,69,101,0.6)]"
+                  : "bg-white/5 hover:bg-white/10 text-gray-300 border-white/10 hover:border-white/30"
               }`}
             >
               <ClockIcon className="w-4 h-4" />
-              <p className="text-sm">{isoTimeFormat(item.time)}</p>
+              <p className="text-sm font-semibold tracking-wider">{isoTimeFormat(item.time)}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Seats Layout  */}
-      <div className="relative flex flex-col items-center flex-1 max-md:mt-16">
+      <div className="relative flex flex-col items-center flex-1 max-md:mt-8 z-10">
         <BlurCircle top="-100px" left="-100px" />
-        <BlurCircle bottom="0" right="0" />
-
-        <h1 className="mb-4 text-2xl font-semibold flex items-center gap-3">
-          <span className="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center text-lg">3</span>
-          Chọn ghế ngồi
+        
+        <h1 className="mb-6 text-xl md:text-2xl font-bold flex items-center gap-3 tracking-wide">
+          <span className="bg-white/10 text-primary border border-primary/30 w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-[0_0_10px_rgba(248,69,101,0.2)]">3</span>
+          Sơ đồ ghế
         </h1>
 
-        <div className={`w-full max-w-full overflow-x-auto pb-4 no-scrollbar p-6 rounded-2xl transition-all duration-500 ${selectedTime && selectedSeats.length === 0 ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#111] animate-pulse shadow-[0_0_30px_rgba(229,9,20,0.3)] bg-primary/5' : ''}`}>
-          <div className={`flex flex-col items-center text-xs text-gray-300 min-w-[600px] transition-opacity duration-300 ${!selectedTime ? 'opacity-40 grayscale' : ''}`}>
-            <img src={assets.screenImage} alt="screen" />
-            <p className="mb-6 text-sm text-gray-400">MÀN HÌNH CHÍNH</p>
+        <div className={`w-full max-w-full overflow-x-auto pb-6 no-scrollbar p-6 md:p-10 rounded-3xl transition-all duration-500 bg-white/5 backdrop-blur-md border border-white/5 shadow-2xl ${selectedTime && selectedSeats.length === 0 ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#09090b] animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_40px_rgba(248,69,101,0.2)] bg-primary/5' : ''}`}>
+          <div className={`flex flex-col items-center text-xs text-gray-300 min-w-[600px] transition-all duration-500 ${!selectedTime ? 'opacity-30 grayscale blur-[2px]' : ''}`}>
+            
+            {/* Cinematic Screen */}
+            <div className="relative w-full max-w-[500px] mb-12 flex flex-col items-center">
+              <div className="w-full h-2 bg-white/20 rounded-t-full shadow-[0_-15px_40px_rgba(255,255,255,0.2)] blur-[1px]" />
+              <img src={assets.screenImage} alt="screen" className="w-full mt-2 drop-shadow-[0_20px_30px_rgba(255,255,255,0.15)]" />
+              <p className="mt-4 text-sm font-bold tracking-[0.2em] text-gray-400 drop-shadow-md">MÀN HÌNH</p>
+            </div>
 
-            <div className="flex flex-col gap-2 mt-4 mb-6">
+            <div className="flex flex-col gap-2 md:gap-3 mb-6 md:mb-8">
               {groupRows[0].map((row) => renderSeats(row))}
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 md:gap-3">
               {groupRows.slice(1).map((group, idx) => (
-                <div key={idx} className="flex flex-col gap-2 mb-6">{group.map((row) => renderSeats(row))}</div>
+                <div key={idx} className="flex flex-col gap-2 md:gap-3 mb-6 md:mb-8">{group.map((row) => renderSeats(row))}</div>
               ))}
+            </div>
+            
+            {/* Seat Legend */}
+            <div className="flex items-center gap-6 mt-6 p-4 rounded-xl bg-black/40 border border-white/5">
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-white/5 border border-white/20"></div> <span className="text-xs font-medium">Trống</span></div>
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-primary border border-primary shadow-[0_0_10px_rgba(248,69,101,0.5)]"></div> <span className="text-xs font-medium text-white">Đang chọn</span></div>
+              <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-white/5 border border-white/5 opacity-50"></div> <span className="text-xs font-medium">Đã đặt</span></div>
             </div>
           </div>
         </div>
 
         {selectedSeats.length > 0 && selectedTime && (
-          <div className="w-full max-w-md mt-8 p-4 bg-primary/10 border border-primary/30 rounded-lg">
-            <h2 className="text-lg font-semibold text-white mb-3">Thông tin đặt vé</h2>
-            <div className="flex justify-between text-sm text-gray-300 mb-1">
-              <span>Ghế đã chọn:</span>
-              <span className="font-semibold text-white">{selectedSeats.join(", ")}</span>
+          <div className="w-full max-w-lg mt-10 p-6 md:p-8 bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl transition-all animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-xl font-bold text-white mb-5 tracking-wide flex items-center gap-2">
+              <TicketPlus className="w-5 h-5 text-primary" /> Thông tin vé
+            </h2>
+            <div className="flex justify-between items-center text-sm mb-3">
+              <span className="text-gray-400 font-medium">Ghế đã chọn:</span>
+              <span className="font-bold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/5">{selectedSeats.join(", ")}</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-300 mb-2">
-              <span>Số lượng:</span>
-              <span className="font-semibold text-white">{selectedSeats.length} vé</span>
+            <div className="flex justify-between items-center text-sm mb-4">
+              <span className="text-gray-400 font-medium">Số lượng:</span>
+              <span className="font-bold text-white">{selectedSeats.length} vé</span>
             </div>
-            <div className="flex justify-between text-base font-semibold text-primary mt-3 pt-3 border-t border-primary/20">
-              <span>Tổng tiền:</span>
+            <div className="flex justify-between items-center text-lg md:text-xl font-black text-primary mt-4 pt-4 border-t border-white/10">
+              <span>Tổng thanh toán:</span>
               <span>{(selectedSeats.length * (selectedTime.price || 250000)).toLocaleString("vi-VN")} VNĐ</span>
             </div>
           </div>
         )}
 
-        <div className="w-full max-w-md mt-6 space-y-4">
-          <h2 className="text-lg font-semibold text-white">Thông tin khách hàng</h2>
-          <div>
-            <label className="block mb-1 text-sm text-gray-400">Họ và tên *</label>
-            <input
-              type="text"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              placeholder="Nhập họ và tên..."
-              className="w-full px-4 py-2 border rounded-md bg-transparent border-gray-600 focus:border-primary outline-none text-white"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm text-gray-400">Số điện thoại *</label>
-            <input
-              type="tel"
-              value={customerPhone}
-              onChange={(e) => setCustomerPhone(e.target.value)}
-              placeholder="Nhập số điện thoại..."
-              className="w-full px-4 py-2 border rounded-md bg-transparent border-gray-600 focus:border-primary outline-none text-white"
-            />
+        <div className="w-full max-w-lg mt-8 p-6 md:p-8 bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
+          <h2 className="text-xl font-bold text-white mb-6 tracking-wide">Thông tin liên hệ</h2>
+          <div className="space-y-5">
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-400">Họ và tên *</label>
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Nguyễn Văn A"
+                className="w-full px-5 py-3.5 border rounded-xl bg-white/5 border-white/10 focus:border-primary focus:bg-white/10 outline-none text-white font-medium transition-all duration-300 placeholder:text-gray-600 shadow-inner"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-400">Số điện thoại *</label>
+              <input
+                type="tel"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                placeholder="0901234567"
+                className="w-full px-5 py-3.5 border rounded-xl bg-white/5 border-white/10 focus:border-primary focus:bg-white/10 outline-none text-white font-medium transition-all duration-300 placeholder:text-gray-600 shadow-inner"
+              />
+            </div>
           </div>
         </div>
 
         <button
           onClick={bookTickets}
-          className="flex items-center gap-1 px-10 py-3 mt-8 text-sm font-medium transition rounded-full cursor-pointer bg-primary hover:bg-primary-dull active:scale-95"
+          className="group flex items-center justify-center gap-2 w-full max-w-lg px-8 py-4 mt-8 mb-12 text-base font-bold tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
         >
-          Thanh toán ngay
-          <ArrowRightIcon strokeWidth={3} className="w-4 h-4" />
+          Xác nhận Thanh toán
+          <ArrowRightIcon strokeWidth={3} className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

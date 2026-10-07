@@ -70,82 +70,101 @@ const MyBookings = () => {
         <BlurCircle bottom="0px" left="600px" />
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-white">Lịch sử đặt vé</h1>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 md:mb-12 gap-6">
+        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-md flex items-center gap-4">
+          <span className="w-2 h-8 md:h-10 bg-primary rounded-full shadow-[0_0_15px_rgba(248,69,101,0.5)]" />
+          Vé của tôi
+        </h1>
         
-        <div className="flex gap-4 border-b border-gray-800 pb-2">
+        <div className="flex gap-6 border-b border-white/10 pb-1">
           <button
             onClick={() => setActiveTab("valid")}
-            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
-              activeTab === "valid" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            className={`pb-3 px-2 text-sm md:text-base font-bold transition-all relative ${
+              activeTab === "valid" ? "text-primary" : "text-gray-500 hover:text-white"
             }`}
           >
             Đang xử lý ({bookings.filter(b => !b.isCancelled).length})
+            {activeTab === "valid" && (
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-md shadow-[0_0_10px_rgba(248,69,101,0.8)]" />
+            )}
           </button>
           <button
             onClick={() => setActiveTab("cancelled")}
-            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
-              activeTab === "cancelled" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            className={`pb-3 px-2 text-sm md:text-base font-bold transition-all relative ${
+              activeTab === "cancelled" ? "text-primary" : "text-gray-500 hover:text-white"
             }`}
           >
             Đã hủy ({bookings.filter(b => b.isCancelled).length})
+            {activeTab === "cancelled" && (
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-md shadow-[0_0_10px_rgba(248,69,101,0.8)]" />
+            )}
           </button>
         </div>
       </div>
 
-      <div className="grid gap-4 mt-4">
+      <div className="grid gap-6 mt-6">
         {filteredBookings.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-2xl hover:bg-gray-800/50 transition-colors"
+            className="group flex flex-col md:flex-row items-center gap-6 p-5 md:p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl hover:border-white/20 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden"
           >
-            <img
-              src={image_base_url + item.show.movie.poster_path}
-              alt=""
-              className="w-full sm:w-24 h-36 sm:h-32 object-cover rounded-xl shadow-lg"
-            />
+            {/* Subtle glow on hover */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+            <div className="w-full md:w-32 lg:w-40 h-48 md:h-full md:aspect-[2/3] shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/10">
+              <img
+                src={image_base_url + item.show.movie.poster_path}
+                alt=""
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
             
-            <div className="flex-1 w-full flex flex-col justify-between py-1">
+            <div className="flex-1 w-full flex flex-col justify-between py-2 relative z-10">
               <div>
-                <h3 className="text-lg font-bold text-white line-clamp-1">{item.show.movie.title}</h3>
-                <p className="text-sm text-gray-400 mt-1">{dateFormat(item.show.showDateTime)}</p>
-                <p className="text-sm text-gray-400">Ghế: <span className="font-bold text-primary">{item.bookedSeats.join(", ")}</span></p>
+                <h3 className="text-xl md:text-2xl font-black text-white line-clamp-1 group-hover:text-primary transition-colors tracking-wide">{item.show.movie.title}</h3>
+                <p className="text-sm md:text-base text-gray-400 mt-2 font-medium flex items-center gap-2">
+                  <ClockIcon className="w-4 h-4 text-primary" /> {dateFormat(item.show.showDateTime)}
+                </p>
+                <div className="flex items-center gap-2 mt-3">
+                  <span className="text-sm text-gray-400 font-medium">Ghế:</span>
+                  <span className="bg-white/10 px-3 py-1 rounded-lg border border-white/5 font-bold text-primary tracking-widest">{item.bookedSeats.join(", ")}</span>
+                </div>
               </div>
               
-              <div className="flex flex-col mt-3">
-                <div className="flex items-center gap-3">
-                  <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
+              <div className="flex flex-col mt-6">
+                <div className="flex items-center gap-4">
+                  <span className={`text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
                     {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
                   </span>
-                  <span className="text-sm font-bold">{item.amount.toLocaleString("vi-VN")} {currency}</span>
+                  <span className="text-lg md:text-xl font-black text-white">{item.amount.toLocaleString("vi-VN")} {currency}</span>
                 </div>
                 {item.isCancelled && item.cancellationReason && (
-                  <p className="text-xs text-red-400 mt-2 font-medium">
-                    Lý do hủy: {item.cancellationReason}
+                  <p className="text-sm text-red-400/90 mt-3 font-medium bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                    <span className="font-bold text-red-500">Lý do hủy:</span> {item.cancellationReason}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="w-full sm:w-auto flex flex-col gap-2 shrink-0">
+            <div className="w-full md:w-48 lg:w-56 flex flex-col gap-3 shrink-0 relative z-10 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0 md:pl-6">
               {item.isPaid && !item.isCancelled ? (
                 <button
                   onClick={() => setSelectedTicket(item)}
-                  className="px-6 py-2.5 bg-primary hover:bg-primary-dull text-white text-sm font-bold rounded-xl transition shadow-lg shadow-primary/20 w-full"
+                  className="px-6 py-4 bg-primary hover:bg-white hover:text-black text-white text-sm font-bold tracking-wide rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 w-full flex justify-center items-center gap-2"
                 >
-                  Mở Vé / Mã QR
+                  <TicketPlus className="w-5 h-5" /> Mở Vé / Mã QR
                 </button>
               ) : !item.isCancelled && !item.isPaid ? (
-                <div className="flex flex-col sm:flex-row gap-2 w-full">
+                <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full">
                   <Link
                     to={`/payment/${item._id}`}
-                    className="px-6 py-2.5 bg-primary hover:bg-primary-dull text-white text-sm font-bold text-center rounded-xl transition shadow-lg shadow-primary/20 flex-1"
+                    className="px-6 py-3.5 bg-primary hover:bg-white hover:text-black text-white text-sm font-bold tracking-wide text-center rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 flex-1"
                   >
                     Thanh toán
                   </Link>
                   <button
                     onClick={() => handleCancel(item._id)}
-                    className="px-6 py-2.5 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white text-sm font-bold rounded-xl transition flex-1"
+                    className="px-6 py-3.5 bg-white/5 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 text-sm font-bold tracking-wide rounded-2xl transition-all duration-300 flex-1 active:scale-95"
                   >
                     Hủy vé
                   </button>
@@ -155,7 +174,7 @@ const MyBookings = () => {
           </div>
         ))}
         {filteredBookings.length === 0 && (
-          <div className="text-center py-10 text-gray-400">
+          <div className="text-center py-20 text-gray-500 font-medium bg-white/5 border border-white/5 rounded-3xl">
             {activeTab === "valid" ? "Bạn chưa đặt vé nào." : "Không có vé nào bị hủy."}
           </div>
         )}
