@@ -41,6 +41,48 @@ const HeroSection = () => {
     setCurrentIndex((prev) => (prev === movies.length - 1 ? 0 : prev + 1));
   };
 
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const minSwipeDistance = 50; 
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > minSwipeDistance) handleNext();
+    else if (distance < -minSwipeDistance) handlePrev();
+  };
+
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [mouseStart, setMouseStart] = useState(null);
+
+  const onMouseDown = (e) => {
+    setIsMouseDown(true);
+    setMouseStart(e.clientX);
+    setTouchEnd(null);
+  };
+
+  const onMouseMove = (e) => {
+    if (!isMouseDown) return;
+    setTouchEnd(e.clientX);
+  };
+
+  const onMouseUp = () => {
+    setIsMouseDown(false);
+    if (!mouseStart || !touchEnd) return;
+    const distance = mouseStart - touchEnd;
+    if (distance > minSwipeDistance) handleNext();
+    else if (distance < -minSwipeDistance) handlePrev();
+  };
+
   const featuredMovie = movies[currentIndex];
 
   // Nếu chưa có phim nào trong rạp, hiển thị mặc định
@@ -67,8 +109,15 @@ const HeroSection = () => {
   // Nếu có phim trong rạp, tự động lấy ảnh và thông tin của phim đó làm Banner
   return (
     <div 
-      className='flex flex-col items-start justify-center gap-4 px-16 md:px-24 lg:px-36 bg-cover bg-center h-screen relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/90 before:to-transparent transition-all duration-700'
+      className='flex flex-col items-start justify-center gap-4 px-16 md:px-24 lg:px-36 bg-cover bg-center h-screen relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/90 before:to-transparent transition-all duration-700 select-none'
       style={{ backgroundImage: `url(${image_base_url + featuredMovie.backdrop_path})` }}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onMouseLeave={onMouseUp} // Handle case where mouse leaves the element while dragging
     >
       <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-start">
         <h1 className="text-5xl md:text-[70px] md:leading-[80px] font-semibold max-w-[800px] mt-20 drop-shadow-lg">
