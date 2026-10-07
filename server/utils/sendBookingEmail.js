@@ -1,5 +1,6 @@
 import Booking from "../models/Booking.js";
 import sendEmail from "../configs/nodemailer.js";
+import { clerkClient } from "@clerk/express";
 
 export const sendBookingConfirmationEmail = async (bookingId) => {
   try {
@@ -7,27 +8,42 @@ export const sendBookingConfirmationEmail = async (bookingId) => {
       .populate({
         path: "show",
         populate: { path: "movie", model: "Movie" },
-      })
-      .populate("user");
+      });
 
     if (!booking) {
       console.error("sendBookingConfirmationEmail: Booking not found");
       return;
     }
 
-    if (!booking.user || !booking.user.email) {
+    let userEmail = null;
+    let userName = booking.customerName || "Khách hàng";
+
+    // Fetch user details from Clerk since MongoDB User collection might be empty
+    try {
+      if (booking.user) {
+        const clerkUser = await clerkClient.users.getUser(booking.user.toString());
+        userEmail = clerkUser.emailAddresses[0]?.emailAddress;
+        if (clerkUser.firstName || clerkUser.lastName) {
+          userName = `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim();
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching user from Clerk in email sender:", err.message);
+    }
+
+    if (!userEmail) {
       console.error("sendBookingConfirmationEmail: User email not found");
       return;
     }
 
     await sendEmail({
-      to: booking.user.email,
+      to: userEmail,
       subject: `Xác nhận đặt vé thành công: "${booking.show.movie.title}"`,
       body: `<div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
-    <h2>Xin chào ${booking.user.name},</h2>
+    <h2>Xin chào ${userName},</h2>
     <p>
       Vé xem phim 
-      <strong style="color: #F84565;">"${booking.show.movie.title}"</strong> của bạn đã được xác nhận.
+      <strong style="color: #F84565;">"${booking.show.movie.title}"</strong> của bạn đã được xác nhận thanh toán.
     </p>
     <p>
       <strong>Mã vé:</strong> ${booking.bookingCode}<br/>
@@ -42,7 +58,7 @@ export const sendBookingConfirmationEmail = async (bookingId) => {
     </p>
   </div>`,
     });
-    console.log(`Booking confirmation email sent successfully to ${booking.user.email}`);
+    console.log(`Booking confirmation email sent successfully to ${userEmail}`);
   } catch (error) {
     console.error("Error sending booking confirmation email:", error);
   }
