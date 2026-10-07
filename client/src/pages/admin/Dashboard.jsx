@@ -99,7 +99,7 @@ const Dashboard = () => {
   }, [user]);
 
   return !loading ? (
-    <div className="flex flex-col h-full animate-in fade-in duration-500 max-w-7xl mx-auto pb-10">
+    <div className="flex flex-col animate-in fade-in duration-500 max-w-7xl mx-auto pb-10">
       <div className="mb-8 flex items-center gap-3">
         <span className="w-2 h-8 bg-primary rounded-full shadow-[0_0_15px_rgba(248,69,101,0.5)]"></span>
         <h1 className="text-3xl font-black text-white tracking-wide">Bảng Điều Khiển</h1>
