@@ -231,6 +231,7 @@ export const cancelBooking = async (req, res) => {
     }
 
     booking.isCancelled = true;
+    booking.cancellationReason = "Người dùng tự hủy";
     await booking.save();
 
     res.json({ success: true, message: "Đã hủy vé thành công" });

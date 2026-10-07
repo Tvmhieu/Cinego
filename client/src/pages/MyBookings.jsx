@@ -57,6 +57,12 @@ const MyBookings = () => {
     }
   }, [user, getMyBookings]);
 
+  const [activeTab, setActiveTab] = useState("valid"); // 'valid', 'cancelled'
+
+  const filteredBookings = bookings.filter(item => 
+    activeTab === "valid" ? !item.isCancelled : item.isCancelled
+  );
+
   return !isLoading ? (
     <div className="relative px-6 md:px-16 lg:px-40 pt-30 md:pt-40 min-h-[80vh]">
       <BlurCircle top="100px" left="100px" />
@@ -64,10 +70,31 @@ const MyBookings = () => {
         <BlurCircle bottom="0px" left="600px" />
       </div>
 
-      <h1 className="mb-6 text-2xl font-bold text-white">Lịch sử đặt vé</h1>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
+        <h1 className="text-2xl font-bold text-white">Lịch sử đặt vé</h1>
+        
+        <div className="flex gap-4 border-b border-gray-800 pb-2">
+          <button
+            onClick={() => setActiveTab("valid")}
+            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+              activeTab === "valid" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            }`}
+          >
+            Đang xử lý ({bookings.filter(b => !b.isCancelled).length})
+          </button>
+          <button
+            onClick={() => setActiveTab("cancelled")}
+            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+              activeTab === "cancelled" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            }`}
+          >
+            Đã hủy ({bookings.filter(b => b.isCancelled).length})
+          </button>
+        </div>
+      </div>
 
       <div className="grid gap-4 mt-4">
-        {bookings.map((item, index) => (
+        {filteredBookings.map((item, index) => (
           <div
             key={index}
             className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-gray-900/50 border border-gray-800 rounded-2xl hover:bg-gray-800/50 transition-colors"
@@ -85,11 +112,18 @@ const MyBookings = () => {
                 <p className="text-sm text-gray-400">Ghế: <span className="font-bold text-primary">{item.bookedSeats.join(", ")}</span></p>
               </div>
               
-              <div className="flex items-center gap-3 mt-3">
-                <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
-                  {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
-                </span>
-                <span className="text-sm font-bold">{item.amount.toLocaleString("vi-VN")} {currency}</span>
+              <div className="flex flex-col mt-3">
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
+                    {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                  </span>
+                  <span className="text-sm font-bold">{item.amount.toLocaleString("vi-VN")} {currency}</span>
+                </div>
+                {item.isCancelled && item.cancellationReason && (
+                  <p className="text-xs text-red-400 mt-2 font-medium">
+                    Lý do hủy: {item.cancellationReason}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -120,8 +154,10 @@ const MyBookings = () => {
             </div>
           </div>
         ))}
-        {bookings.length === 0 && (
-          <div className="text-center py-10 text-gray-400">Bạn chưa đặt vé nào.</div>
+        {filteredBookings.length === 0 && (
+          <div className="text-center py-10 text-gray-400">
+            {activeTab === "valid" ? "Bạn chưa đặt vé nào." : "Không có vé nào bị hủy."}
+          </div>
         )}
       </div>
 

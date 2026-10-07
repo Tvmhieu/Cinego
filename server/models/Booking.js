@@ -12,6 +12,7 @@ const bookingSchema = new mongoose.Schema(
     customerName: { type: String, required: true },
     customerPhone: { type: String, required: true },
     isCancelled: { type: Boolean, default: false },
+    cancellationReason: { type: String, default: "" },
     isCheckedIn: { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -329,7 +329,8 @@ const ListShows = () => {
           </table>
         </div>
       </div>
-      </>}
+        </>
+      )}
     </div>
   ) : (
     <Loading />

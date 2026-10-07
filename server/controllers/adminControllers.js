@@ -287,3 +287,43 @@ export const scanTicket = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to cancel booking by Admin
+export const adminCancelBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.body;
+    
+    // Clerk user info injected from auth middleware
+    const { userId } = req.auth();
+    const adminUser = await clerkClient.users.getUser(userId);
+    const adminEmail = adminUser.emailAddresses[0]?.emailAddress || "Admin";
+
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.json({ success: false, message: "Không tìm thấy vé" });
+    }
+
+    if (booking.isCancelled) {
+      return res.json({ success: false, message: "Vé này đã bị hủy từ trước" });
+    }
+
+    // Release seats
+    const show = await Show.findById(booking.show);
+    if (show) {
+      booking.bookedSeats.forEach((seat) => {
+        delete show.occupiedSeats[seat];
+      });
+      show.markModified("occupiedSeats");
+      await show.save();
+    }
+
+    booking.isCancelled = true;
+    booking.cancellationReason = `Email ${adminEmail} hủy`;
+    await booking.save();
+
+    res.json({ success: true, message: "Đã hủy vé thành công" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};

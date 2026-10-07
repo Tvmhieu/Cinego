@@ -22,6 +22,8 @@ const ListBookings = () => {
 
   const [sortConfig, setSortConfig] = useState({ key: 'show.showDateTime', direction: 'desc' });
 
+  const [activeTab, setActiveTab] = useState("valid"); // 'valid', 'cancelled'
+
   const getAllBookings = async () => {
     const abortController = new AbortController();
     setError(null);
@@ -85,6 +87,27 @@ const ListBookings = () => {
     }
   };
 
+  const handleCancelBooking = async (bookingId) => {
+    if (!window.confirm("Bạn có chắc muốn hủy vé này? Hành động này không thể hoàn tác.")) return;
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/admin/cancel-booking",
+        { bookingId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getAllBookings(); // Refresh list
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Lỗi khi hủy vé");
+    }
+  };
+
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -102,6 +125,10 @@ const ListBookings = () => {
   const filteredBookings = bookings.filter((item) => {
     if (!item || !item.show || !item.show.movie) return false;
     
+    // Tab filter
+    if (activeTab === "valid" && item.isCancelled) return false;
+    if (activeTab === "cancelled" && !item.isCancelled) return false;
+
     // Show ID filter (from ListShows)
     if (showIdFilter) {
       if (item.show._id !== showIdFilter) return false;
@@ -245,6 +272,27 @@ const ListBookings = () => {
         </div>
       )}
 
+      {!showIdFilter && (
+        <div className="flex gap-4 mb-6 border-b border-gray-800 pb-2">
+          <button
+            onClick={() => setActiveTab("valid")}
+            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+              activeTab === "valid" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            }`}
+          >
+            Đang hoạt động ({bookings.filter(b => !b.isCancelled).length})
+          </button>
+          <button
+            onClick={() => setActiveTab("cancelled")}
+            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+              activeTab === "cancelled" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            }`}
+          >
+            Đã hủy ({bookings.filter(b => b.isCancelled).length})
+          </button>
+        </div>
+      )}
+
       {/* Mobile Card Layout */}
       <div className="md:hidden flex flex-col gap-4 pb-6">
         <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar text-xs">
@@ -263,7 +311,14 @@ const ListBookings = () => {
             <div key={item._id} className="flex flex-col bg-[#161616] rounded-xl border border-gray-800 p-3 shadow-sm">
               <div className="flex justify-between items-center mb-2">
                 <p className="font-mono font-bold text-primary text-sm">{item.bookingCode || item._id.slice(-6).toUpperCase()}</p>
-                {renderStatus(item)}
+                <div className="flex flex-col items-end gap-1">
+                  {renderStatus(item)}
+                  {item.isCancelled && item.cancellationReason && (
+                    <span className="text-[10px] text-gray-500 max-w-[120px] truncate" title={item.cancellationReason}>
+                      {item.cancellationReason}
+                    </span>
+                  )}
+                </div>
               </div>
               
               <div className="flex flex-col gap-1.5 mb-3 border-y border-gray-800/60 py-2">
@@ -291,6 +346,14 @@ const ListBookings = () => {
               <div className="flex justify-between items-center">
                 <span className="text-primary font-bold text-sm">{(item.amount || 0).toLocaleString("vi-VN")} {currency}</span>
                 <div className="flex gap-2">
+                  {!item.isCancelled && (
+                    <button
+                      onClick={() => handleCancelBooking(item._id)}
+                      className="px-3 py-1.5 bg-red-600/10 text-red-500 border border-red-600/20 rounded-lg text-xs font-bold transition active:scale-95"
+                    >
+                      Hủy Vé
+                    </button>
+                  )}
                   {!item.isPaid && !item.isCancelled && (
                     <button
                       onClick={() => handleConfirmPayment(item._id)}
@@ -368,9 +431,22 @@ const ListBookings = () => {
                     </td>
                     <td className="px-6 py-4">
                       {renderStatus(item)}
+                      {item.isCancelled && item.cancellationReason && (
+                        <p className="text-[10px] text-gray-500 mt-1 max-w-[150px] truncate" title={item.cancellationReason}>
+                          Lý do: {item.cancellationReason}
+                        </p>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
+                        {!item.isCancelled && (
+                          <button
+                            onClick={() => handleCancelBooking(item._id)}
+                            className="px-4 py-1.5 text-xs font-bold text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
+                          >
+                            Hủy Vé
+                          </button>
+                        )}
                         {!item.isPaid && !item.isCancelled && (
                           <button
                             onClick={() => handleConfirmPayment(item._id)}

@@ -91,6 +91,7 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
           await show.save();
         }
         booking.isCancelled = true;
+        booking.cancellationReason = "Quá hạn thanh toán";
         await booking.save();
       }
     });

@@ -13,6 +13,7 @@ import {
   scanTicket,
   toggleMovieBanner,
   getAllMovies,
+  adminCancelBooking,
 } from "../controllers/adminControllers.js";
 import { confirmPayment } from "../controllers/bookingControllers.js";
 
@@ -31,6 +32,7 @@ adminRouter.get("/booking/:code", protectAdmin, getBookingByCode);
 adminRouter.post("/scan-ticket", protectAdmin, scanTicket);
 adminRouter.post("/toggle-banner", protectAdmin, toggleMovieBanner);
 adminRouter.get("/movies", protectAdmin, getAllMovies);
+adminRouter.post("/cancel-booking", protectAdmin, adminCancelBooking);
 
 export default adminRouter;
 
