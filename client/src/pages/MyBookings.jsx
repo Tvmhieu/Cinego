@@ -6,7 +6,7 @@ import { dateFormat } from "../lib/dateFormat";
 import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { XIcon } from "lucide-react";
+import { XIcon, ClockIcon, TicketPlus } from "lucide-react";
 
 const MyBookings = () => {
   const { axios, getToken, user, image_base_url } = useAppContext();
