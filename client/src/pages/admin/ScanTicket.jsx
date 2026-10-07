@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Html5QrcodeScanner, Html5QrcodeScanType } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 import Title from "../../components/admin/Title";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
-import { CheckCircle2Icon, XCircleIcon, AlertTriangleIcon, ClockIcon } from "lucide-react";
+import { CheckCircle2Icon, XCircleIcon, AlertTriangleIcon, ClockIcon, RefreshCcwIcon } from "lucide-react";
 import { dateFormat } from "../../lib/dateFormat";
 
 const ScanTicket = () => {
@@ -12,45 +12,54 @@ const ScanTicket = () => {
   const [bookingInfo, setBookingInfo] = useState(null);
   const [scanStatus, setScanStatus] = useState(null); // VALID, USED, CANCELLED, UNPAID, NOT_FOUND, TOO_EARLY
   const [isProcessing, setIsProcessing] = useState(false);
-  const scannerRef = useRef(null);
+  const [facingMode, setFacingMode] = useState("environment");
+  const html5QrCodeRef = useRef(null);
+
+  const startScanner = async (mode) => {
+    try {
+      if (!html5QrCodeRef.current) {
+        html5QrCodeRef.current = new Html5Qrcode("qr-reader");
+      }
+      
+      if (html5QrCodeRef.current.isScanning) {
+        await html5QrCodeRef.current.stop();
+      }
+
+      await html5QrCodeRef.current.start(
+        { facingMode: mode },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          if (html5QrCodeRef.current.isScanning) {
+            html5QrCodeRef.current.stop().then(() => {
+              setScannedCode(decodedText);
+              handleScan(decodedText);
+            }).catch(console.error);
+          }
+        },
+        (errorMessage) => {
+          // Handle scan error quietly
+        }
+      );
+    } catch (error) {
+      console.error("Lỗi bật camera:", error);
+    }
+  };
 
   useEffect(() => {
-    // Start scanner only if no code is currently being processed
-    if (!scannedCode && !scannerRef.current) {
-      const scanner = new Html5QrcodeScanner(
-        "qr-reader",
-        { 
-          fps: 10, 
-          qrbox: { width: 250, height: 250 },
-          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-        },
-        false
-      );
-      
-      scannerRef.current = scanner;
-
-      scanner.render(
-        (decodedText) => {
-          // Pause scanner
-          scanner.pause(true);
-          setScannedCode(decodedText);
-          handleScan(decodedText);
-        },
-        (err) => {}
-      );
+    if (!scannedCode) {
+      startScanner(facingMode);
     }
 
     return () => {
-      if (scannerRef.current) {
-        try {
-          scannerRef.current.clear();
-          scannerRef.current = null;
-        } catch (error) {
-          console.error("Failed to clear scanner", error);
-        }
+      if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+        html5QrCodeRef.current.stop().catch(console.error);
       }
     };
-  }, [scannedCode]);
+  }, [scannedCode, facingMode]);
+
+  const toggleCamera = () => {
+    setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
+  };
 
   const handleScan = async (code) => {
     setIsProcessing(true);
@@ -177,9 +186,18 @@ const ScanTicket = () => {
       <div className="w-full max-w-md bg-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl border border-gray-800 p-4 md:p-6">
         {!scannedCode ? (
           <>
-            <p className="text-center text-gray-400 mb-4 text-sm font-medium">
-              Đưa mã QR trên vé vào khung hình camera.
-            </p>
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-gray-400 text-sm font-medium">
+                Đưa mã QR vào khung hình
+              </p>
+              <button 
+                onClick={toggleCamera} 
+                className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors border border-gray-700"
+              >
+                <RefreshCcwIcon className="w-3.5 h-3.5" />
+                Đổi Camera
+              </button>
+            </div>
             <div id="qr-reader" className="w-full overflow-hidden rounded-2xl bg-black border border-gray-800 shadow-inner"></div>
           </>
         ) : (
