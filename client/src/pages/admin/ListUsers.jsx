@@ -77,7 +77,7 @@ const ListUsers = () => {
   return isLoading ? (
     <Loading />
   ) : (
-    <div className="flex flex-col h-full animate-in fade-in duration-500">
+    <div className="flex flex-col animate-in fade-in duration-500">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <Title text1="Danh sách" text2="Tài khoản" />
         

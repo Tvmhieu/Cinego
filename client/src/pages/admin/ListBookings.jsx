@@ -246,7 +246,7 @@ const ListBookings = () => {
   };
 
   return !isLoading ? (
-    <div className="flex flex-col h-full animate-in fade-in duration-500">
+    <div className="flex flex-col animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <Title text1="Danh sách" text2="Vé đã đặt" />
         
