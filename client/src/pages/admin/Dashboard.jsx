@@ -32,9 +32,11 @@ const Dashboard = () => {
     totalRevenue: 0,
     activeShows: [],
     totalUser: 0,
+    moviePerformance: [],
   });
 
   const [loading, setLoading] = useState(true);
+  const [selectedMoviePerf, setSelectedMoviePerf] = useState(null);
 
   const dashboardCards = [
     {
@@ -179,10 +181,29 @@ const Dashboard = () => {
                     if (name === 'Doanh thu') return [`${value.toLocaleString("vi-VN")} ${currency}`, name];
                     return [value, name];
                   }}
+                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                 />
                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                <Bar yAxisId="left" dataKey="revenue" name="Doanh thu" fill="#e50914" radius={[4, 4, 0, 0]} barSize={40} />
-                <Bar yAxisId="right" dataKey="ticketsSold" name="Vé bán ra" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
+                <Bar 
+                  yAxisId="left" 
+                  dataKey="revenue" 
+                  name="Doanh thu" 
+                  fill="#e50914" 
+                  radius={[4, 4, 0, 0]} 
+                  barSize={40}
+                  onClick={(data) => setSelectedMoviePerf(data)}
+                  cursor="pointer"
+                />
+                <Bar 
+                  yAxisId="right" 
+                  dataKey="ticketsSold" 
+                  name="Vé bán ra" 
+                  fill="#3b82f6" 
+                  radius={[4, 4, 0, 0]} 
+                  barSize={40}
+                  onClick={(data) => setSelectedMoviePerf(data)}
+                  cursor="pointer"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -193,6 +214,52 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Selected Movie Details Modal */}
+      {selectedMoviePerf && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedMoviePerf(null)}>
+          <div className="relative w-full max-w-md bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-2xl border border-gray-700 p-6 sm:p-8 animate-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
+            <button 
+              onClick={() => setSelectedMoviePerf(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800/50 hover:bg-gray-700 p-2 rounded-full transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                <ChartLineIcon className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 line-clamp-2 leading-tight">
+                {selectedMoviePerf.title || selectedMoviePerf.payload?.title}
+              </h2>
+              <p className="text-gray-400 text-sm">Chi tiết hiệu suất phim</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:gap-4">
+              <div className="flex items-center justify-between p-4 bg-gray-800/40 rounded-xl border border-gray-700/50">
+                <span className="text-gray-400 font-medium">Số suất chiếu</span>
+                <span className="text-lg font-bold text-white">{selectedMoviePerf.showCount || selectedMoviePerf.payload?.showCount || 0}</span>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                <span className="text-blue-400 font-medium">Số vé đã bán</span>
+                <span className="text-lg font-bold text-blue-500">{selectedMoviePerf.ticketsSold || selectedMoviePerf.payload?.ticketsSold || 0} vé</span>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                <span className="text-red-400 font-medium">Tổng doanh thu</span>
+                <span className="text-lg font-bold text-primary">{(selectedMoviePerf.revenue || selectedMoviePerf.payload?.revenue || 0).toLocaleString("vi-VN")} {currency}</span>
+              </div>
+            </div>
+            
+            <button 
+              onClick={() => setSelectedMoviePerf(null)}
+              className="mt-6 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   ) : (
     <Loading />

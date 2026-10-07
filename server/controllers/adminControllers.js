@@ -82,9 +82,12 @@ export const getDashboardData = async (req, res) => {
     // Actually let's fetch all shows and populate movies to calculate overall performance
     const allShows = await Show.find({}).populate("movie");
     const showToMovieMap = {};
+    const showCountMap = {};
+
     allShows.forEach(show => {
       if (show.movie) {
         showToMovieMap[show._id.toString()] = show.movie.title;
+        showCountMap[show.movie.title] = (showCountMap[show.movie.title] || 0) + 1;
       }
     });
 
@@ -92,7 +95,12 @@ export const getDashboardData = async (req, res) => {
       const movieTitle = showToMovieMap[booking.show.toString()];
       if (movieTitle) {
         if (!movieStats[movieTitle]) {
-          movieStats[movieTitle] = { title: movieTitle, ticketsSold: 0, revenue: 0 };
+          movieStats[movieTitle] = { 
+            title: movieTitle, 
+            ticketsSold: 0, 
+            revenue: 0, 
+            showCount: showCountMap[movieTitle] || 0 
+          };
         }
         movieStats[movieTitle].ticketsSold += booking.bookedSeats?.length || 0;
         movieStats[movieTitle].revenue += booking.amount || 0;
