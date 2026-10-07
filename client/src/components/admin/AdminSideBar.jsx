@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   LayoutDashboardIcon,
   ListCollapseIcon,
@@ -5,12 +6,17 @@ import {
   PlusSquareIcon,
   UsersIcon,
   ScanLineIcon,
+  MenuIcon,
+  XIcon,
+  ImagePlayIcon,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { assets } from "../../assets/assets";
 
 const AdminSideBar = () => {
   const location = useLocation();
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+
   const user = {
     firstName: "Admin",
     lastName: "User",
@@ -23,8 +29,13 @@ const AdminSideBar = () => {
     { name: "DS Suất chiếu", path: "/admin/list-shows", icon: ListIcon },
     { name: "DS Vé đã đặt", path: "/admin/list-bookings", icon: ListCollapseIcon },
     { name: "Tài khoản", path: "/admin/users", icon: UsersIcon },
-    { name: "Quản lý Banner", path: "/admin/banners", icon: ListIcon },
+    { name: "Quản lý Banner", path: "/admin/banners", icon: ImagePlayIcon },
   ];
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMoreOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
@@ -87,8 +98,42 @@ const AdminSideBar = () => {
         </div>
       </div>
 
+      {/* Mobile Slide-up Menu Drawer */}
+      <div 
+        className={`md:hidden fixed inset-0 z-[40] bg-black/80 backdrop-blur-sm transition-opacity duration-300 ${isMoreOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        onClick={() => setIsMoreOpen(false)}
+      >
+        <div 
+          className={`absolute bottom-16 left-0 w-full bg-[#111] border-t border-white/10 rounded-t-3xl p-6 pb-10 flex flex-col gap-2 transition-transform duration-300 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] ${isMoreOpen ? "translate-y-0" : "translate-y-full"}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-white tracking-wide">Menu Quản Trị</h3>
+            <button onClick={() => setIsMoreOpen(false)} className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white transition">
+              <XIcon className="w-5 h-5" />
+            </button>
+          </div>
+          
+          {adminNavlinks.map((link, index) => (
+            <NavLink
+              key={index}
+              to={link.path}
+              end
+              className={({ isActive }) =>
+                `flex items-center gap-4 w-full p-4 rounded-2xl text-gray-300 transition-all active:scale-95 ${
+                  isActive ? "bg-primary/20 text-white border border-primary/30 font-bold shadow-md" : "bg-white/5 border border-transparent"
+                }`
+              }
+            >
+              <link.icon className="w-6 h-6" />
+              <p className="text-base">{link.name}</p>
+            </NavLink>
+          ))}
+        </div>
+      </div>
+
       {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 w-full h-16 bg-black/80 backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-between px-2 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+      <div className="md:hidden fixed bottom-0 left-0 w-full h-16 bg-black/80 backdrop-blur-xl border-t border-white/10 z-[50] flex items-center justify-between px-2 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         {/* Left Side Links */}
         <div className="flex flex-1 justify-around">
           <NavLink to="/admin" end className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
@@ -114,9 +159,9 @@ const AdminSideBar = () => {
           <NavLink to="/admin/list-bookings" className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
             <ListCollapseIcon className="w-6 h-6" />
           </NavLink>
-          <NavLink to="/admin/users" className={({ isActive }) => `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
-            <UsersIcon className="w-6 h-6" />
-          </NavLink>
+          <button onClick={() => setIsMoreOpen(!isMoreOpen)} className={`flex flex-col items-center p-2 transition-colors ${isMoreOpen ? 'text-primary' : 'text-gray-500 hover:text-white'}`}>
+            <MenuIcon className="w-6 h-6" />
+          </button>
         </div>
       </div>
     </>
