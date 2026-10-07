@@ -5,7 +5,7 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { FilmIcon, CalendarClockIcon, UsersIcon, CircleDollarSignIcon, Trash2Icon, EyeIcon, SearchIcon, ListIcon, CalendarIcon, ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { FilmIcon, CalendarClockIcon, UsersIcon, CircleDollarSignIcon, Trash2Icon, EyeIcon, SearchIcon, ListIcon, CalendarIcon, ArrowUpIcon, ArrowDownIcon, LayoutGridIcon, TableIcon } from "lucide-react";
 import AdminCalendar from "../../components/admin/AdminCalendar";
 
 const ListShows = () => {
@@ -17,7 +17,7 @@ const ListShows = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: 'showDateTime', direction: 'desc' });
-  const [viewMode, setViewMode] = useState('list'); // 'list' | 'calendar'
+  const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
 
   const getAllShows = async () => {
     try {
