@@ -76,7 +76,7 @@ const SeatLayout = ({ propId, propDate }) => {
                 key={seatId}
                 onClick={() => handleSeatClick(seatId)}
                 disabled={isOccupied}
-                className={`h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-[10px] md:text-xs font-bold transition-all duration-300 border 
+                className={`h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-[10px] md:text-xs font-medium transition-all duration-300 border 
                    ${
                      isSelected
                        ? "bg-primary text-white border-primary shadow-[0_0_15px_rgba(248,69,101,0.6)] scale-110"
@@ -188,7 +188,7 @@ const SeatLayout = ({ propId, propDate }) => {
               <div className="flex flex-col items-center">
                 <div className="flex items-center gap-2">
                   <ClockIcon className="w-4 h-4" />
-                  <p className="text-sm font-semibold tracking-wider">{isoTimeFormat(item.time)}</p>
+                  <p className="text-sm font-medium tracking-wider">{isoTimeFormat(item.time)}</p>
                 </div>
                 {item.totalSeats !== undefined && (
                   <p className={`text-[10px] mt-1 font-medium ${selectedTime?.time === item.time ? 'text-white/90' : 'text-gray-400'}`}>
@@ -217,7 +217,7 @@ const SeatLayout = ({ propId, propDate }) => {
             <div className="relative w-full max-w-[500px] mb-12 flex flex-col items-center">
               <div className="w-full h-2 bg-white/20 rounded-t-full shadow-[0_-15px_40px_rgba(255,255,255,0.2)] blur-[1px]" />
               <img src={assets.screenImage} alt="screen" className="w-full mt-2 drop-shadow-[0_20px_30px_rgba(255,255,255,0.15)]" />
-              <p className="mt-4 text-sm font-bold tracking-[0.2em] text-gray-400 drop-shadow-md">MÀN HÌNH</p>
+              <p className="mt-4 text-sm font-medium tracking-[0.2em] text-gray-400 drop-shadow-md">MÀN HÌNH</p>
             </div>
 
             <div className="flex flex-col gap-2 md:gap-3 mb-6 md:mb-8">
@@ -246,11 +246,11 @@ const SeatLayout = ({ propId, propDate }) => {
             </h2>
             <div className="flex justify-between items-center text-sm mb-3">
               <span className="text-gray-400 font-medium">Ghế đã chọn:</span>
-              <span className="font-bold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/5">{selectedSeats.join(", ")}</span>
+              <span className="font-medium text-white bg-white/10 px-3 py-1 rounded-lg border border-white/5">{selectedSeats.join(", ")}</span>
             </div>
             <div className="flex justify-between items-center text-sm mb-4">
               <span className="text-gray-400 font-medium">Số lượng:</span>
-              <span className="font-bold text-white">{selectedSeats.length} vé</span>
+              <span className="font-medium text-white">{selectedSeats.length} vé</span>
             </div>
             <div className="flex justify-between items-center text-lg md:text-xl font-black text-primary mt-4 pt-4 border-t border-white/10">
               <span>Tổng thanh toán:</span>
@@ -287,7 +287,7 @@ const SeatLayout = ({ propId, propDate }) => {
 
         <button
           onClick={bookTickets}
-          className="group flex items-center justify-center gap-2 w-full max-w-lg px-8 py-4 mt-8 mb-12 text-base font-bold tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
+          className="group flex items-center justify-center gap-2 w-full max-w-lg px-8 py-4 mt-8 mb-12 text-base font-medium tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
         >
           Xác nhận Thanh toán
           <ArrowRightIcon strokeWidth={3} className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

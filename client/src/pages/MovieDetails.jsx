@@ -137,7 +137,7 @@ const MovieDetails = () => {
         <div className="relative flex flex-col gap-4 md:gap-5 w-full">
           <BlurCircle top="-100px" left="-100px" />
 
-          <p className="text-primary font-bold tracking-[0.2em] text-xs md:text-sm uppercase bg-primary/10 w-max px-3 py-1 rounded-md border border-primary/20">
+          <p className="text-primary font-medium tracking-[0.2em] text-xs md:text-sm uppercase bg-primary/10 w-max px-3 py-1 rounded-md border border-primary/20">
             {show.movie.original_language === 'en' ? 'ENGLISH' : show.movie.original_language?.toUpperCase() || 'PHIM RẠP'}
           </p>
 
@@ -148,7 +148,7 @@ const MovieDetails = () => {
           <div className="flex flex-wrap items-center gap-4 text-gray-300 font-medium">
             <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
               <StarIcon className="w-4.5 h-4.5 text-primary fill-primary drop-shadow-[0_0_5px_rgba(248,69,101,0.5)]" />
-              <span className="text-white font-bold">{show.movie.vote_average?.toFixed(1) || "N/A"}</span>
+              <span className="text-white font-medium">{show.movie.vote_average?.toFixed(1) || "N/A"}</span>
               <span className="text-xs text-gray-500">/ 10</span>
             </div>
             
@@ -178,7 +178,7 @@ const MovieDetails = () => {
           <div className="flex flex-wrap items-center gap-4 mt-6">
             <button 
               onClick={handleWatchTrailer}
-              className="flex items-center gap-2 py-3.5 px-8 text-sm font-bold tracking-wide transition-all bg-white/5 backdrop-blur-md border border-white/10 rounded-full cursor-pointer hover:bg-white/10 hover:border-white/30 active:scale-95"
+              className="flex items-center gap-2 py-3.5 px-8 text-sm font-medium tracking-wide transition-all bg-white/5 backdrop-blur-md border border-white/10 rounded-full cursor-pointer hover:bg-white/10 hover:border-white/30 active:scale-95"
             >
               <PlayCircleIcon className="w-5 h-5" />
               Xem Trailer
@@ -186,7 +186,7 @@ const MovieDetails = () => {
 
             <a
               href="#dateSelect"
-              className="px-10 py-3.5 text-sm font-bold tracking-wide transition-all rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
+              className="px-10 py-3.5 text-sm font-medium tracking-wide transition-all rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
             >
               Mua Vé Ngay
             </a>
@@ -228,7 +228,7 @@ const MovieDetails = () => {
                     </div>
                   )}
                 </div>
-                <p className="mt-4 text-[13px] font-bold leading-tight group-hover:text-primary transition-colors">{cast.name}</p>
+                <p className="mt-4 text-[13px] font-medium leading-tight group-hover:text-primary transition-colors">{cast.name}</p>
               </div>
             ))}
           </div>
@@ -260,7 +260,7 @@ const MovieDetails = () => {
               navigate("/movies");
               scrollTo(0, 0);
             }}
-            className="px-10 py-3.5 text-sm font-bold tracking-wide transition-all rounded-full cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95"
+            className="px-10 py-3.5 text-sm font-medium tracking-wide transition-all rounded-full cursor-pointer bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95"
           >
             Xem tất cả phim
           </button>

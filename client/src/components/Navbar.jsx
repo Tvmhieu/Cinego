@@ -129,7 +129,7 @@ const Navbar = () => {
           {!user ? (
             <button
               onClick={openSignIn}
-              className="px-4 py-1.5 md:px-5 md:py-2 text-sm font-bold tracking-wide text-black transition-all duration-300 rounded-full cursor-pointer bg-white hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(248,69,101,0.4)] active:scale-95"
+              className="px-4 py-1.5 md:px-5 md:py-2 text-sm font-medium tracking-wide text-black transition-all duration-300 rounded-full cursor-pointer bg-white hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(248,69,101,0.4)] active:scale-95"
             >
               Đăng nhập
             </button>

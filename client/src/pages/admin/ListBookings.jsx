@@ -355,7 +355,7 @@ const ListBookings = () => {
             filteredBookings.map((item) => (
               <div key={item._id} className="flex flex-col bg-[#161616] rounded-xl border border-gray-800 p-3 shadow-sm">
                 <div className="flex justify-between items-center mb-2">
-                  <p className="font-mono font-bold text-primary text-sm">{item.bookingCode || item._id.slice(-6).toUpperCase()}</p>
+                  <p className="font-mono font-medium text-primary text-sm">{item.bookingCode || item._id.slice(-6).toUpperCase()}</p>
                   <div className="flex flex-col items-end gap-1">
                     {renderStatus(item)}
                     {item.isCancelled && item.cancellationReason && (
@@ -384,17 +384,17 @@ const ListBookings = () => {
                   </div>
                   <div className="flex justify-between items-start text-xs">
                     <span className="text-gray-500 font-medium">Ghế:</span>
-                    <span className="text-gray-200 font-bold text-right">{item.bookedSeats?.join(", ")}</span>
+                    <span className="text-gray-200 font-medium text-right">{item.bookedSeats?.join(", ")}</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-primary font-bold text-sm">{(item.amount || 0).toLocaleString("vi-VN")} {currency}</span>
+                  <span className="text-primary font-medium text-sm">{(item.amount || 0).toLocaleString("vi-VN")} {currency}</span>
                   <div className="flex gap-2">
                     {!item.isCancelled && (
                       <button
                         onClick={() => handleCancelBooking(item._id)}
-                        className="px-3 py-1.5 bg-red-600/10 text-red-500 border border-red-600/20 rounded-lg text-xs font-bold transition active:scale-95"
+                        className="px-3 py-1.5 bg-red-600/10 text-red-500 border border-red-600/20 rounded-lg text-xs font-medium transition active:scale-95"
                       >
                         Hủy Vé
                       </button>
@@ -402,7 +402,7 @@ const ListBookings = () => {
                     {!item.isPaid && !item.isCancelled && (
                       <button
                         onClick={() => handleConfirmPayment(item._id)}
-                        className="px-3 py-1.5 bg-green-600/20 text-green-500 border border-green-600/30 rounded-lg text-xs font-bold transition active:scale-95"
+                        className="px-3 py-1.5 bg-green-600/20 text-green-500 border border-green-600/30 rounded-lg text-xs font-medium transition active:scale-95"
                       >
                         Xác nhận TT
                       </button>
@@ -410,7 +410,7 @@ const ListBookings = () => {
                     {item.isPaid && !item.isCancelled && (
                       <button
                         onClick={() => handleCheckIn(item._id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border active:scale-95 ${item.isCheckedIn ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-blue-600/20 text-blue-500 border-blue-600/30'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition border active:scale-95 ${item.isCheckedIn ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-blue-600/20 text-blue-500 border-blue-600/30'}`}
                       >
                         {item.isCheckedIn ? "Hủy Soát Vé" : "Soát Vé"}
                       </button>
@@ -454,7 +454,7 @@ const ListBookings = () => {
                     className="hover:bg-white/[0.02] transition-colors"
                   >
                     <td className="px-6 py-4">
-                      <span className="font-mono font-bold text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20">
+                      <span className="font-mono font-medium text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20">
                         {item.bookingCode || item._id.slice(-6).toUpperCase()}
                       </span>
                     </td>
@@ -472,7 +472,7 @@ const ListBookings = () => {
                       <p className="text-xs text-gray-400">{dateFormat(item.show?.showDateTime)}</p>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <p className="font-bold text-gray-200 mb-0.5">{item.bookedSeats?.join(", ") || "N/A"}</p>
+                      <p className="font-medium text-gray-200 mb-0.5">{item.bookedSeats?.join(", ") || "N/A"}</p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium text-primary">
@@ -492,7 +492,7 @@ const ListBookings = () => {
                         {!item.isCancelled && (
                           <button
                             onClick={() => handleCancelBooking(item._id)}
-                            className="px-4 py-1.5 text-xs font-bold text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
+                            className="px-4 py-1.5 text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
                           >
                             Hủy Vé
                           </button>
@@ -500,7 +500,7 @@ const ListBookings = () => {
                         {!item.isPaid && !item.isCancelled && (
                           <button
                             onClick={() => handleConfirmPayment(item._id)}
-                            className="px-4 py-1.5 text-xs font-bold text-green-500 bg-green-500/10 border border-green-500/20 rounded-lg hover:bg-green-500 hover:text-white transition active:scale-95"
+                            className="px-4 py-1.5 text-xs font-medium text-green-500 bg-green-500/10 border border-green-500/20 rounded-lg hover:bg-green-500 hover:text-white transition active:scale-95"
                           >
                             Xác nhận TT
                           </button>
@@ -508,7 +508,7 @@ const ListBookings = () => {
                         {item.isPaid && !item.isCancelled && (
                           <button
                             onClick={() => handleCheckIn(item._id)}
-                            className={`px-4 py-1.5 text-xs font-bold rounded-lg border transition active:scale-95 ${item.isCheckedIn ? 'bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700 hover:text-white' : 'bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500 hover:text-white'}`}
+                            className={`px-4 py-1.5 text-xs font-medium rounded-lg border transition active:scale-95 ${item.isCheckedIn ? 'bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700 hover:text-white' : 'bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500 hover:text-white'}`}
                           >
                             {item.isCheckedIn ? "Hủy Soát Vé" : "Soát Vé"}
                           </button>

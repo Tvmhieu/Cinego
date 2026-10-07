@@ -113,7 +113,7 @@ const Dashboard = () => {
             >
               <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               <div className="relative z-10">
-                <h1 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">{card.title}</h1>
+                <h1 className="text-xs font-medium uppercase tracking-widest text-gray-400 mb-2">{card.title}</h1>
                 <p className="text-2xl md:text-3xl font-black text-white tracking-tight">{card.value}</p>
               </div>
               <div className={`relative z-10 p-4 rounded-2xl bg-white/5 border border-white/5 shadow-inner transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/20 group-hover:border-primary/30 ${card.iconColor}`}>
@@ -259,7 +259,7 @@ const Dashboard = () => {
                           <div key={price} className="text-sm">
                             <div className="flex justify-between text-blue-300">
                               <span>Giá {Number(price).toLocaleString("vi-VN")} {currency}:</span>
-                              <span className="font-semibold">{info.count} vé</span>
+                              <span className="font-medium">{info.count} vé</span>
                             </div>
                             <div className="text-xs text-blue-400/70 mt-1 max-h-20 overflow-y-auto pr-1 custom-scrollbar">
                               <span className="italic">Ghế: </span>
@@ -281,7 +281,7 @@ const Dashboard = () => {
             
             <button 
               onClick={() => setSelectedMoviePerf(null)}
-              className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
+              className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors"
             >
               Đóng
             </button>

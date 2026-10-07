@@ -248,7 +248,7 @@ const ScanTicket = () => {
                     <div className="grid grid-cols-2 gap-y-5 gap-x-4 text-sm">
                       <div>
                         <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Mã đặt vé</p>
-                        <p className="font-mono text-primary font-bold text-base">{bookingInfo.bookingCode || bookingInfo._id.slice(-6).toUpperCase()}</p>
+                        <p className="font-mono text-primary font-medium text-base">{bookingInfo.bookingCode || bookingInfo._id.slice(-6).toUpperCase()}</p>
                       </div>
                       <div>
                         <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Ghế ngồi</p>
@@ -256,7 +256,7 @@ const ScanTicket = () => {
                       </div>
                       <div className="col-span-2 border-t border-gray-800/50 pt-4">
                         <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Khách hàng</p>
-                        <p className="font-semibold text-gray-300">{bookingInfo.customerName || bookingInfo.user?.name}</p>
+                        <p className="font-medium text-gray-300">{bookingInfo.customerName || bookingInfo.user?.name}</p>
                       </div>
                     </div>
                   </div>
@@ -267,7 +267,7 @@ const ScanTicket = () => {
                     <button 
                       onClick={handleCheckIn}
                       disabled={isProcessing}
-                      className="w-full py-4 bg-green-600 hover:bg-green-700 active:scale-95 text-white font-bold rounded-2xl transition-all shadow-lg shadow-green-600/20 uppercase tracking-widest flex items-center justify-center disabled:opacity-50"
+                      className="w-full py-4 bg-green-600 hover:bg-green-700 active:scale-95 text-white font-medium rounded-2xl transition-all shadow-lg shadow-green-600/20 uppercase tracking-widest flex items-center justify-center disabled:opacity-50"
                     >
                       {isProcessing ? "Đang xử lý..." : "Duyệt Vào Rạp"}
                     </button>
@@ -275,7 +275,7 @@ const ScanTicket = () => {
                   <button 
                     onClick={resetScanner}
                     disabled={isProcessing}
-                    className={`w-full py-4 active:scale-95 font-bold rounded-2xl transition-all uppercase tracking-widest ${scanStatus === "VALID" ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-primary hover:bg-primary-dull text-white shadow-lg shadow-primary/20"}`}
+                    className={`w-full py-4 active:scale-95 font-medium rounded-2xl transition-all uppercase tracking-widest ${scanStatus === "VALID" ? "bg-gray-800 text-gray-300 hover:bg-gray-700" : "bg-primary hover:bg-primary-dull text-white shadow-lg shadow-primary/20"}`}
                   >
                     Quét Vé Tiếp Theo
                   </button>

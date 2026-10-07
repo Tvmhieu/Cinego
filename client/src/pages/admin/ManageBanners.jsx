@@ -83,25 +83,25 @@ const ManageBanners = () => {
           <table className="w-full text-sm text-left text-gray-400 min-w-[800px]">
             <thead className="text-xs text-gray-300 uppercase bg-[#222] border-b border-gray-700">
               <tr>
-                <th scope="col" className="px-6 py-4 font-semibold text-center w-16">
+                <th scope="col" className="px-6 py-4 font-medium text-center w-16">
                   STT
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold w-72">
+                <th scope="col" className="px-6 py-4 font-medium w-72">
                   Phim
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold">
+                <th scope="col" className="px-6 py-4 font-medium">
                   Ngày Phát Hành
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold text-center">
+                <th scope="col" className="px-6 py-4 font-medium text-center">
                   Số suất chiếu
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold">
+                <th scope="col" className="px-6 py-4 font-medium">
                   Ngày chiếu
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold text-center w-32">
+                <th scope="col" className="px-6 py-4 font-medium text-center w-32">
                   Trạng Thái Banner
                 </th>
-                <th scope="col" className="px-6 py-4 font-semibold text-center w-32">
+                <th scope="col" className="px-6 py-4 font-medium text-center w-32">
                   Hành Động
                 </th>
               </tr>
@@ -123,7 +123,7 @@ const ManageBanners = () => {
                           alt={movie.title}
                           className="w-12 h-16 object-cover rounded-md shadow-md"
                         />
-                        <span className="font-semibold text-gray-200 line-clamp-2">
+                        <span className="font-medium text-gray-200 line-clamp-2">
                           {movie.title}
                         </span>
                       </div>
@@ -132,7 +132,7 @@ const ManageBanners = () => {
                       {movie.release_date}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="font-bold text-primary">{movie.showCount || 0}</span>
+                      <span className="font-medium text-primary">{movie.showCount || 0}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs text-gray-400 max-w-[150px] inline-block">{movie.showDates || "Không có suất chiếu"}</span>
@@ -151,7 +151,7 @@ const ManageBanners = () => {
                     <td className="px-6 py-4 text-center">
                       <button
                         onClick={() => handleToggleBanner(movie._id, movie.isBanner)}
-                        className={`px-4 py-2 text-xs font-bold rounded-lg transition-colors ${
+                        className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors ${
                           movie.isBanner 
                             ? "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
                             : "bg-primary/10 text-primary hover:bg-primary hover:text-white"

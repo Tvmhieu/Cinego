@@ -127,7 +127,7 @@ const AdminCalendar = ({ shows }) => {
               >
                 <div className="flex justify-between items-start">
                   <span className={`text-sm w-7 h-7 flex items-center justify-center rounded-full ${
-                    isToday ? 'bg-white text-black font-bold' : isSelected ? 'text-white font-bold' : 'text-gray-400'
+                    isToday ? 'bg-white text-black font-medium ' : isSelected ? 'text-white font-medium ' : 'text-gray-400'
                   }`}>
                     {day}
                   </span>

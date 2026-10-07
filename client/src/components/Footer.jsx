@@ -27,7 +27,7 @@ const Footer = () => {
         </div>
         <div className="flex-1 flex items-start md:justify-end gap-20 md:gap-40">
           <div>
-            <h2 className="font-semibold mb-5">Liên kết nhanh</h2>
+            <h2 className="font-medium mb-5">Liên kết nhanh</h2>
 
             <ul className="text-sm space-y-2">
               <li>
@@ -48,7 +48,7 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h2 className="font-semibold mb-5">Liên hệ với chúng tôi</h2>
+            <h2 className="font-medium mb-5">Liên hệ với chúng tôi</h2>
             <div className="text-sm space-y-2">
               <p>
                 Hỗ trợ:{" "}

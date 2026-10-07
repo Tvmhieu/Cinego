@@ -95,7 +95,7 @@ const TrailersSection = () => {
               className={`absolute w-8 h-8 md:w-10 md:h-10 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 drop-shadow-lg transition-all duration-300 ${currentTrailer?._id === movie._id ? 'text-primary scale-110' : 'text-white/70'}`}
             />
             <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/40 to-transparent pt-6 pb-2 px-2">
-              <p className="text-[10px] md:text-xs font-bold text-white truncate text-center drop-shadow-md">
+              <p className="text-[10px] md:text-xs font-medium text-white truncate text-center drop-shadow-md">
                 {movie.title}
               </p>
             </div>

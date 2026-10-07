@@ -41,7 +41,7 @@ const PaymentResult = () => {
 
         {code && code !== "invalid" && code !== "error" && (
           <p className="mb-6 text-sm text-gray-500">
-            Mã đơn hàng: <span className="font-mono font-bold text-primary">{code}</span>
+            Mã đơn hàng: <span className="font-mono font-medium text-primary">{code}</span>
           </p>
         )}
 

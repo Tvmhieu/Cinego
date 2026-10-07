@@ -222,8 +222,8 @@ const ListShows = () => {
                 >
                   <div className="flex justify-between items-start mb-3 border-b border-gray-800/60 pb-3">
                     <div className="flex-1 pr-2">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Mã: <span className="font-mono text-gray-300 font-bold">{show.showCode || "N/A"}</span></p>
-                      <p className="font-bold text-white text-base leading-tight">{show.movie?.title}</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Mã: <span className="font-mono text-gray-300 font-medium">{show.showCode || "N/A"}</span></p>
+                      <p className="font-medium text-white text-base leading-tight">{show.movie?.title}</p>
                     </div>
                     <span className={`flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full border ${status.color}`}>
                       {status.text}
@@ -238,31 +238,31 @@ const ListShows = () => {
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Giá Vé</p>
-                        <p className="text-sm font-bold text-white">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</p>
+                        <p className="text-sm font-medium text-white">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</p>
                       </div>
                     </div>
                     
                     <div>
                       <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Vé Đã Bán</p>
-                      <p className="text-base font-bold text-white flex items-center gap-1.5"><UsersIcon className="w-4 h-4 text-gray-400" /> {show.paidTickets || 0}</p>
+                      <p className="text-base font-medium text-white flex items-center gap-1.5"><UsersIcon className="w-4 h-4 text-gray-400" /> {show.paidTickets || 0}</p>
                     </div>
                     
                     <div>
                       <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Doanh Thu</p>
-                      <p className="text-base font-bold text-green-400 flex items-center gap-1.5"><CircleDollarSignIcon className="w-4 h-4 text-green-500" /> {(show.revenue || 0).toLocaleString("vi-VN")} {currency}</p>
+                      <p className="text-base font-medium text-green-400 flex items-center gap-1.5"><CircleDollarSignIcon className="w-4 h-4 text-green-500" /> {(show.revenue || 0).toLocaleString("vi-VN")} {currency}</p>
                     </div>
                   </div>
 
                   <div className="flex gap-2 mt-2 pt-3 border-t border-gray-800/60">
                     <button
                       onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
-                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-[#222] text-white hover:bg-[#333] rounded-xl text-sm font-bold transition"
+                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-[#222] text-white hover:bg-[#333] rounded-xl text-sm font-medium transition"
                     >
                       <EyeIcon className="w-4 h-4" /> Xem Vé
                     </button>
                     <button
                       onClick={(e) => handleCancelShow(e, show._id)}
-                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-bold transition"
+                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-medium transition"
                     >
                       <Trash2Icon className="w-4 h-4" /> Xóa
                     </button>
@@ -309,40 +309,40 @@ const ListShows = () => {
                       className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     >
                       <td className="px-6 py-4">
-                        <span className="font-mono text-xs font-bold text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
+                        <span className="font-mono text-xs font-medium text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
                           {show.showCode || "N/A"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-bold text-white group-hover:text-primary transition-colors max-w-[250px] truncate" title={show.movie?.title}>{show.movie?.title}</p>
+                        <p className="font-medium text-white group-hover:text-primary transition-colors max-w-[250px] truncate" title={show.movie?.title}>{show.movie?.title}</p>
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-medium text-gray-300">{dateFormat(show.showDateTime)}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-bold text-gray-300">
+                        <p className="font-medium text-gray-300">
                           {(show.showPrice || 0).toLocaleString("vi-VN")} {currency}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="bg-gray-800/50 px-3 py-1 rounded font-bold text-gray-300">
+                        <span className="bg-gray-800/50 px-3 py-1 rounded font-medium text-gray-300">
                           {show.paidTickets || 0}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-bold text-green-400">
+                        <p className="font-medium text-green-400">
                           {(show.revenue || 0).toLocaleString("vi-VN")} {currency}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 text-xs font-bold rounded border ${status.color}`}>
+                        <span className={`px-3 py-1 text-xs font-medium rounded border ${status.color}`}>
                           {status.text}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={(e) => handleCancelShow(e, show._id)}
-                          className="px-4 py-2 text-xs font-bold text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
+                          className="px-4 py-2 text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
                         >
                           Xóa
                         </button>

@@ -107,7 +107,7 @@ const HeroSection = () => {
           </p>
           <button
             onClick={(e) => { e.stopPropagation(); navigate("/movies"); }}
-            className="hidden md:flex group items-center gap-2 px-8 py-3.5 mt-8 text-sm md:text-base font-bold tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-white text-black hover:bg-primary hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(248,69,101,0.4)] active:scale-95"
+            className="hidden md:flex group items-center gap-2 px-8 py-3.5 mt-8 text-sm md:text-base font-medium tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-white text-black hover:bg-primary hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(248,69,101,0.4)] active:scale-95"
           >
             Khám phá Phim
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -162,7 +162,7 @@ const HeroSection = () => {
         
         <button
           onClick={(e) => { e.stopPropagation(); navigate(`/movies/${featuredMovie._id}`, { state: { scrollToDate: true } }); }}
-          className="hidden md:flex group items-center gap-2 px-8 py-4 mt-8 text-sm md:text-base font-bold tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
+          className="hidden md:flex group items-center gap-2 px-8 py-4 mt-8 text-sm md:text-base font-medium tracking-wide transition-all duration-300 rounded-full cursor-pointer bg-primary text-white hover:bg-white hover:text-black shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95"
         >
           Đặt vé ngay
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

@@ -134,7 +134,7 @@ const ListUsers = () => {
             {filteredUsers.map((user) => (
               <tr key={user._id} className="hover:bg-white/[0.02] transition">
                 <td className="px-6 py-4">
-                  <span className="font-mono text-xs font-bold text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
+                  <span className="font-mono text-xs font-medium text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
                     {user._id.replace("user_", "")}
                   </span>
                 </td>
@@ -150,7 +150,7 @@ const ListUsers = () => {
                 </td>
                 <td className="px-6 py-4 text-gray-300">{user.email}</td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${
                     user.role === "admin" 
                       ? "bg-primary/10 text-primary border-primary/20" 
                       : "bg-gray-800 text-gray-400 border-gray-700"
@@ -162,7 +162,7 @@ const ListUsers = () => {
                 <td className="px-6 py-4 text-right">
                   <button
                     onClick={() => handleRoleChange(user._id, user.role)}
-                    className={`px-4 py-2 text-xs font-bold border rounded-lg transition active:scale-95 ${
+                    className={`px-4 py-2 text-xs font-medium border rounded-lg transition active:scale-95 ${
                       user.role === "admin" 
                         ? "text-red-500 border-red-500/20 bg-red-500/10 hover:bg-red-500 hover:text-white" 
                         : "text-primary border-primary/20 bg-primary/10 hover:bg-primary hover:text-white"

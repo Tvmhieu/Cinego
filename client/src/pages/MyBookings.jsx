@@ -79,7 +79,7 @@ const MyBookings = () => {
         <div className="flex gap-6 border-b border-white/10 pb-1">
           <button
             onClick={() => setActiveTab("valid")}
-            className={`pb-3 px-2 text-sm md:text-base font-bold transition-all relative ${
+            className={`pb-3 px-2 text-sm md:text-base font-medium transition-all relative ${
               activeTab === "valid" ? "text-primary" : "text-gray-500 hover:text-white"
             }`}
           >
@@ -90,7 +90,7 @@ const MyBookings = () => {
           </button>
           <button
             onClick={() => setActiveTab("cancelled")}
-            className={`pb-3 px-2 text-sm md:text-base font-bold transition-all relative ${
+            className={`pb-3 px-2 text-sm md:text-base font-medium transition-all relative ${
               activeTab === "cancelled" ? "text-primary" : "text-gray-500 hover:text-white"
             }`}
           >
@@ -127,20 +127,20 @@ const MyBookings = () => {
                 </p>
                 <div className="flex items-center gap-2 mt-3">
                   <span className="text-sm text-gray-400 font-medium">Ghế:</span>
-                  <span className="bg-white/10 px-3 py-1 rounded-lg border border-white/5 font-bold text-primary tracking-widest">{item.bookedSeats.join(", ")}</span>
+                  <span className="bg-white/10 px-3 py-1 rounded-lg border border-white/5 font-medium text-primary tracking-widest">{item.bookedSeats.join(", ")}</span>
                 </div>
               </div>
               
               <div className="flex flex-col mt-6">
                 <div className="flex items-center gap-4">
-                  <span className={`text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
+                  <span className={`text-[10px] md:text-xs font-medium px-3 py-1.5 rounded-md uppercase tracking-wider ${item.isCancelled ? 'bg-red-500/10 text-red-500 border border-red-500/20' : item.isPaid ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
                     {item.isCancelled ? 'Đã hủy' : item.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}
                   </span>
                   <span className="text-lg md:text-xl font-black text-white">{item.amount.toLocaleString("vi-VN")} {currency}</span>
                 </div>
                 {item.isCancelled && item.cancellationReason && (
                   <p className="text-sm text-red-400/90 mt-3 font-medium bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-                    <span className="font-bold text-red-500">Lý do hủy:</span> {item.cancellationReason}
+                    <span className="font-medium text-red-500">Lý do hủy:</span> {item.cancellationReason}
                   </p>
                 )}
               </div>
@@ -150,7 +150,7 @@ const MyBookings = () => {
               {item.isPaid && !item.isCancelled ? (
                 <button
                   onClick={() => setSelectedTicket(item)}
-                  className="px-6 py-4 bg-primary hover:bg-white hover:text-black text-white text-sm font-bold tracking-wide rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 w-full flex justify-center items-center gap-2"
+                  className="px-6 py-4 bg-primary hover:bg-white hover:text-black text-white text-sm font-medium tracking-wide rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 w-full flex justify-center items-center gap-2"
                 >
                   <TicketPlus className="w-5 h-5" /> Mở Vé / Mã QR
                 </button>
@@ -158,13 +158,13 @@ const MyBookings = () => {
                 <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full">
                   <Link
                     to={`/payment/${item._id}`}
-                    className="px-6 py-3.5 bg-primary hover:bg-white hover:text-black text-white text-sm font-bold tracking-wide text-center rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 flex-1"
+                    className="px-6 py-3.5 bg-primary hover:bg-white hover:text-black text-white text-sm font-medium tracking-wide text-center rounded-2xl transition-all duration-300 shadow-[0_0_20px_rgba(248,69,101,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] active:scale-95 flex-1"
                   >
                     Thanh toán
                   </Link>
                   <button
                     onClick={() => handleCancel(item._id)}
-                    className="px-6 py-3.5 bg-white/5 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 text-sm font-bold tracking-wide rounded-2xl transition-all duration-300 flex-1 active:scale-95"
+                    className="px-6 py-3.5 bg-white/5 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 text-sm font-medium tracking-wide rounded-2xl transition-all duration-300 flex-1 active:scale-95"
                   >
                     Hủy vé
                   </button>
@@ -205,7 +205,7 @@ const MyBookings = () => {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent"></div>
-                <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-md text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg">
+                <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-md text-white text-[9px] font-medium px-2.5 py-1 rounded-full uppercase tracking-widest shadow-lg">
                   CineGo
                 </div>
               </div>
@@ -223,7 +223,7 @@ const MyBookings = () => {
                 <div className="grid grid-cols-2 gap-y-3 gap-x-2">
                   <div>
                     <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Giờ chiếu</p>
-                    <p className="text-xs sm:text-sm font-bold text-gray-200">{dateFormat(selectedTicket.show.showDateTime)}</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-200">{dateFormat(selectedTicket.show.showDateTime)}</p>
                   </div>
                   <div>
                     <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Ghế ngồi</p>
@@ -231,11 +231,11 @@ const MyBookings = () => {
                   </div>
                   <div>
                     <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Khách hàng</p>
-                    <p className="text-xs sm:text-sm font-bold text-gray-300 truncate">{selectedTicket.customerName || user?.name || "Ẩn danh"}</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-300 truncate">{selectedTicket.customerName || user?.name || "Ẩn danh"}</p>
                   </div>
                   <div>
                     <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Tổng tiền</p>
-                    <p className="text-xs sm:text-sm font-bold text-gray-300">{selectedTicket.amount.toLocaleString("vi-VN")} {currency}</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-300">{selectedTicket.amount.toLocaleString("vi-VN")} {currency}</p>
                   </div>
                 </div>
               </div>
@@ -246,7 +246,7 @@ const MyBookings = () => {
                 <div className="absolute -top-4 -left-4 w-8 h-8 bg-black/80 rounded-full border-b border-r border-gray-700/50"></div>
                 <div className="absolute -top-4 -right-4 w-8 h-8 bg-black/80 rounded-full border-b border-l border-gray-700/50"></div>
                 
-                <h3 className="text-black font-bold text-center mb-3 uppercase tracking-widest text-xs sm:text-sm">Quét mã để vào rạp</h3>
+                <h3 className="text-black font-medium text-center mb-3 uppercase tracking-widest text-xs sm:text-sm">Quét mã để vào rạp</h3>
                 <div className="w-48 aspect-square relative bg-white">
                   <img 
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${selectedTicket.bookingCode || selectedTicket._id}`} 

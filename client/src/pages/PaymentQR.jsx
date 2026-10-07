@@ -120,14 +120,14 @@ const PaymentQR = () => {
         
         {isExpired ? (
           <div className="text-center p-4 mb-6 bg-red-500/10 border border-red-500/20 rounded-xl backdrop-blur-sm">
-            <h2 className="text-red-500 font-bold mb-2">Hết thời gian thanh toán!</h2>
+            <h2 className="text-red-500 font-medium mb-2">Hết thời gian thanh toán!</h2>
             <p className="text-red-400/80 text-sm">Vé của bạn đã bị hủy do quá thời gian 5 phút. Vui lòng quay lại để đặt lại vé.</p>
           </div>
         ) : (
           <>
             <p className="text-center text-gray-400 mb-4 text-sm md:text-base">Quét mã QR bằng ứng dụng ngân hàng để thanh toán.</p>
             <div className="text-center mb-6">
-              <span className="inline-block px-5 py-2 bg-red-500/10 border border-red-500/20 text-primary font-bold rounded-full animate-pulse shadow-[0_0_15px_rgba(248,69,101,0.2)]">
+              <span className="inline-block px-5 py-2 bg-red-500/10 border border-red-500/20 text-primary font-medium rounded-full animate-pulse shadow-[0_0_15px_rgba(248,69,101,0.2)]">
                 Thời gian còn lại: {formatTime(timeLeft)}
               </span>
             </div>
@@ -145,7 +145,7 @@ const PaymentQR = () => {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-400 text-sm font-medium">Nội dung CK:</span>
-            <span className="font-mono font-bold text-white bg-white/10 px-3 py-1 rounded-lg tracking-wider border border-white/5">{content}</span>
+            <span className="font-mono font-medium text-white bg-white/10 px-3 py-1 rounded-lg tracking-wider border border-white/5">{content}</span>
           </div>
           <div className="text-[11px] md:text-xs text-yellow-500/90 mt-4 text-center leading-relaxed">
             ⚠️ Bắt buộc nhập chính xác nội dung chuyển khoản để hệ thống tự động xác nhận.
@@ -155,7 +155,7 @@ const PaymentQR = () => {
         <button
           onClick={handleManualCheck}
           disabled={statusLoading || isExpired}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 font-bold tracking-wide text-white transition-all duration-300 rounded-full bg-primary hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:text-white disabled:hover:shadow-none"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 font-medium tracking-wide text-white transition-all duration-300 rounded-full bg-primary hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:text-white disabled:hover:shadow-none"
         >
           {statusLoading ? (
             <RefreshCcw className="w-5 h-5 animate-spin" />

@@ -33,7 +33,7 @@ const MovieCard = ({ movie }) => {
         />
       </div>
 
-      <p className="mt-3 font-bold tracking-wide truncate text-white group-hover:text-primary transition-colors duration-300">
+      <p className="mt-3 font-medium tracking-wide truncate text-white group-hover:text-primary transition-colors duration-300">
         {movie.title || 'Untitled Movie'}
       </p>
 
@@ -59,7 +59,7 @@ const MovieCard = ({ movie }) => {
               navigate(`/movies/${movie._id}`, { state: { scrollToDate: true } });
             }
           }}
-          className="px-5 py-2 text-xs font-semibold tracking-wide text-white transition-all duration-300 rounded-full cursor-pointer bg-primary hover:bg-white hover:text-black hover:shadow-[0_0_15px_rgba(255,255,255,0.4)] active:scale-95"
+          className="px-5 py-2 text-xs font-medium tracking-wide text-white transition-all duration-300 rounded-full cursor-pointer bg-primary hover:bg-white hover:text-black hover:shadow-[0_0_15px_rgba(255,255,255,0.4)] active:scale-95"
         >
           Mua Vé
         </button>

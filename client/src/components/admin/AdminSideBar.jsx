@@ -49,7 +49,7 @@ const AdminSideBar = () => {
             alt="sidebar"
           />
         </div>
-        <p className="mt-3 text-base font-bold tracking-wide">
+        <p className="mt-3 text-base font-medium tracking-wide">
           {user.firstName} {user.lastName}
         </p>
         <p className="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-md mt-1 border border-primary/20 uppercase tracking-widest">Administrator</p>
@@ -90,7 +90,7 @@ const AdminSideBar = () => {
               {({ isActive }) => (
                 <>
                   <ScanLineIcon className={`w-5 h-5 relative z-10 ${isActive ? 'text-white' : 'text-primary group-hover:text-primary'}`} />
-                  <p className="relative z-10 font-bold tracking-wide">Quét vé ngay</p>
+                  <p className="relative z-10 font-medium tracking-wide">Quét vé ngay</p>
                 </>
               )}
             </NavLink>
