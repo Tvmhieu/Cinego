@@ -386,7 +386,8 @@ const ListBookings = () => {
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('bookingCode')}>Mã vé{renderSortIndicator('bookingCode')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('customerName')}>Khách hàng{renderSortIndicator('customerName')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('movie.title')}>Phim & Suất chiếu{renderSortIndicator('movie.title')}</th>
-                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('amount')}>Ghế & Giá{renderSortIndicator('amount')}</th>
+                <th className="px-6 py-4 font-medium text-center">Ghế</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('amount')}>Giá{renderSortIndicator('amount')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('status')}>Trạng thái{renderSortIndicator('status')}</th>
                 <th className="px-6 py-4 font-medium text-right">Thao tác</th>
               </tr>
@@ -395,7 +396,7 @@ const ListBookings = () => {
             <tbody className="divide-y divide-gray-800/60">
               {filteredBookings.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
                     Chưa có vé nào được đặt
                   </td>
                 </tr>
@@ -423,9 +424,11 @@ const ListBookings = () => {
                       </p>
                       <p className="text-xs text-gray-400">{dateFormat(item.show?.showDateTime)}</p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-center">
                       <p className="font-bold text-gray-200 mb-0.5">{item.bookedSeats?.join(", ") || "N/A"}</p>
-                      <p className="text-xs font-medium text-primary">
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-primary">
                         {(item.amount || 0).toLocaleString("vi-VN")} {currency}
                       </p>
                     </td>
