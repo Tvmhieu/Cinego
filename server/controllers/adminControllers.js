@@ -67,16 +67,15 @@ export const getDashboardData = async (req, res) => {
       showDateTime: { $gte: new Date() },
     }).populate("movie");
 
-    const totalUser = await User.countDocuments();
+    // Calculate unique movies having active shows
+    const activeMovieIds = [...new Set(activeShows.map(show => show.movie._id.toString()))];
+    const activeMoviesCount = activeMovieIds.length;
 
     // Calculate movie performance
     const movieStats = {};
 
     bookings.forEach((booking) => {
-      const show = activeShows.find((s) => s._id.toString() === booking.show.toString()) || 
-                   // also count from all shows if we want total performance, but let's fetch all shows for performance
-                   null;
-      // Wait, let's fetch all shows to map bookings to movies accurately
+      const show = activeShows.find((s) => s._id.toString() === booking.show.toString()) || null;
     });
 
     // Actually let's fetch all shows and populate movies to calculate overall performance
@@ -127,7 +126,7 @@ export const getDashboardData = async (req, res) => {
       totalBookings: bookings.length,
       totalRevenue: bookings.reduce((acc, booking) => acc + booking.amount, 0),
       activeShows,
-      totalUser,
+      activeMoviesCount,
       moviePerformance,
     };
 

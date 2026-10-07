@@ -2,8 +2,7 @@ import {
   ChartLineIcon,
   CircleDollarSignIcon,
   PlayCircleIcon,
-  StarIcon,
-  UserIcon,
+  FilmIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
@@ -31,7 +30,7 @@ const Dashboard = () => {
     totalBookings: 0,
     totalRevenue: 0,
     activeShows: [],
-    totalUser: 0,
+    activeMoviesCount: 0,
     moviePerformance: [],
   });
 
@@ -57,16 +56,16 @@ const Dashboard = () => {
     },
     {
       title: "Suất chiếu đang mở",
-      value: dashboardData.activeShows.length || "0",
+      value: dashboardData.activeShows?.length || "0",
       icon: PlayCircleIcon,
       color: "from-purple-500/20 to-purple-500/5",
       borderColor: "border-purple-500/30",
       iconColor: "text-purple-500",
     },
     {
-      title: "Tổng người dùng",
-      value: dashboardData.totalUser || "0",
-      icon: UserIcon,
+      title: "Số phim đang chiếu",
+      value: dashboardData.activeMoviesCount || "0",
+      icon: FilmIcon,
       color: "from-primary/20 to-primary/5",
       borderColor: "border-primary/30",
       iconColor: "text-primary",
