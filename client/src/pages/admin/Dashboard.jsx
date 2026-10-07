@@ -204,6 +204,16 @@ const Dashboard = () => {
                   onClick={(data) => setSelectedMoviePerf(data)}
                   cursor="pointer"
                 />
+                <Bar 
+                  yAxisId="right" 
+                  dataKey="showCount" 
+                  name="Số suất chiếu" 
+                  fill="#10b981" 
+                  radius={[4, 4, 0, 0]} 
+                  barSize={40}
+                  onClick={(data) => setSelectedMoviePerf(data)}
+                  cursor="pointer"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -218,7 +228,7 @@ const Dashboard = () => {
       {/* Selected Movie Details Modal */}
       {selectedMoviePerf && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedMoviePerf(null)}>
-          <div className="relative w-full max-w-md bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-2xl border border-gray-700 p-6 sm:p-8 animate-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#1a1a1a] rounded-2xl shadow-2xl border border-gray-700 p-6 sm:p-8 animate-in zoom-in-95 duration-300 scrollbar-hide" onClick={(e) => e.stopPropagation()}>
             <button 
               onClick={() => setSelectedMoviePerf(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800/50 hover:bg-gray-700 p-2 rounded-full transition"
@@ -236,14 +246,40 @@ const Dashboard = () => {
               <p className="text-gray-400 text-sm">Chi tiết hiệu suất phim</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 mb-6">
               <div className="flex items-center justify-between p-4 bg-gray-800/40 rounded-xl border border-gray-700/50">
                 <span className="text-gray-400 font-medium">Số suất chiếu</span>
                 <span className="text-lg font-bold text-white">{selectedMoviePerf.showCount || selectedMoviePerf.payload?.showCount || 0}</span>
               </div>
-              <div className="flex items-center justify-between p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
-                <span className="text-blue-400 font-medium">Số vé đã bán</span>
-                <span className="text-lg font-bold text-blue-500">{selectedMoviePerf.ticketsSold || selectedMoviePerf.payload?.ticketsSold || 0} vé</span>
+              <div className="flex flex-col gap-2 p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-400 font-medium">Tổng số vé đã bán</span>
+                  <span className="text-lg font-bold text-blue-500">{selectedMoviePerf.ticketsSold || selectedMoviePerf.payload?.ticketsSold || 0} vé</span>
+                </div>
+                
+                {/* Breakdown by Price */}
+                {(() => {
+                  const details = selectedMoviePerf.ticketDetails || selectedMoviePerf.payload?.ticketDetails;
+                  if (details && Object.keys(details).length > 0) {
+                    return (
+                      <div className="mt-2 space-y-2 border-t border-blue-500/20 pt-2">
+                        {Object.entries(details).map(([price, info]) => (
+                          <div key={price} className="text-sm">
+                            <div className="flex justify-between text-blue-300">
+                              <span>Giá {Number(price).toLocaleString("vi-VN")} {currency}:</span>
+                              <span className="font-semibold">{info.count} vé</span>
+                            </div>
+                            <div className="text-xs text-blue-400/70 mt-1 max-h-20 overflow-y-auto pr-1 custom-scrollbar">
+                              <span className="italic">Ghế: </span>
+                              {info.seats.join(", ")}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
               <div className="flex items-center justify-between p-4 bg-red-500/10 rounded-xl border border-red-500/20">
                 <span className="text-red-400 font-medium">Tổng doanh thu</span>
@@ -253,7 +289,7 @@ const Dashboard = () => {
             
             <button 
               onClick={() => setSelectedMoviePerf(null)}
-              className="mt-6 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
+              className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
             >
               Đóng
             </button>

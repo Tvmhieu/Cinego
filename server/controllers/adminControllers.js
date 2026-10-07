@@ -99,11 +99,23 @@ export const getDashboardData = async (req, res) => {
             title: movieTitle, 
             ticketsSold: 0, 
             revenue: 0, 
-            showCount: showCountMap[movieTitle] || 0 
+            showCount: showCountMap[movieTitle] || 0,
+            ticketDetails: {} // To store price and seats info
           };
         }
         movieStats[movieTitle].ticketsSold += booking.bookedSeats?.length || 0;
         movieStats[movieTitle].revenue += booking.amount || 0;
+        
+        // Group by ticket price
+        const pricePerSeat = booking.amount / (booking.bookedSeats?.length || 1);
+        if (!movieStats[movieTitle].ticketDetails[pricePerSeat]) {
+          movieStats[movieTitle].ticketDetails[pricePerSeat] = {
+            count: 0,
+            seats: []
+          };
+        }
+        movieStats[movieTitle].ticketDetails[pricePerSeat].count += booking.bookedSeats?.length || 0;
+        movieStats[movieTitle].ticketDetails[pricePerSeat].seats.push(...(booking.bookedSeats || []));
       }
     });
 
