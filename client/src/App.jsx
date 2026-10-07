@@ -17,6 +17,7 @@ import ListShows from "./pages/admin/ListShows";
 import ListBookings from "./pages/admin/ListBookings";
 import ListUsers from "./pages/admin/ListUsers";
 import ScanTicket from "./pages/admin/ScanTicket";
+import ManageBanners from "./pages/admin/ManageBanners";
 import { useAppContext } from "./context/AppContext";
 import { SignIn } from "@clerk/clerk-react";
 import Loading from "./components/Loading";
@@ -58,6 +59,7 @@ const App = () => {
           <Route path="list-bookings" element={<ListBookings />} />
           <Route path="scan" element={<ScanTicket />} />
           <Route path="users" element={<ListUsers />} />
+          <Route path="banners" element={<ManageBanners />} />
         </Route>
       </Routes>
       {!isAdminRoute && <Footer />}

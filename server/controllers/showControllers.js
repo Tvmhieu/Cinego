@@ -264,3 +264,13 @@ export const getMovieTrailer = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+export const getBanners = async (req, res) => {
+  try {
+    const banners = await Movie.find({ isBanner: true });
+    res.json({ success: true, banners });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};

@@ -1,8 +1,38 @@
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import User from "../models/User.js";
+import Movie from "../models/Movie.js";
 import { clerkClient } from "@clerk/express";
 import mongoose from "mongoose";
+
+export const toggleMovieBanner = async (req, res) => {
+  try {
+    const { movieId, isBanner } = req.body;
+    const movie = await Movie.findById(movieId);
+    
+    if (!movie) {
+      return res.json({ success: false, message: "Movie not found" });
+    }
+    
+    movie.isBanner = isBanner;
+    await movie.save();
+    
+    res.json({ success: true, message: `Banner status updated for ${movie.title}` });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const getAllMovies = async (req, res) => {
+  try {
+    const movies = await Movie.find({});
+    res.json({ success: true, movies });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 // API to check if user is admin
 export const isAdmin = async (req, res) => {

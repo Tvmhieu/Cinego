@@ -23,6 +23,7 @@ const AdminSideBar = () => {
     { name: "DS Suất chiếu", path: "/admin/list-shows", icon: ListIcon },
     { name: "DS Vé đã đặt", path: "/admin/list-bookings", icon: ListCollapseIcon },
     { name: "Tài khoản", path: "/admin/users", icon: UsersIcon },
+    { name: "Quản lý Banner", path: "/admin/banners", icon: ListIcon },
   ];
 
   return (

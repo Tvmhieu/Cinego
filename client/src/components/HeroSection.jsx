@@ -13,10 +13,15 @@ const HeroSection = () => {
   useEffect(() => {
     const fetchTopMovie = async () => {
       try {
-        const { data } = await axios.get("/api/show/all");
-        if (data.success && data.shows && data.shows.length > 0) {
-          // Lấy top 5 phim để làm carousel
-          setMovies(data.shows.slice(0, 5));
+        const { data } = await axios.get("/api/show/banners");
+        if (data.success && data.banners && data.banners.length > 0) {
+          setMovies(data.banners);
+        } else {
+          // Fallback to top 5 currently showing movies if no banners configured
+          const allShowsRes = await axios.get("/api/show/all");
+          if (allShowsRes.data.success && allShowsRes.data.shows && allShowsRes.data.shows.length > 0) {
+            setMovies(allShowsRes.data.shows.slice(0, 5));
+          }
         }
       } catch (error) {
         console.error("Error fetching featured movie:", error);

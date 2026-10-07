@@ -11,6 +11,8 @@ import {
   checkInBooking,
   getBookingByCode,
   scanTicket,
+  toggleMovieBanner,
+  getAllMovies,
 } from "../controllers/adminControllers.js";
 import { confirmPayment } from "../controllers/bookingControllers.js";
 
@@ -27,6 +29,8 @@ adminRouter.post("/update-role", protectAdmin, updateUserRole);
 adminRouter.post("/check-in", protectAdmin, checkInBooking);
 adminRouter.get("/booking/:code", protectAdmin, getBookingByCode);
 adminRouter.post("/scan-ticket", protectAdmin, scanTicket);
+adminRouter.post("/toggle-banner", protectAdmin, toggleMovieBanner);
+adminRouter.get("/movies", protectAdmin, getAllMovies);
 
 export default adminRouter;
 
