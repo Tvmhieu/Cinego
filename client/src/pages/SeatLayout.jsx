@@ -46,7 +46,7 @@ const SeatLayout = ({ propId, propDate }) => {
 
   const handleSeatClick = (seatId) => {
     if (!selectedTime) {
-      document.getElementById("dateSelect")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("timeSelect")?.scrollIntoView({ behavior: "smooth" });
       return toast("Vui lòng chọn khung giờ chiếu trước");
     }
     if (!selectedSeats.includes(seatId) && selectedSeats.length >= 5) {
@@ -154,10 +154,13 @@ const SeatLayout = ({ propId, propDate }) => {
   return show ? (
     <div className={`flex flex-col ${propId ? 'mt-10' : 'px-6 md:px-16 lg:px-40 py-30 md:pt-50'}`}>
       {/* Available Timings */}
-      <div className="flex flex-col items-center mb-12 w-full">
-        <p className="text-lg font-semibold mb-4">Khung giờ chiếu</p>
+      <div className="flex flex-col items-center mb-12 w-full" id="timeSelect">
+        <p className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
+          Chọn khung giờ chiếu
+        </p>
 
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className={`flex flex-wrap justify-center gap-3 p-4 rounded-xl transition-all duration-500 ${!selectedTime ? 'ring-2 ring-primary ring-offset-4 ring-offset-black animate-pulse shadow-[0_0_20px_rgba(229,9,20,0.4)]' : ''}`}>
           {(Array.isArray(show?.dateTime?.[date])
             ? show.dateTime[date]
             : []
@@ -167,7 +170,7 @@ const SeatLayout = ({ propId, propDate }) => {
               onClick={() => setSelectedTime(item)}
               className={`flex items-center gap-2 px-6 py-2 rounded-full cursor-pointer transition border border-primary/20 ${
                 selectedTime?.time === item.time
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white scale-110 shadow-[0_0_15px_rgba(229,9,20,0.5)]"
                   : "bg-gray-800/50 hover:bg-primary/20 text-gray-300"
               }`}
             >
@@ -183,10 +186,13 @@ const SeatLayout = ({ propId, propDate }) => {
         <BlurCircle top="-100px" left="-100px" />
         <BlurCircle bottom="0" right="0" />
 
-        <h1 className="mb-4 text-2xl font-semibold">Chọn ghế ngồi</h1>
+        <h1 className="mb-4 text-2xl font-semibold flex items-center gap-3">
+          <span className="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center text-lg">3</span>
+          Chọn ghế ngồi
+        </h1>
 
-        <div className="w-full max-w-full overflow-x-auto pb-4 no-scrollbar">
-          <div className="flex flex-col items-center text-xs text-gray-300 min-w-[600px]">
+        <div className={`w-full max-w-full overflow-x-auto pb-4 no-scrollbar p-6 rounded-2xl transition-all duration-500 ${selectedTime && selectedSeats.length === 0 ? 'ring-2 ring-primary ring-offset-4 ring-offset-[#111] animate-pulse shadow-[0_0_30px_rgba(229,9,20,0.3)] bg-primary/5' : ''}`}>
+          <div className={`flex flex-col items-center text-xs text-gray-300 min-w-[600px] transition-opacity duration-300 ${!selectedTime ? 'opacity-40 grayscale' : ''}`}>
             <img src={assets.screenImage} alt="screen" />
             <p className="mb-6 text-sm text-gray-400">MÀN HÌNH CHÍNH</p>
 

@@ -24,8 +24,11 @@ const DateSelect = ({ dateTime, id, onSelectDate }) => {
         <BlurCircle top="100px" right="0px" />
 
         <div className="flex flex-col items-center">
-          <p className="text-lg font-semibold">Chọn ngày chiếu</p>
-          <div className="flex items-center gap-6 text-sm mt-5">
+          <p className="text-lg font-semibold flex items-center gap-2">
+            <span className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
+            Chọn ngày chiếu
+          </p>
+          <div className={`flex items-center gap-6 text-sm mt-5 p-4 rounded-xl transition-all duration-500 ${!selected ? 'ring-2 ring-primary ring-offset-4 ring-offset-black animate-pulse shadow-[0_0_20px_rgba(229,9,20,0.4)]' : ''}`}>
             <ChevronLeftIcon width={28} />
             <span className="grid grid-cols-3 md:flex flex-wrap md:max-w-lg gap-4">
               {Object.keys(dateTime).map((date) => (
