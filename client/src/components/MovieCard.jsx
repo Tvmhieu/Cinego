@@ -28,7 +28,8 @@ const MovieCard = ({ movie }) => {
           }}
           src={image_base_url + (movie.backdrop_path || movie.poster_path || '')}
           alt={`${movie.title || 'Movie'} poster`}
-          className="object-cover object-right-bottom w-full h-52 cursor-pointer transform group-hover:scale-105 transition-transform duration-700 ease-out"
+          loading="lazy"
+          className="object-cover object-right-bottom w-full h-52 cursor-pointer transform group-hover:scale-105 transition-transform duration-700 ease-out bg-black/20"
         />
       </div>
 
