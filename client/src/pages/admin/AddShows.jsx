@@ -175,15 +175,7 @@ const AddShows = () => {
                   className="object-cover w-full brightness-90"
                 />
 
-                <div className="absolute bottom-0 left-0 flex items-center justify-between w-full p-2 text-sm bg-black/70">
-                  <p className="flex items-center gap-1 text-gray-400">
-                    <StarIcon className="w-4 h-4 text-primary fill-primary" />
-                    {movie.vote_average.toFixed(1)}
-                  </p>
-                  <p className="text-gray-300">
-                    {kConverter(movie.vote_count)} Lượt đánh giá
-                  </p>
-                </div>
+
               </div>
               {selectedMovie === movie.id && (
                 <div className="absolute flex items-center justify-center w-6 h-6 rounded top-2 right-2 bg-primary">

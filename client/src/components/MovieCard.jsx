@@ -63,10 +63,7 @@ const MovieCard = ({ movie }) => {
         >
           Mua Vé
         </button>
-        <p className="flex items-center gap-1.5 pr-1 mt-1 text-sm font-medium text-gray-400">
-          <StarIcon className="w-3.5 h-3.5 text-primary fill-primary" />{" "}
-          <span className="text-white/80">{movie.vote_average?.toFixed(1) || "N/A"}</span>
-        </p>
+
       </div>
     </div>
   );
