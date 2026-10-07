@@ -9,6 +9,13 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async ({ to, subject, body }) => {
+  // Tạm thời tắt chức năng gửi mail theo yêu cầu
+  console.log("Email sending is temporarily disabled.");
+  console.log(`[Email Blocked] To: ${to}, Subject: ${subject}`);
+  
+  return true;
+  
+  /*
   const response = await transporter.sendMail({
     from: process.env.SENDER_EMAIL,
     to,
@@ -17,6 +24,7 @@ const sendEmail = async ({ to, subject, body }) => {
   });
 
   return response;
+  */
 };
 
 export default sendEmail;
