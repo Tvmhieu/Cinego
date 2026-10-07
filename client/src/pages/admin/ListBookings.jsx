@@ -5,7 +5,7 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon } from "lucide-react";
+import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon, ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 
 const ListBookings = () => {
   const { axios, getToken, user } = useAppContext();
@@ -305,11 +305,29 @@ const ListBookings = () => {
 
       {/* Mobile Card Layout */}
       <div className="md:hidden flex flex-col gap-4 pb-6">
-        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar text-xs">
-          <span className="text-gray-500 whitespace-nowrap">Sắp xếp:</span>
-          <button onClick={() => handleSort('show.showDateTime')} className={`whitespace-nowrap ${sortConfig.key === 'show.showDateTime' ? 'text-primary font-bold' : 'text-gray-400'}`}>Ngày chiếu {renderSortIndicator('show.showDateTime')}</button>
-          <button onClick={() => handleSort('bookingCode')} className={`whitespace-nowrap ${sortConfig.key === 'bookingCode' ? 'text-primary font-bold' : 'text-gray-400'}`}>Mã vé {renderSortIndicator('bookingCode')}</button>
-          <button onClick={() => handleSort('status')} className={`whitespace-nowrap ${sortConfig.key === 'status' ? 'text-primary font-bold' : 'text-gray-400'}`}>Trạng thái {renderSortIndicator('status')}</button>
+        <div className="flex items-center justify-between gap-2 pb-2">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500 text-xs whitespace-nowrap">Sắp xếp:</span>
+            <select
+              value={sortConfig.key}
+              onChange={(e) => setSortConfig({ ...sortConfig, key: e.target.value })}
+              className="bg-[#161616] border border-gray-800 text-gray-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
+            >
+              <option value="show.showDateTime">Ngày chiếu</option>
+              <option value="bookingCode">Mã vé</option>
+              <option value="status">Trạng thái</option>
+            </select>
+          </div>
+          <button 
+            onClick={() => setSortConfig({ ...sortConfig, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}
+            className="flex items-center justify-center gap-1 px-2 py-1.5 bg-[#161616] border border-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors text-xs"
+          >
+            {sortConfig.direction === 'asc' ? (
+              <><ArrowUpIcon className="w-3.5 h-3.5" /> Tăng dần</>
+            ) : (
+              <><ArrowDownIcon className="w-3.5 h-3.5" /> Giảm dần</>
+            )}
+          </button>
         </div>
         {filteredBookings.length === 0 ? (
           <div className="w-full py-12 flex flex-col items-center justify-center bg-[#111] rounded-2xl border border-gray-800">
