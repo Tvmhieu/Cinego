@@ -46,6 +46,9 @@ const PaymentQR = () => {
   };
 
   useEffect(() => {
+    // Cuộn lên đầu trang khi vừa vào
+    window.scrollTo(0, 0);
+    
     fetchBooking();
     
     // Auto polling every 10 seconds to check payment status
