@@ -211,13 +211,14 @@ export const getShow = async (req, res) => {
   try {
     const { movieId } = req.params;
 
-    // Get all upcoming shows for the movie
-    const shows = await Show.find({
-      movie: movieId,
-      showDateTime: { $gte: new Date(Date.now() - 15 * 60 * 1000) },
-    });
-
-    const movie = await Movie.findById(movieId);
+    // Get all upcoming shows for the movie and the movie details in parallel
+    const [shows, movie] = await Promise.all([
+      Show.find({
+        movie: movieId,
+        showDateTime: { $gte: new Date(Date.now() - 15 * 60 * 1000) },
+      }),
+      Movie.findById(movieId)
+    ]);
     const dateTime = {};
 
     shows.forEach((show) => {
