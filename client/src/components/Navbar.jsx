@@ -7,6 +7,8 @@ import { useAppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useUser();
   const { openSignIn } = useClerk();
 
@@ -92,7 +94,36 @@ const Navbar = () => {
       </div>
 
       <div className="relative z-10 flex items-center gap-4 md:gap-6">
-        <SearchIcon className="w-5 h-5 text-white/80 hover:text-white transition-colors cursor-pointer max-md:hidden" />
+        {/* Search Bar */}
+        <div className="flex items-center">
+          <div className={`overflow-hidden transition-all duration-300 flex items-center ${isSearchOpen ? 'w-40 md:w-48 opacity-100 mr-2' : 'w-0 opacity-0'}`}>
+            <input 
+              type="text" 
+              placeholder="Tìm phim..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  navigate(`/movies?search=${encodeURIComponent(searchQuery)}`);
+                  setIsSearchOpen(false);
+                }
+              }}
+              autoFocus={isSearchOpen}
+              className="w-full bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-400"
+            />
+          </div>
+          <SearchIcon 
+            className={`w-5 h-5 transition-colors cursor-pointer max-md:hidden ${isSearchOpen ? 'text-primary' : 'text-white/80 hover:text-white'}`}
+            onClick={() => {
+              if (isSearchOpen && searchQuery.trim()) {
+                navigate(`/movies?search=${encodeURIComponent(searchQuery)}`);
+                setIsSearchOpen(false);
+              } else {
+                setIsSearchOpen(!isSearchOpen);
+              }
+            }}
+          />
+        </div>
         
         <div>
           {!user ? (
