@@ -26,7 +26,13 @@ export const toggleMovieBanner = async (req, res) => {
 
 export const getAllMovies = async (req, res) => {
   try {
-    const movies = await Movie.find({});
+    const activeMovieIds = await Show.distinct("movie");
+    const movies = await Movie.find({
+      $or: [
+        { _id: { $in: activeMovieIds } },
+        { isBanner: true }
+      ]
+    });
     res.json({ success: true, movies });
   } catch (error) {
     console.error(error);

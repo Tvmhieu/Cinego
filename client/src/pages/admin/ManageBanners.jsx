@@ -3,11 +3,13 @@ import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import { SearchIcon } from "lucide-react";
 
 const ManageBanners = () => {
   const { axios, getToken } = useAppContext();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getAllMovies = async () => {
     try {
@@ -49,14 +51,31 @@ const ManageBanners = () => {
     getAllMovies();
   }, []);
 
+  const filteredMovies = movies.filter(movie => 
+    movie.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="w-full text-left">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
         <Title text1="Quản lý" text2="Banner" />
+        
+        <div className="relative w-full md:w-80">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <SearchIcon className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2 border border-gray-800 rounded-xl leading-5 bg-[#161616] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
+            placeholder="Tìm theo tên phim..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="bg-[#1a1a1a] rounded-xl overflow-hidden border border-gray-800 shadow-xl flex-1">
@@ -82,8 +101,8 @@ const ManageBanners = () => {
               </tr>
             </thead>
             <tbody>
-              {movies.length > 0 ? (
-                movies.map((movie, index) => (
+              {filteredMovies.length > 0 ? (
+                filteredMovies.map((movie, index) => (
                   <tr
                     key={movie._id}
                     className="border-b border-gray-800 hover:bg-[#252525] transition-colors"

@@ -5,7 +5,8 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { FilmIcon, CalendarClockIcon, UsersIcon, CircleDollarSignIcon, Trash2Icon, EyeIcon, SearchIcon } from "lucide-react";
+import { FilmIcon, CalendarClockIcon, UsersIcon, CircleDollarSignIcon, Trash2Icon, EyeIcon, SearchIcon, ListIcon, CalendarIcon } from "lucide-react";
+import AdminCalendar from "../../components/admin/AdminCalendar";
 
 const ListShows = () => {
   const { axios, getToken, user } = useAppContext();
@@ -16,6 +17,7 @@ const ListShows = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: 'showDateTime', direction: 'desc' });
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'calendar'
 
   const getAllShows = async () => {
     try {
@@ -115,6 +117,11 @@ const ListShows = () => {
       const statusB = getShowStatus(b.showDateTime, b.movie?.runtime).value;
       return sortConfig.direction === 'asc' ? statusA - statusB : statusB - statusA;
     }
+    if (sortConfig.key === 'showPrice') {
+      const valA = a.showPrice || 0;
+      const valB = b.showPrice || 0;
+      return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
+    }
     return 0;
   });
 
@@ -130,19 +137,42 @@ const ListShows = () => {
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <Title text1="Danh sách" text2="Suất chiếu" />
         
-        <div className="relative w-full md:w-80">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <SearchIcon className="h-5 w-5 text-gray-400" />
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+          {/* Toggle View Mode */}
+          <div className="flex bg-[#161616] p-1 border border-gray-800 rounded-lg w-full md:w-auto">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'list' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+            >
+              <ListIcon className="w-4 h-4" /> Danh sách
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${viewMode === 'calendar' ? 'bg-[#2a2a2a] text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+            >
+              <CalendarIcon className="w-4 h-4" /> Lịch
+            </button>
           </div>
-          <input
-            type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-800 rounded-xl leading-5 bg-[#161616] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
-            placeholder="Tìm theo tên phim, mã, ngày chiếu..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+
+          <div className="relative w-full md:w-80">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <SearchIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-800 rounded-xl leading-5 bg-[#161616] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
+              placeholder="Tìm theo tên phim, mã, ngày chiếu..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
+
+      {viewMode === 'calendar' ? (
+        <AdminCalendar shows={filteredShows} />
+      ) : (
+        <>
 
       {/* Mobile Card Layout */}
       <div className="md:hidden flex flex-col gap-4 pb-6">
@@ -177,9 +207,15 @@ const ListShows = () => {
                 </div>
                 
                 <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-4">
-                  <div className="col-span-2">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Thời Gian</p>
-                    <p className="text-sm font-medium text-gray-300 flex items-center gap-1.5"><CalendarClockIcon className="w-4 h-4 text-primary" /> {dateFormat(show.showDateTime)}</p>
+                  <div className="col-span-2 flex justify-between items-start">
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Thời Gian</p>
+                      <p className="text-sm font-medium text-gray-300 flex items-center gap-1.5"><CalendarClockIcon className="w-4 h-4 text-primary" /> {dateFormat(show.showDateTime)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Giá Vé</p>
+                      <p className="text-sm font-bold text-white">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</p>
+                    </div>
                   </div>
                   
                   <div>
@@ -222,6 +258,7 @@ const ListShows = () => {
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showCode')}>Mã{renderSortIndicator('showCode')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('movie.title')}>Tên phim{renderSortIndicator('movie.title')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showDateTime')}>Giờ chiếu{renderSortIndicator('showDateTime')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showPrice')}>Giá vé{renderSortIndicator('showPrice')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('paidTickets')}>Tổng vé bán{renderSortIndicator('paidTickets')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('revenue')}>Doanh thu{renderSortIndicator('revenue')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('status')}>Trạng thái{renderSortIndicator('status')}</th>
@@ -232,7 +269,7 @@ const ListShows = () => {
             <tbody className="divide-y divide-gray-800/60">
               {filteredShows.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
                     Không tìm thấy suất chiếu nào
                   </td>
                 </tr>
@@ -255,6 +292,11 @@ const ListShows = () => {
                       </td>
                       <td className="px-6 py-4">
                         <p className="font-medium text-gray-300">{dateFormat(show.showDateTime)}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-gray-300">
+                          {(show.showPrice || 0).toLocaleString("vi-VN")} {currency}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
                         <span className="bg-gray-800/50 px-3 py-1 rounded font-bold text-gray-300">
@@ -287,6 +329,7 @@ const ListShows = () => {
           </table>
         </div>
       </div>
+      </>}
     </div>
   ) : (
     <Loading />
