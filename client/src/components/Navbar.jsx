@@ -23,83 +23,115 @@ const Navbar = () => {
       </Link>
 
       <div
-        className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:font-semibold max-md:text-lg z-50 flex flex-col md:flex-row items-center max-md:justify-center gap-6 md:gap-8 md:px-8 py-3 max-md:h-screen md:rounded-full backdrop-blur-md bg-black/90 md:bg-white/5 border-b md:border border-white/5 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isOpen ? "max-md:w-full opacity-100" : "max-md:w-0 max-md:opacity-0 md:opacity-100"
+        className={`fixed top-0 right-0 z-50 flex flex-col md:flex-row items-center md:justify-center gap-6 md:gap-8 md:px-8 py-20 md:py-3 h-screen md:h-auto md:rounded-full backdrop-blur-xl bg-black/95 md:bg-white/5 border-l md:border border-white/10 overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isOpen ? "w-64 opacity-100 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]" : "w-0 md:w-auto opacity-0 md:opacity-100 pointer-events-none md:pointer-events-auto"
         }`}
       >
         <XIcon
           className="absolute w-7 h-7 text-white/50 hover:text-white cursor-pointer md:hidden top-6 right-6 transition-colors"
           onClick={() => setIsOpen(false)}
         />
+
+        {/* Mobile Menu Logo */}
+        <div className="md:hidden w-full px-8 mb-4">
+          <h2 className="text-2xl font-black italic tracking-tighter"><span className="text-primary">Cine</span>Go</h2>
+          <div className="w-full h-px bg-white/10 mt-6"></div>
+        </div>
         
         {/* Navigation Links */}
-        {[
-          { label: "Trang chủ", path: "/" },
-          { label: "Phim", path: "/movies" },
-          ...(favouriteMovies.length > 0 ? [{ label: "Yêu thích", path: "/favourite" }] : []),
-        ].map((link, idx) => (
-          <Link
-            key={idx}
-            onClick={() => {
-              scrollTo(0, 0);
-              setIsOpen(false);
-            }}
-            to={link.path}
-            className="text-white/70 hover:text-white transition-colors duration-300 tracking-wide font-medium"
-          >
-            {link.label}
-          </Link>
-        ))}
+        <div className="flex flex-col md:flex-row w-full md:w-auto items-start md:items-center px-8 md:px-0 gap-6 md:gap-8">
+          {[
+            { label: "Trang chủ", path: "/" },
+            { label: "Phim đang chiếu", path: "/movies" },
+            ...(favouriteMovies.length > 0 ? [{ label: "Yêu thích", path: "/favourite" }] : []),
+          ].map((link, idx) => (
+            <Link
+              key={idx}
+              onClick={() => {
+                scrollTo(0, 0);
+                setIsOpen(false);
+              }}
+              to={link.path}
+              className="text-white/70 hover:text-white transition-colors duration-300 tracking-wide font-medium whitespace-nowrap w-full md:w-auto text-lg md:text-base"
+            >
+              {link.label}
+            </Link>
+          ))}
 
-        <a
-          href="/my-bookings"
-          onClick={(e) => {
-            e.preventDefault();
-            setIsOpen(false);
-            if (!user) {
-              openSignIn();
-            } else {
-              navigate("/my-bookings");
-              scrollTo(0, 0);
-            }
-          }}
-          className="text-white/70 hover:text-white transition-colors duration-300 tracking-wide font-medium cursor-pointer"
-        >
-          Vé của tôi
-        </a>
-
-        {isAdmin && (
-          <Link
-            onClick={() => {
-              scrollTo(0, 0);
+          <a
+            href="/my-bookings"
+            onClick={(e) => {
+              e.preventDefault();
               setIsOpen(false);
+              if (!user) {
+                openSignIn();
+              } else {
+                navigate("/my-bookings");
+                scrollTo(0, 0);
+              }
             }}
-            to="/admin"
-            className="font-bold text-primary tracking-wide drop-shadow-[0_0_10px_rgba(248,69,101,0.5)]"
+            className="text-white/70 hover:text-white transition-colors duration-300 tracking-wide font-medium cursor-pointer whitespace-nowrap w-full md:w-auto text-lg md:text-base"
           >
-            Quản trị
-          </Link>
-        )}
+            Vé của tôi
+          </a>
+
+          {isAdmin && (
+            <Link
+              onClick={() => {
+                scrollTo(0, 0);
+                setIsOpen(false);
+              }}
+              to="/admin"
+              className="font-bold text-primary tracking-wide drop-shadow-[0_0_10px_rgba(248,69,101,0.5)] whitespace-nowrap w-full md:w-auto text-lg md:text-base"
+            >
+              Quản trị
+            </Link>
+          )}
+
+          {/* Mobile login button inside menu */}
+          <div className="md:hidden w-full h-px bg-white/10 my-2"></div>
+          <div className="md:hidden w-full">
+            {!user ? (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  openSignIn();
+                }}
+                className="w-full py-3 text-base font-bold tracking-wide text-white transition-all duration-300 rounded-xl cursor-pointer bg-primary hover:bg-white hover:text-black"
+              >
+                Đăng nhập
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <UserButton appearance={{ elements: { avatarBox: "w-10 h-10" } }} />
+                <span className="font-medium text-white/80">Tài khoản</span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="relative z-10 flex items-center gap-6">
+      <div className="relative z-10 flex items-center gap-4 md:gap-6">
         <SearchIcon className="w-5 h-5 text-white/80 hover:text-white transition-colors cursor-pointer max-md:hidden" />
-        {!user ? (
-          <button
-            onClick={openSignIn}
-            className="px-5 py-2 text-sm font-bold tracking-wide text-black transition-all duration-300 rounded-full cursor-pointer bg-white hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(248,69,101,0.4)] active:scale-95"
-          >
-            Đăng nhập
-          </button>
-        ) : (
-          <UserButton appearance={{ elements: { avatarBox: "w-9 h-9 ring-2 ring-white/10 hover:ring-primary transition-all" } }} />
-        )}
-      </div>
+        
+        <div className="max-md:hidden">
+          {!user ? (
+            <button
+              onClick={openSignIn}
+              className="px-5 py-2 text-sm font-bold tracking-wide text-black transition-all duration-300 rounded-full cursor-pointer bg-white hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(248,69,101,0.4)] active:scale-95"
+            >
+              Đăng nhập
+            </button>
+          ) : (
+            <UserButton appearance={{ elements: { avatarBox: "w-9 h-9 ring-2 ring-white/10 hover:ring-primary transition-all" } }} />
+          )}
+        </div>
 
-      <MenuIcon
-        className="relative z-10 w-7 h-7 text-white/80 hover:text-white transition-colors cursor-pointer max-md:ml-4 md:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-      />
+        <MenuIcon
+          className="w-7 h-7 text-white/80 hover:text-white transition-colors cursor-pointer md:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        />
+      </div>
     </div>
   );
 };
