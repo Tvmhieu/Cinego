@@ -88,42 +88,22 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Mobile login button inside menu */}
-          <div className="md:hidden w-full h-px bg-white/10 my-2"></div>
-          <div className="md:hidden w-full">
-            {!user ? (
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  openSignIn();
-                }}
-                className="w-full py-3 text-base font-bold tracking-wide text-white transition-all duration-300 rounded-xl cursor-pointer bg-primary hover:bg-white hover:text-black"
-              >
-                Đăng nhập
-              </button>
-            ) : (
-              <div className="flex items-center gap-3">
-                <UserButton appearance={{ elements: { avatarBox: "w-10 h-10" } }} />
-                <span className="font-medium text-white/80">Tài khoản</span>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
       <div className="relative z-10 flex items-center gap-4 md:gap-6">
         <SearchIcon className="w-5 h-5 text-white/80 hover:text-white transition-colors cursor-pointer max-md:hidden" />
         
-        <div className="max-md:hidden">
+        <div>
           {!user ? (
             <button
               onClick={openSignIn}
-              className="px-5 py-2 text-sm font-bold tracking-wide text-black transition-all duration-300 rounded-full cursor-pointer bg-white hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(248,69,101,0.4)] active:scale-95"
+              className="px-4 py-1.5 md:px-5 md:py-2 text-sm font-bold tracking-wide text-black transition-all duration-300 rounded-full cursor-pointer bg-white hover:bg-primary hover:text-white hover:shadow-[0_0_15px_rgba(248,69,101,0.4)] active:scale-95"
             >
               Đăng nhập
             </button>
           ) : (
-            <UserButton appearance={{ elements: { avatarBox: "w-9 h-9 ring-2 ring-white/10 hover:ring-primary transition-all" } }} />
+            <UserButton appearance={{ elements: { avatarBox: "w-8 h-8 md:w-9 md:h-9 ring-2 ring-white/10 hover:ring-primary transition-all" } }} />
           )}
         </div>
 
