@@ -2,7 +2,7 @@ import { inngest } from "../inngest/index.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 
-import { sendBookingConfirmationEmail } from "../utils/sendBookingEmail.js";
+// No email imports needed
 
 // Function to check availability of selected seats for a movie
 const checkSeatsAvailability = async (showId, selectedSeats) => {
@@ -133,12 +133,7 @@ export const confirmPayment = async (req, res) => {
       return res.json({ success: false, message: "Booking not found" });
     }
 
-    // Send Confirmation Email directly via Nodemailer
-    try {
-      await sendBookingConfirmationEmail(booking._id.toString());
-    } catch (err) {
-      console.error("Error sending confirmation email:", err);
-    }
+    // Email sending removed
 
     res.json({ success: true, message: "Payment confirmed successfully" });
   } catch (error) {
@@ -178,14 +173,7 @@ export const sepayWebhook = async (req, res) => {
       booking.isPaid = true;
       await booking.save();
       
-      // Send Confirmation Email directly via Nodemailer (only if it wasn't cancelled)
-      if (!booking.isCancelled) {
-        try {
-          await sendBookingConfirmationEmail(booking._id.toString());
-        } catch (err) {
-          console.error("Error sending confirmation email:", err);
-        }
-      }
+      // Email sending removed
     }
 
     res.json({ success: true });
