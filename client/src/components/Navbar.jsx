@@ -103,7 +103,7 @@ const Navbar = () => {
               Đăng nhập
             </button>
           ) : (
-            <UserButton appearance={{ elements: { avatarBox: "w-8 h-8 md:w-9 md:h-9 ring-2 ring-white/10 hover:ring-primary transition-all" } }} />
+            <UserButton appearance={{ elements: { avatarBox: "w-9 h-9 ring-2 ring-white/10 hover:ring-primary transition-all" } }} />
           )}
         </div>
 
