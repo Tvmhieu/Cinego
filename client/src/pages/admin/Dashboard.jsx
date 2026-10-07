@@ -176,13 +176,13 @@ const Dashboard = () => {
                   itemStyle={{ fontWeight: 'bold' }}
                   labelStyle={{ color: '#fff', fontWeight: 'bold', marginBottom: '8px' }}
                   formatter={(value, name) => {
-                    if (name === 'revenue') return [`${value.toLocaleString("vi-VN")} ${currency}`, 'Doanh thu'];
-                    return [value, 'Vé bán ra'];
+                    if (name === 'Doanh thu') return [`${value.toLocaleString("vi-VN")} ${currency}`, name];
+                    return [value, name];
                   }}
                 />
                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                <Bar yAxisId="left" dataKey="revenue" name="revenue" fill="#e50914" radius={[4, 4, 0, 0]} barSize={40} />
-                <Bar yAxisId="right" dataKey="ticketsSold" name="ticketsSold" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
+                <Bar yAxisId="left" dataKey="revenue" name="Doanh thu" fill="#e50914" radius={[4, 4, 0, 0]} barSize={40} />
+                <Bar yAxisId="right" dataKey="ticketsSold" name="Vé bán ra" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
