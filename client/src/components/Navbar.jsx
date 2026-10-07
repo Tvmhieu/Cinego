@@ -23,7 +23,7 @@ const Navbar = () => {
       </Link>
 
       <div
-        className={`fixed top-0 right-0 z-50 flex flex-col md:flex-row items-center md:justify-center gap-6 md:gap-8 md:px-8 py-20 md:py-3 h-screen md:h-auto md:rounded-full backdrop-blur-xl bg-black/95 md:bg-white/5 border-l md:border border-white/10 overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed md:static top-0 right-0 z-50 flex flex-col md:flex-row items-center md:justify-center gap-6 md:gap-8 md:px-8 py-20 md:py-3 h-screen md:h-auto md:rounded-full backdrop-blur-xl bg-black/95 md:bg-white/5 border-l md:border border-white/10 overflow-y-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen ? "w-64 opacity-100 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]" : "w-0 md:w-auto opacity-0 md:opacity-100 pointer-events-none md:pointer-events-auto"
         }`}
       >
