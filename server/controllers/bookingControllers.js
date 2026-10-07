@@ -211,14 +211,14 @@ export const cancelBooking = async (req, res) => {
       return res.json({ success: false, message: "Không thể hủy vé đã thanh toán" });
     }
 
-    // Release seats
-    const show = await Show.findById(booking.show);
-    if (show) {
-      booking.bookedSeats.forEach((seat) => {
-        delete show.occupiedSeats[seat];
-      });
-      show.markModified("occupiedSeats");
-      await show.save();
+    // Release seats atomically using $unset
+    const unsetSeats = {};
+    booking.bookedSeats.forEach((seat) => {
+      unsetSeats[`occupiedSeats.${seat}`] = 1;
+    });
+    
+    if (Object.keys(unsetSeats).length > 0) {
+      await Show.findByIdAndUpdate(booking.show, { $unset: unsetSeats });
     }
 
     booking.isCancelled = true;
