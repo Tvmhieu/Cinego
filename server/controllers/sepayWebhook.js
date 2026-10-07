@@ -1,5 +1,5 @@
 import Booking from "../models/Booking.js";
-import { inngest } from "../inngest/index.js";
+import { sendBookingConfirmationEmail } from "../utils/sendBookingEmail.js";
 
 // SePay Webhook - automatically called when money is received in bank account
 export const sepayWebhook = async (req, res) => {
@@ -45,11 +45,8 @@ export const sepayWebhook = async (req, res) => {
 
     console.log(`SePay webhook: Booking ${bookingCode} confirmed as paid!`);
 
-    // Send Confirmation Email via Inngest
-    await inngest.send({
-      name: "app/show.booked",
-      data: { bookingId: booking._id.toString() },
-    });
+    // Send Confirmation Email directly via Nodemailer
+    await sendBookingConfirmationEmail(booking._id.toString());
 
     res.json({ success: true, message: "Payment confirmed" });
   } catch (error) {

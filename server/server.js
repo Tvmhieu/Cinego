@@ -9,7 +9,7 @@ import showRouter from "./routes/showRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import { vnpayReturn, vnpayIPN } from "./controllers/vnpayController.js";
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -38,9 +38,7 @@ app.use("/api/booking", bookingRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/user", userRouter);
 
-// VNPay Routes (no auth needed - VNPay calls these)
-app.get("/api/vnpay/return", vnpayReturn);
-app.get("/api/vnpay/ipn", vnpayIPN);
+
 
 app.listen(port, () =>
   console.log(`server listening at http://localhost:${port}`),

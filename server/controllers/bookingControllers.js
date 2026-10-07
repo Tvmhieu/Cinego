@@ -1,7 +1,8 @@
 import { inngest } from "../inngest/index.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
-import { createVnpayUrl } from "./vnpayController.js";
+
+import { sendBookingConfirmationEmail } from "../utils/sendBookingEmail.js";
 
 // Function to check availability of selected seats for a movie
 const checkSeatsAvailability = async (showId, selectedSeats) => {
@@ -132,16 +133,11 @@ export const confirmPayment = async (req, res) => {
       return res.json({ success: false, message: "Booking not found" });
     }
 
-    // Send Confirmation Email via Inngest
+    // Send Confirmation Email directly via Nodemailer
     try {
-      if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
-        await inngest.send({
-          name: "app/show.booked",
-          data: { bookingId: booking._id.toString() },
-        });
-      }
+      await sendBookingConfirmationEmail(booking._id.toString());
     } catch (err) {
-      console.warn("Skipping confirmation email task (Inngest keys missing)");
+      console.error("Error sending confirmation email:", err);
     }
 
     res.json({ success: true, message: "Payment confirmed successfully" });
@@ -182,17 +178,12 @@ export const sepayWebhook = async (req, res) => {
       booking.isPaid = true;
       await booking.save();
       
-      // Send Confirmation Email via Inngest (only if it wasn't cancelled)
+      // Send Confirmation Email directly via Nodemailer (only if it wasn't cancelled)
       if (!booking.isCancelled) {
         try {
-          if (process.env.INNGEST_EVENT_KEY && process.env.INNGEST_EVENT_KEY !== 'your_inngest_event_key') {
-            await inngest.send({
-              name: "app/show.booked",
-              data: { bookingId: booking._id.toString() },
-            });
-          }
+          await sendBookingConfirmationEmail(booking._id.toString());
         } catch (err) {
-          console.warn("Skipping confirmation email task (Inngest keys missing)");
+          console.error("Error sending confirmation email:", err);
         }
       }
     }
