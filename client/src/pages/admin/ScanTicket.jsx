@@ -3,7 +3,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import Title from "../../components/admin/Title";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
-import { CheckCircle2Icon, XCircleIcon, AlertTriangleIcon, ClockIcon, RefreshCcwIcon } from "lucide-react";
+import { CheckCircle2Icon, XCircleIcon, AlertTriangleIcon, ClockIcon } from "lucide-react";
 import { dateFormat } from "../../lib/dateFormat";
 
 const ScanTicket = () => {
@@ -12,10 +12,28 @@ const ScanTicket = () => {
   const [bookingInfo, setBookingInfo] = useState(null);
   const [scanStatus, setScanStatus] = useState(null); // VALID, USED, CANCELLED, UNPAID, NOT_FOUND, TOO_EARLY
   const [isProcessing, setIsProcessing] = useState(false);
-  const [facingMode, setFacingMode] = useState("environment");
+  const [cameras, setCameras] = useState([]);
+  const [selectedCameraId, setSelectedCameraId] = useState("");
   const html5QrCodeRef = useRef(null);
 
-  const startScanner = async (mode) => {
+  useEffect(() => {
+    Html5Qrcode.getCameras().then(devices => {
+      if (devices && devices.length) {
+        setCameras(devices);
+        
+        let backCamera = devices.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('environment'));
+        if (backCamera) {
+          setSelectedCameraId(backCamera.id);
+        } else {
+          setSelectedCameraId(devices[0].id);
+        }
+      }
+    }).catch(err => {
+      console.error("Lỗi lấy danh sách camera:", err);
+    });
+  }, []);
+
+  const startScanner = async (cameraId) => {
     try {
       if (!html5QrCodeRef.current) {
         html5QrCodeRef.current = new Html5Qrcode("qr-reader");
@@ -26,7 +44,7 @@ const ScanTicket = () => {
       }
 
       await html5QrCodeRef.current.start(
-        { facingMode: mode },
+        cameraId,
         { fps: 10, qrbox: { width: 250, height: 250 } },
         (decodedText) => {
           if (html5QrCodeRef.current.isScanning) {
@@ -46,8 +64,8 @@ const ScanTicket = () => {
   };
 
   useEffect(() => {
-    if (!scannedCode) {
-      startScanner(facingMode);
+    if (!scannedCode && selectedCameraId) {
+      startScanner(selectedCameraId);
     }
 
     return () => {
@@ -55,11 +73,7 @@ const ScanTicket = () => {
         html5QrCodeRef.current.stop().catch(console.error);
       }
     };
-  }, [scannedCode, facingMode]);
-
-  const toggleCamera = () => {
-    setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
-  };
+  }, [scannedCode, selectedCameraId]);
 
   const handleScan = async (code) => {
     setIsProcessing(true);
@@ -186,17 +200,29 @@ const ScanTicket = () => {
       <div className="w-full max-w-md bg-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl border border-gray-800 p-4 md:p-6">
         {!scannedCode ? (
           <>
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-gray-400 text-sm font-medium">
+            <div className="flex flex-col gap-3 mb-4">
+              <p className="text-center text-gray-400 text-sm font-medium">
                 Đưa mã QR vào khung hình
               </p>
-              <button 
-                onClick={toggleCamera} 
-                className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors border border-gray-700"
-              >
-                <RefreshCcwIcon className="w-3.5 h-3.5" />
-                Đổi Camera
-              </button>
+              
+              {cameras.length > 0 && (
+                <div className="relative w-full max-w-xs mx-auto">
+                  <select 
+                    value={selectedCameraId}
+                    onChange={(e) => setSelectedCameraId(e.target.value)}
+                    className="w-full bg-gray-900 border border-gray-700 text-gray-200 text-sm rounded-xl focus:ring-primary focus:border-primary block p-2.5 appearance-none shadow-sm cursor-pointer"
+                  >
+                    {cameras.map((cam, idx) => (
+                      <option key={cam.id} value={cam.id}>
+                        {cam.label || `Camera ${idx + 1}`}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+              )}
             </div>
             <div id="qr-reader" className="w-full overflow-hidden rounded-2xl bg-black border border-gray-800 shadow-inner"></div>
           </>
