@@ -55,11 +55,46 @@ export const getDashboardData = async (req, res) => {
 
     const totalUser = await User.countDocuments();
 
+    // Calculate movie performance
+    const movieStats = {};
+
+    bookings.forEach((booking) => {
+      const show = activeShows.find((s) => s._id.toString() === booking.show.toString()) || 
+                   // also count from all shows if we want total performance, but let's fetch all shows for performance
+                   null;
+      // Wait, let's fetch all shows to map bookings to movies accurately
+    });
+
+    // Actually let's fetch all shows and populate movies to calculate overall performance
+    const allShows = await Show.find({}).populate("movie");
+    const showToMovieMap = {};
+    allShows.forEach(show => {
+      if (show.movie) {
+        showToMovieMap[show._id.toString()] = show.movie.title;
+      }
+    });
+
+    bookings.forEach((booking) => {
+      const movieTitle = showToMovieMap[booking.show.toString()];
+      if (movieTitle) {
+        if (!movieStats[movieTitle]) {
+          movieStats[movieTitle] = { title: movieTitle, ticketsSold: 0, revenue: 0 };
+        }
+        movieStats[movieTitle].ticketsSold += booking.bookedSeats?.length || 0;
+        movieStats[movieTitle].revenue += booking.amount || 0;
+      }
+    });
+
+    const moviePerformance = Object.values(movieStats)
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 10); // top 10 movies
+
     const dashboardData = {
       totalBookings: bookings.length,
       totalRevenue: bookings.reduce((acc, booking) => acc + booking.amount, 0),
       activeShows,
       totalUser,
+      moviePerformance,
     };
 
     res.json({ success: true, dashboardData });

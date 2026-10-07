@@ -12,6 +12,16 @@ import BlurCircle from "../../components/BlurCircle";
 import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const Dashboard = () => {
   const { axios, getToken, user, image_base_url } = useAppContext();
@@ -115,54 +125,71 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="mt-10 mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">Suất chiếu đang mở</h2>
+      <div className="mt-10 mb-4 flex items-center justify-between z-10 relative">
+        <h2 className="text-xl font-bold text-white">Hiệu suất theo Phim</h2>
       </div>
       
-      {/* Active Shows Grid */}
-      <div className="relative w-full">
+      {/* Movie Performance Chart */}
+      <div className="relative w-full z-10 bg-[#161616] p-6 rounded-2xl border border-gray-800 shadow-xl overflow-hidden mb-6">
         <BlurCircle top="100px" left="-10%" />
-        {dashboardData.activeShows.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 pb-6">
-            {dashboardData.activeShows.map((show) => (
-              <div
-                key={show._id}
-                className="group flex flex-col h-full overflow-hidden transition-all duration-300 border rounded-2xl bg-[#1a1a1a]/80 border-gray-800 hover:border-primary/50 hover:shadow-[0_0_20px_rgba(229,9,20,0.15)] hover:-translate-y-2 backdrop-blur-sm"
+        {dashboardData.moviePerformance && dashboardData.moviePerformance.length > 0 ? (
+          <div className="h-[400px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={dashboardData.moviePerformance}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 70,
+                }}
               >
-                <div className="relative aspect-[2/3] w-full overflow-hidden">
-                  <img
-                    src={image_base_url + show.movie.poster_path}
-                    alt={`${show.movie.title} poster`}
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
-                  <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md border border-white/10">
-                    <StarIcon className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                    <span className="text-xs font-bold text-white">{show.movie.vote_average?.toFixed(1) || "N/A"}</span>
-                  </div>
-                  <div className="absolute bottom-2 left-2 right-2">
-                    <p className="text-primary font-bold text-sm bg-black/60 w-max px-2 py-0.5 rounded backdrop-blur-md">
-                      {show.showPrice.toLocaleString("vi-VN")} {currency}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="p-4 flex flex-col flex-1 justify-between">
-                  <p className="font-bold text-white line-clamp-2 leading-tight mb-2 group-hover:text-primary transition-colors">{show.movie.title}</p>
-                  <div className="flex items-center gap-2 mt-auto">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <p className="text-xs font-medium text-gray-400">
-                      {dateFormat(show.showDateTime)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                <XAxis 
+                  dataKey="title" 
+                  tick={{ fill: '#9ca3af', fontSize: 12 }}
+                  tickLine={{ stroke: '#555' }}
+                  axisLine={{ stroke: '#555' }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis 
+                  yAxisId="left" 
+                  orientation="left" 
+                  stroke="#primary"
+                  tick={{ fill: '#e50914', fontSize: 12 }}
+                  tickLine={{ stroke: '#555' }}
+                  axisLine={{ stroke: '#555' }}
+                  tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+                />
+                <YAxis 
+                  yAxisId="right" 
+                  orientation="right" 
+                  stroke="#3b82f6" 
+                  tick={{ fill: '#3b82f6', fontSize: 12 }}
+                  tickLine={{ stroke: '#555' }}
+                  axisLine={{ stroke: '#555' }}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#1a1a1a', borderColor: '#333', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)' }}
+                  itemStyle={{ fontWeight: 'bold' }}
+                  labelStyle={{ color: '#fff', fontWeight: 'bold', marginBottom: '8px' }}
+                  formatter={(value, name) => {
+                    if (name === 'revenue') return [`${value.toLocaleString("vi-VN")} ${currency}`, 'Doanh thu'];
+                    return [value, 'Vé bán ra'];
+                  }}
+                />
+                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Bar yAxisId="left" dataKey="revenue" name="revenue" fill="#e50914" radius={[4, 4, 0, 0]} barSize={40} />
+                <Bar yAxisId="right" dataKey="ticketsSold" name="ticketsSold" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         ) : (
           <div className="w-full p-10 flex flex-col items-center justify-center bg-gray-900/30 border border-gray-800 border-dashed rounded-2xl">
-            <PlayCircleIcon className="w-12 h-12 text-gray-600 mb-2" />
-            <p className="text-gray-500">Chưa có suất chiếu nào đang mở</p>
+            <ChartLineIcon className="w-12 h-12 text-gray-600 mb-2" />
+            <p className="text-gray-500">Chưa có dữ liệu thống kê</p>
           </div>
         )}
       </div>
