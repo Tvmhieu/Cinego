@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import BlurCircle from "../components/BlurCircle";
 import MovieCard from "../components/MovieCard";
 import { useAppContext } from "../context/AppContext";
@@ -11,6 +12,10 @@ const Movies = () => {
   const filteredShows = shows.filter(movie => 
     movie.title?.toLowerCase().includes(searchQuery)
   );
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [searchQuery]);
 
   return filteredShows.length > 0 ? (
     <div className="relative my-40 mb-60 px-6 md:px-16 lg:px-40 xl:px-44 overflow-hidden min-h-[80vh]">

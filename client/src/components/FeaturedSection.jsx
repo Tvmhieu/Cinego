@@ -15,7 +15,10 @@ const FeaturedSection = () => {
         <BlurCircle top="0" right="-80px" />
         <p className="text-lg font-medium text-gray-300">Phim đang chiếu</p>
         <button
-          onClick={() => navigate("/movies")}
+          onClick={() => {
+            navigate("/movies");
+            window.scrollTo(0, 0);
+          }}
           className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer group"
         >
           Xem tất cả
