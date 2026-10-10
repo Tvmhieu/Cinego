@@ -82,14 +82,11 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
       if (!booking.isPaid && !booking.isCancelled) {
         const show = await Show.findById(booking.show);
         if (show) {
-          const unsetSeats = {};
           booking.bookedSeats.forEach((seat) => {
-            unsetSeats[`occupiedSeats.${seat}`] = 1;
+            delete show.occupiedSeats[seat];
           });
-          
-          if (Object.keys(unsetSeats).length > 0) {
-            await Show.findByIdAndUpdate(booking.show, { $unset: unsetSeats });
-          }
+          show.markModified("occupiedSeats");
+          await show.save();
         }
         booking.isCancelled = true;
         booking.cancellationReason = "Quá hạn thanh toán";
