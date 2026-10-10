@@ -361,7 +361,7 @@ const ListBookings = () => {
               activeTab === "upcoming" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
             }`}
           >
-            Sắp chiếu ({bookings.filter(b => !b.isCancelled && new Date(b.show?.showDateTime) > new Date()).length})
+            Sắp chiếu ({bookings.filter(b => b && b.show && !b.isCancelled && new Date(b.show.showDateTime) > new Date()).length})
           </button>
           <button
             onClick={() => setActiveTab("past")}
@@ -369,7 +369,7 @@ const ListBookings = () => {
               activeTab === "past" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
             }`}
           >
-            Đã chiếu ({bookings.filter(b => !b.isCancelled && new Date(b.show?.showDateTime) <= new Date()).length})
+            Đã chiếu ({bookings.filter(b => b && b.show && !b.isCancelled && new Date(b.show.showDateTime) <= new Date()).length})
           </button>
           <button
             onClick={() => setActiveTab("cancelled")}
