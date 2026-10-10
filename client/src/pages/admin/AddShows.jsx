@@ -163,6 +163,30 @@ const AddShows = () => {
 
   // Removed since we fetch via debounce in the useEffect above
 
+  const selectedRoomData = rooms.find(r => r._id === selectedRoom);
+  let vipCount = 0;
+  let standardCount = 0;
+  let vipMultiplier = 1.5;
+  let standardMultiplier = 1;
+
+  if (selectedRoomData?.layout) {
+    selectedRoomData.layout.forEach(row => {
+      row.seats.forEach(seat => {
+        if (seat.type === 'vip') {
+          vipCount++;
+          if (seat.priceMultiplier) vipMultiplier = seat.priceMultiplier;
+        } else if (seat.type === 'standard') {
+          standardCount++;
+          if (seat.priceMultiplier) standardMultiplier = seat.priceMultiplier;
+        }
+      });
+    });
+  }
+
+  const numericPrice = Number(String(showPrice).replace(/\D/g, "")) || 0;
+  const vipPrice = numericPrice * vipMultiplier;
+  const standardPrice = numericPrice * standardMultiplier;
+
   return (
     <>
       <Title text1="Thêm" text2="Suất chiếu" />
@@ -230,6 +254,20 @@ const AddShows = () => {
             </option>
           ))}
         </select>
+        
+        {selectedRoomData && (
+          <div className="mt-3 flex gap-4 text-sm bg-primary/5 border border-primary/20 p-3 rounded-lg w-max">
+            <div className="flex flex-col">
+              <span className="text-gray-400">Ghế Thường</span>
+              <span className="font-medium text-white">{standardCount} ghế</span>
+            </div>
+            <div className="w-px bg-gray-700"></div>
+            <div className="flex flex-col">
+              <span className="text-gray-400">Ghế VIP</span>
+              <span className="font-medium text-primary">{vipCount} ghế</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Show Price Input  */}
@@ -251,11 +289,25 @@ const AddShows = () => {
               const rawValue = e.target.value.replace(/\D/g, "");
               setShowPrice(rawValue ? Number(rawValue).toLocaleString("vi-VN") : "");
             }}
-            placeholder="Nhập giá vé"
+            placeholder="Nhập giá vé cơ bản"
             className="outline-none"
           />
           <p className="text-sm text-gray-400">{currency}</p>
         </div>
+
+        {selectedRoomData && numericPrice > 0 && (
+          <div className="mt-3 flex gap-4 text-sm bg-primary/5 border border-primary/20 p-3 rounded-lg w-max">
+            <div className="flex flex-col">
+              <span className="text-gray-400">Giá Thường (x{standardMultiplier})</span>
+              <span className="font-medium text-white">{standardPrice.toLocaleString("vi-VN")} {currency}</span>
+            </div>
+            <div className="w-px bg-gray-700"></div>
+            <div className="flex flex-col">
+              <span className="text-gray-400">Giá VIP (x{vipMultiplier})</span>
+              <span className="font-medium text-primary">{vipPrice.toLocaleString("vi-VN")} {currency}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Date & Time Selection  */}
