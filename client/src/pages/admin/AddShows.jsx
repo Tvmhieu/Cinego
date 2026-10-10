@@ -217,10 +217,10 @@ const AddShows = () => {
           onChange={(e) => setSelectedRoom(e.target.value)}
           className="px-4 py-2 border rounded-lg border-primary/30 bg-primary/5 focus:outline-none focus:border-primary text-white"
         >
-          <option value="">-- Chọn phòng chiếu --</option>
+          <option value="" className="text-black">-- Chọn phòng chiếu --</option>
           {rooms.map((room) => (
-            <option key={room._id} value={room._id}>
-              {room.name} ({room.rows * room.columns} ghế)
+            <option key={room._id} value={room._id} className="text-black">
+              {room.name} ({room.layout?.reduce((total, row) => total + row.seats.filter(s => s.type !== 'empty').length, 0) || 0} ghế)
             </option>
           ))}
         </select>
