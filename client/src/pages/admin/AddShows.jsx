@@ -21,6 +21,20 @@ const AddShows = () => {
   const [timeInput, setTimeInput] = useState("12:00");
   const [showPrice, setShowPrice] = useState("");
   const [addingShow, setAddingShow] = useState(false);
+  
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState("");
+
+  const fetchRooms = async () => {
+    try {
+      const { data } = await axios.get("/api/room/all");
+      if (data.success) {
+        setRooms(data.rooms);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetchNowPlayingMovies = async () => {
     // setNowPlayingMovies(dummyShowsData);
@@ -46,6 +60,8 @@ const AddShows = () => {
         fetchNowPlayingMovies();
       }
     }, 500);
+
+    fetchRooms();
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, user]);
@@ -104,9 +120,10 @@ const AddShows = () => {
       if (
         !selectedMovie ||
         Object.keys(dateTimeSelection).length === 0 ||
-        !showPrice
+        !showPrice ||
+        !selectedRoom
       ) {
-        toast("Vui lòng điền đầy đủ các thông tin bắt buộc (chọn phim, giờ chiếu và giá vé)");
+        toast("Vui lòng điền đầy đủ thông tin (chọn phim, phòng chiếu, giờ chiếu và giá vé)");
         setAddingShow(false);
         return;
       }
@@ -119,6 +136,7 @@ const AddShows = () => {
         movieId: selectedMovie,
         showsInput,
         showPrice: Number(String(showPrice).replace(/\D/g, "")),
+        roomId: selectedRoom,
       };
 
       const { data } = await axios.post("/api/show/add", payload, {
@@ -130,6 +148,7 @@ const AddShows = () => {
         setSelectedMovie(null);
         setDataTimeSelection({});
         setShowPrice("");
+        setSelectedRoom("");
       } else {
         toast.error(data.message);
       }
@@ -190,8 +209,25 @@ const AddShows = () => {
         </div>
       </div>
 
-      {/* Show Price Input  */}
+      {/* Select Room */}
       <div className="mt-8">
+        <label className="block mb-2 text-sm font-medium">Chọn phòng chiếu</label>
+        <select
+          value={selectedRoom}
+          onChange={(e) => setSelectedRoom(e.target.value)}
+          className="px-4 py-2 border rounded-lg border-primary/30 bg-primary/5 focus:outline-none focus:border-primary text-white"
+        >
+          <option value="">-- Chọn phòng chiếu --</option>
+          {rooms.map((room) => (
+            <option key={room._id} value={room._id}>
+              {room.name} ({room.rows * room.columns} ghế)
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Show Price Input  */}
+      <div className="mt-6">
         <label className="block mb-2 text-sm font-medium">Giá vé</label>
         <div className="inline-flex items-center gap-2 px-3 py-2 border border-gray-600 rounded-md">
           <input

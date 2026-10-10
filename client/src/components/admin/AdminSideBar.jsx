@@ -9,6 +9,7 @@ import {
   MenuIcon,
   XIcon,
   ImagePlayIcon,
+  MonitorIcon,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { assets } from "../../assets/assets";
@@ -25,6 +26,7 @@ const AdminSideBar = () => {
 
   const adminNavlinks = [
     { name: "Bảng điều khiển", path: "/admin", icon: LayoutDashboardIcon },
+    { name: "Phòng chiếu", path: "/admin/rooms", icon: MonitorIcon },
     { name: "Thêm suất chiếu", path: "/admin/add-shows", icon: PlusSquareIcon },
     { name: "DS Suất chiếu", path: "/admin/list-shows", icon: ListIcon },
     { name: "DS Vé đã đặt", path: "/admin/list-bookings", icon: ListCollapseIcon },

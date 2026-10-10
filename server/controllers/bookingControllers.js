@@ -41,8 +41,29 @@ export const createBooking = async (req, res) => {
       });
     }
 
-    // Get the show details
-    const showData = await Show.findById(showId).populate("movie");
+    // Get the show details and populate room
+    const showData = await Show.findById(showId).populate("movie").populate("room");
+
+    let totalAmount = 0;
+    if (showData.room && showData.room.layout) {
+      selectedSeats.forEach(seatId => {
+        let seatFound = false;
+        for (const row of showData.room.layout) {
+          const seat = row.seats.find(s => s.id === seatId);
+          if (seat) {
+            totalAmount += showData.showPrice * (seat.priceMultiplier || 1);
+            seatFound = true;
+            break;
+          }
+        }
+        if (!seatFound) {
+           totalAmount += showData.showPrice; // Fallback
+        }
+      });
+    } else {
+      totalAmount = showData.showPrice * selectedSeats.length;
+    }
+
 
     const bookingCode = "DH" + Math.floor(100000 + Math.random() * 900000);
 
@@ -50,7 +71,7 @@ export const createBooking = async (req, res) => {
     const booking = await Booking.create({
       user: userId,
       show: showId,
-      amount: showData.showPrice * selectedSeats.length,
+      amount: totalAmount,
       bookedSeats: selectedSeats,
       bookingCode: bookingCode,
       isPaid: false,

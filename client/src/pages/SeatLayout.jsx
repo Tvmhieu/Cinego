@@ -9,13 +9,7 @@ import toast from "react-hot-toast";
 import { useAppContext } from "../context/AppContext";
 
 const SeatLayout = ({ propId, propDate }) => {
-  const groupRows = [
-    ["A", "B"],
-    ["C", "D"],
-    ["E", "F"],
-    ["G", "H"],
-    ["I", "J"],
-  ];
+
 
   const { id: paramId, date: paramDate } = useParams();
   const id = propId || paramId;
@@ -62,37 +56,7 @@ const SeatLayout = ({ propId, propDate }) => {
     );
   };
 
-  const renderSeats = (row, count = 9) => {
-    return (
-      <div key={row} className="flex gap-2 md:gap-3 mt-2">
-        <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
-          {Array.from({ length: count }, (_, i) => {
-            const seatId = `${row}${i + 1}`;
-            const isSelected = selectedSeats.includes(seatId);
-            const isOccupied = occupiedSeats.includes(seatId);
-            
-            return (
-              <button
-                key={seatId}
-                onClick={() => handleSeatClick(seatId)}
-                disabled={isOccupied}
-                className={`h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-[10px] md:text-xs font-medium transition-all duration-300 border 
-                   ${
-                     isSelected
-                       ? "bg-primary text-white border-primary shadow-[0_0_15px_rgba(248,69,101,0.6)] scale-110"
-                       : isOccupied
-                       ? "bg-white/5 text-white/20 border-white/5 opacity-40 cursor-not-allowed"
-                       : "bg-white/5 text-white/70 border-white/15 cursor-pointer hover:border-primary hover:text-primary hover:shadow-[0_0_10px_rgba(248,69,101,0.3)] hover:-translate-y-1"
-                   }`}
-              >
-                {seatId}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+
 
   const getOccupiedSeats = async () => {
     try {
@@ -221,13 +185,48 @@ const SeatLayout = ({ propId, propDate }) => {
             </div>
 
             <div className="flex flex-col gap-2 md:gap-3 mb-6 md:mb-8">
-              {groupRows[0].map((row) => renderSeats(row))}
-            </div>
+              {selectedTime?.room?.layout ? selectedTime.room.layout.map((row, rIndex) => (
+                <div key={rIndex} className="flex gap-2 md:gap-3 items-center mt-2 justify-center">
+                  <div className="w-6 md:w-8 text-center font-bold text-lg">{row.rowName}</div>
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    {row.seats.map((seat) => {
+                      const seatId = seat.id;
+                      const isSelected = selectedSeats.includes(seatId);
+                      const isOccupied = occupiedSeats.includes(seatId);
+                      const isVip = seat.type === "vip";
+                      const isEmpty = seat.type === "empty";
 
-            <div className="flex flex-col gap-2 md:gap-3">
-              {groupRows.slice(1).map((group, idx) => (
-                <div key={idx} className="flex flex-col gap-2 md:gap-3 mb-6 md:mb-8">{group.map((row) => renderSeats(row))}</div>
-              ))}
+                      if (isEmpty) {
+                        return <div key={seatId} className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 opacity-0 cursor-default pointer-events-none"></div>;
+                      }
+
+                      return (
+                        <button
+                          key={seatId}
+                          onClick={() => handleSeatClick(seatId)}
+                          disabled={isOccupied}
+                          className={`h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-lg flex items-center justify-center text-[10px] md:text-xs font-medium transition-all duration-300 border 
+                             ${
+                               isSelected
+                                 ? "bg-primary text-white border-primary shadow-[0_0_15px_rgba(248,69,101,0.6)] scale-110"
+                                 : isOccupied
+                                 ? "bg-white/5 text-white/20 border-white/5 opacity-40 cursor-not-allowed"
+                                 : isVip
+                                 ? "bg-yellow-500/20 text-yellow-500 border-yellow-500/50 hover:bg-yellow-500 hover:text-black hover:shadow-[0_0_10px_rgba(234,179,8,0.5)]"
+                                 : "bg-white/5 text-white/70 border-white/15 cursor-pointer hover:border-primary hover:text-primary hover:shadow-[0_0_10px_rgba(248,69,101,0.3)] hover:-translate-y-1"
+                             }`}
+                        >
+                          {seatId}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )) : (
+                <div className="text-center text-gray-500 py-10">
+                  Phòng chiếu này chưa có sơ đồ ghế.
+                </div>
+              )}
             </div>
             
             {/* Seat Legend */}
@@ -254,7 +253,24 @@ const SeatLayout = ({ propId, propDate }) => {
             </div>
             <div className="flex justify-between items-center text-lg md:text-xl font-black text-primary mt-4 pt-4 border-t border-white/10">
               <span>Tổng thanh toán:</span>
-              <span>{(selectedSeats.length * (selectedTime.price || 250000)).toLocaleString("vi-VN")} VNĐ</span>
+              <span>
+                {(() => {
+                  let total = 0;
+                  if (selectedTime?.room?.layout) {
+                     selectedSeats.forEach(seatId => {
+                        let found = false;
+                        for (let r of selectedTime.room.layout) {
+                           const s = r.seats.find(x => x.id === seatId);
+                           if (s) { total += (selectedTime.price || 250000) * (s.priceMultiplier || 1); found = true; break; }
+                        }
+                        if(!found) total += (selectedTime.price || 250000);
+                     });
+                  } else {
+                     total = selectedSeats.length * (selectedTime.price || 250000);
+                  }
+                  return total.toLocaleString("vi-VN");
+                })()} VNĐ
+              </span>
             </div>
           </div>
         )}

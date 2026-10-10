@@ -8,6 +8,12 @@ const showSchema = new mongoose.Schema(
       ref: "Movie",
     },
 
+    room: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Room",
+    },
+
     showDateTime: {
       type: Date,
       required: true,

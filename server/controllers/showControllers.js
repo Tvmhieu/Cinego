@@ -56,7 +56,7 @@ export const searchMovies = async (req, res) => {
 // API to add a new show to the database
 export const addShow = async (req, res) => {
   try {
-    const { movieId, showsInput, showPrice } = req.body;
+    const { movieId, showsInput, showPrice, roomId } = req.body;
     let movie = await Movie.findById(movieId);
 
     if (!movie) {
@@ -106,6 +106,7 @@ export const addShow = async (req, res) => {
         
         showsToCreate.push({
           movie: movieId,
+          room: roomId,
           showDateTime,
           showPrice,
           occupiedSeats: {},
@@ -216,7 +217,7 @@ export const getShow = async (req, res) => {
       Show.find({
         movie: movieId,
         showDateTime: { $gte: new Date(Date.now() - 15 * 60 * 1000) },
-      }),
+      }).populate('room'),
       Movie.findById(movieId)
     ]);
     const dateTime = {};
@@ -233,7 +234,8 @@ export const getShow = async (req, res) => {
         showId: show._id, 
         price: show.showPrice,
         occupiedSeatsCount: occupiedCount,
-        totalSeats: 90
+        room: show.room,
+        totalSeats: show.room ? (show.room.rows * show.room.columns) : 90
       });
     });
 

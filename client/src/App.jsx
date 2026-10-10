@@ -26,6 +26,7 @@ const ListBookings = lazy(() => import("./pages/admin/ListBookings"));
 const ListUsers = lazy(() => import("./pages/admin/ListUsers"));
 const ScanTicket = lazy(() => import("./pages/admin/ScanTicket"));
 const ManageBanners = lazy(() => import("./pages/admin/ManageBanners"));
+const Rooms = lazy(() => import("./pages/admin/Rooms"));
 
 const App = () => {
   const isAdminRoute = useLocation().pathname.startsWith("/admin");
@@ -65,6 +66,7 @@ const App = () => {
             <Route path="scan" element={<ScanTicket />} />
             <Route path="users" element={<ListUsers />} />
             <Route path="banners" element={<ManageBanners />} />
+            <Route path="rooms" element={<Rooms />} />
           </Route>
         </Routes>
       </Suspense>
