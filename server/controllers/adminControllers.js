@@ -400,3 +400,76 @@ export const adminCancelBooking = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// API to bulk delete shows
+export const bulkCancelShows = async (req, res) => {
+  try {
+    const { showIds } = req.body;
+    if (!Array.isArray(showIds) || showIds.length === 0) {
+      return res.json({ success: false, message: "Danh sách suất chiếu trống" });
+    }
+
+    const skipped = [];
+    const deleted = [];
+
+    for (const showId of showIds) {
+      const bookings = await Booking.find({ show: showId, isPaid: true });
+      if (bookings.length > 0) {
+        skipped.push(showId);
+        continue;
+      }
+      await Booking.deleteMany({ show: showId });
+      await Show.findByIdAndDelete(showId);
+      deleted.push(showId);
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Đã xóa ${deleted.length} suất chiếu. ${skipped.length > 0 ? `Bỏ qua ${skipped.length} suất do đã có khách thanh toán.` : ''}` 
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to bulk cancel bookings
+export const bulkCancelBookings = async (req, res) => {
+  try {
+    const { bookingIds } = req.body;
+    const { userId: clerkId } = req.auth();
+    if (!Array.isArray(bookingIds) || bookingIds.length === 0) {
+      return res.json({ success: false, message: "Danh sách vé trống" });
+    }
+
+    const admin = await User.findOne({ clerkId });
+    const adminName = admin?.firstName ? `${admin.firstName} ${admin.lastName || ''}` : "Admin";
+    const adminEmail = admin?.email || "N/A";
+
+    let cancelledCount = 0;
+
+    for (const bookingId of bookingIds) {
+      const booking = await Booking.findById(bookingId);
+      if (!booking || booking.isCancelled) continue;
+
+      const show = await Show.findById(booking.show);
+      if (show) {
+        booking.bookedSeats.forEach((seat) => {
+          delete show.occupiedSeats[seat];
+        });
+        show.markModified("occupiedSeats");
+        await show.save();
+      }
+
+      booking.isCancelled = true;
+      booking.cancellationReason = `Xóa hàng loạt (Bởi: ${adminName} - ${adminEmail})`;
+      await booking.save();
+      cancelledCount++;
+    }
+
+    res.json({ success: true, message: `Đã hủy thành công ${cancelledCount} vé` });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};

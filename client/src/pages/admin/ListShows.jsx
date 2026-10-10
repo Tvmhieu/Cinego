@@ -18,6 +18,7 @@ const ListShows = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: 'showDateTime', direction: 'desc' });
   const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
+  const [selectedShows, setSelectedShows] = useState([]);
 
   const getAllShows = async () => {
     try {
@@ -52,6 +53,30 @@ const ListShows = () => {
     } catch (error) {
       console.error(error);
       toast.error("Lỗi khi xóa suất chiếu");
+    }
+  };
+
+  const handleBulkCancel = async () => {
+    if (selectedShows.length === 0) return;
+    if (!window.confirm(`Bạn có chắc muốn xóa ${selectedShows.length} suất chiếu đã chọn?`)) return;
+
+    try {
+      const { data } = await axios.post(
+        "/api/admin/bulk-cancel-shows",
+        { showIds: selectedShows },
+        { headers: { Authorization: `Bearer ${await getToken()}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setSelectedShows([]);
+        getAllShows();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Lỗi khi xóa suất chiếu hàng loạt");
     }
   };
 
@@ -132,6 +157,23 @@ const ListShows = () => {
     return '';
   };
 
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedShows(filteredShows.map(show => show._id));
+    } else {
+      setSelectedShows([]);
+    }
+  };
+
+  const handleSelectShow = (e, showId) => {
+    e.stopPropagation();
+    if (e.target.checked) {
+      setSelectedShows([...selectedShows, showId]);
+    } else {
+      setSelectedShows(selectedShows.filter(id => id !== showId));
+    }
+  };
+
   return !loading ? (
     <div className="flex flex-col animate-in fade-in duration-500">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -172,6 +214,15 @@ const ListShows = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          {selectedShows.length > 0 && (
+            <button
+              onClick={handleBulkCancel}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl transition"
+            >
+              <Trash2Icon className="w-4 h-4" />
+              Xóa đã chọn ({selectedShows.length})
+            </button>
+          )}
         </div>
       </div>
 
@@ -281,6 +332,14 @@ const ListShows = () => {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-gray-900/50 border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider select-none">
+                <th className="px-6 py-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-700 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900"
+                    onChange={handleSelectAll}
+                    checked={filteredShows.length > 0 && selectedShows.length === filteredShows.length}
+                  />
+                </th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showCode')}>Mã{renderSortIndicator('showCode')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('movie.title')}>Tên phim{renderSortIndicator('movie.title')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showDateTime')}>Giờ chiếu{renderSortIndicator('showDateTime')}</th>
@@ -295,7 +354,7 @@ const ListShows = () => {
             <tbody className="divide-y divide-gray-800/60">
               {filteredShows.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="9" className="px-6 py-12 text-center text-gray-500">
                     Không tìm thấy suất chiếu nào
                   </td>
                 </tr>
@@ -308,6 +367,14 @@ const ListShows = () => {
                       onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
                       className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
                     >
+                      <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-700 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900"
+                          checked={selectedShows.includes(show._id)}
+                          onChange={(e) => handleSelectShow(e, show._id)}
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <span className="font-mono text-xs font-medium text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
                           {show.showCode || "N/A"}

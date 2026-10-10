@@ -14,6 +14,8 @@ import {
   toggleMovieBanner,
   getAllMovies,
   adminCancelBooking,
+  bulkCancelShows,
+  bulkCancelBookings,
 } from "../controllers/adminControllers.js";
 import { confirmPayment } from "../controllers/bookingControllers.js";
 
@@ -33,6 +35,8 @@ adminRouter.post("/scan-ticket", protectAdmin, scanTicket);
 adminRouter.post("/toggle-banner", protectAdmin, toggleMovieBanner);
 adminRouter.get("/movies", protectAdmin, getAllMovies);
 adminRouter.post("/cancel-booking", protectAdmin, adminCancelBooking);
+adminRouter.post("/bulk-cancel-shows", protectAdmin, bulkCancelShows);
+adminRouter.post("/bulk-cancel-bookings", protectAdmin, bulkCancelBookings);
 
 export default adminRouter;
 

@@ -5,7 +5,7 @@ import { dateFormat } from "../../lib/dateFormat";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon, ArrowUpIcon, ArrowDownIcon, LayoutGridIcon, TableIcon } from "lucide-react";
+import { Trash2Icon, CreditCardIcon, TicketCheckIcon, XCircleIcon, AlertCircleIcon, ArrowLeftIcon, TicketIcon, SearchIcon, ArrowUpIcon, ArrowDownIcon, LayoutGridIcon, TableIcon } from "lucide-react";
 
 const ListBookings = () => {
   const { axios, getToken, user } = useAppContext();
@@ -20,10 +20,9 @@ const ListBookings = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [sortConfig, setSortConfig] = useState({ key: 'show.showDateTime', direction: 'desc' });
-
   const [activeTab, setActiveTab] = useState("valid"); // 'valid', 'cancelled'
   const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
+  const [selectedBookings, setSelectedBookings] = useState([]);
 
   const getAllBookings = async () => {
     const abortController = new AbortController();
@@ -119,6 +118,30 @@ const ListBookings = () => {
     }
   };
 
+  const handleBulkCancel = async () => {
+    if (selectedBookings.length === 0) return;
+    if (!window.confirm(`Bạn có chắc muốn hủy ${selectedBookings.length} vé đã chọn? Hành động này không thể hoàn tác.`)) return;
+
+    try {
+      const { data } = await axios.post(
+        "/api/admin/bulk-cancel-bookings",
+        { bookingIds: selectedBookings },
+        { headers: { Authorization: `Bearer ${await getToken()}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setSelectedBookings([]);
+        getAllBookings();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Lỗi khi hủy vé hàng loạt");
+    }
+  };
+
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -210,6 +233,23 @@ const ListBookings = () => {
     return '';
   };
 
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedBookings(filteredBookings.map(b => b._id));
+    } else {
+      setSelectedBookings([]);
+    }
+  };
+
+  const handleSelectBooking = (e, bookingId) => {
+    e.stopPropagation();
+    if (e.target.checked) {
+      setSelectedBookings([...selectedBookings, bookingId]);
+    } else {
+      setSelectedBookings(selectedBookings.filter(id => id !== bookingId));
+    }
+  };
+
   const renderStatus = (item) => {
     if (item.isCancelled && !item.isPaid) {
       return (
@@ -280,6 +320,16 @@ const ListBookings = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          {selectedBookings.length > 0 && (
+            <button
+              onClick={handleBulkCancel}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-xl transition whitespace-nowrap"
+            >
+              <Trash2Icon className="w-4 h-4" />
+              Hủy đã chọn ({selectedBookings.length})
+            </button>
+          )}
 
           {showIdFilter && (
             <button 
@@ -430,6 +480,14 @@ const ListBookings = () => {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-gray-900/50 border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider select-none">
+                <th className="px-6 py-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-700 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900"
+                    onChange={handleSelectAll}
+                    checked={filteredBookings.length > 0 && selectedBookings.length === filteredBookings.length}
+                  />
+                </th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('bookingCode')}>Mã vé{renderSortIndicator('bookingCode')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('customerName')}>Khách hàng{renderSortIndicator('customerName')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('movie.title')}>Phim & Suất chiếu{renderSortIndicator('movie.title')}</th>
@@ -443,7 +501,7 @@ const ListBookings = () => {
             <tbody className="divide-y divide-gray-800/60">
               {filteredBookings.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
                     Chưa có vé nào được đặt
                   </td>
                 </tr>
@@ -453,6 +511,14 @@ const ListBookings = () => {
                     key={item._id}
                     className="hover:bg-white/[0.02] transition-colors"
                   >
+                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-700 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900"
+                        checked={selectedBookings.includes(item._id)}
+                        onChange={(e) => handleSelectBooking(e, item._id)}
+                      />
+                    </td>
                     <td className="px-6 py-4">
                       <span className="font-mono font-medium text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20">
                         {item.bookingCode || item._id.slice(-6).toUpperCase()}
