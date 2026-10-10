@@ -235,7 +235,7 @@ export const getShow = async (req, res) => {
         price: show.showPrice,
         occupiedSeatsCount: occupiedCount,
         room: show.room,
-        totalSeats: show.room ? (show.room.rows * show.room.columns) : 90
+        totalSeats: show.room ? show.room.layout.reduce((total, row) => total + row.seats.filter(s => s.type !== 'empty').length, 0) : 90
       });
     });
 

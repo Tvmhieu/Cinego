@@ -9,6 +9,7 @@ const Rooms = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Room form state
+  const [editingRoomId, setEditingRoomId] = useState(null);
   const [roomName, setRoomName] = useState("");
   const [rows, setRows] = useState(10);
   const [cols, setCols] = useState(15);
@@ -50,7 +51,17 @@ const Rooms = () => {
   };
 
   const handleOpenBuilder = () => {
+    setEditingRoomId(null);
     initLayout(rows, cols);
+    setIsModalOpen(true);
+  };
+
+  const handleEditRoom = (room) => {
+    setEditingRoomId(room._id);
+    setRoomName(room.name);
+    setRows(room.rows);
+    setCols(room.columns);
+    setLayout(room.layout);
     setIsModalOpen(true);
   };
 
@@ -83,24 +94,35 @@ const Rooms = () => {
     setLoading(true);
     try {
       const token = await getToken();
-      const { data } = await axios.post("/api/room/add", {
-        name: roomName,
-        rows,
-        columns: cols,
-        layout
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      
+      let res;
+      if (editingRoomId) {
+        res = await axios.put(`/api/room/${editingRoomId}`, {
+          name: roomName,
+          rows,
+          columns: cols,
+          layout
+        }, { headers: { Authorization: `Bearer ${token}` } });
+      } else {
+        res = await axios.post("/api/room/add", {
+          name: roomName,
+          rows,
+          columns: cols,
+          layout
+        }, { headers: { Authorization: `Bearer ${token}` } });
+      }
 
-      if (data.success) {
-        toast.success("Thêm phòng thành công");
+      if (res.data.success) {
+        toast.success(editingRoomId ? "Cập nhật phòng thành công" : "Thêm phòng thành công");
         setIsModalOpen(false);
+        setEditingRoomId(null);
+        setRoomName("");
         fetchRooms();
       } else {
-        toast.error(data.message);
+        toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error("Lỗi khi thêm phòng");
+      toast.error("Lỗi khi lưu phòng");
     }
     setLoading(false);
   };
@@ -144,9 +166,19 @@ const Rooms = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {rooms.map(room => (
-          <div key={room._id} className="bg-white/5 p-6 rounded-xl border border-white/10">
-            <h4 className="text-xl font-bold text-primary mb-2">{room.name}</h4>
-            <p className="text-gray-400">Kích thước: {room.rows} x {room.columns}</p>
+          <div 
+            key={room._id} 
+            onClick={() => handleEditRoom(room)}
+            className="bg-white/5 p-6 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 hover:border-primary transition-all duration-300 group"
+          >
+            <div className="flex justify-between items-start">
+              <h4 className="text-xl font-bold text-primary mb-2 group-hover:scale-105 transition-transform">{room.name}</h4>
+              <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Click để sửa</span>
+            </div>
+            <p className="text-gray-400">Kích thước lưới: {room.rows} x {room.columns}</p>
+            <p className="text-gray-400 mt-1">
+               Tổng ghế: {room.layout?.reduce((total, row) => total + row.seats.filter(s => s.type !== 'empty').length, 0)}
+            </p>
           </div>
         ))}
       </div>
@@ -155,8 +187,8 @@ const Rooms = () => {
         <div className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-4">
           <div className="w-full max-w-6xl max-h-full overflow-y-auto bg-[#1a1a1a] p-6 rounded-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold">Trình thiết kế sơ đồ ghế</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-red-500 font-bold">Đóng</button>
+              <h3 className="text-2xl font-bold">{editingRoomId ? "Chỉnh sửa phòng" : "Trình thiết kế sơ đồ ghế"}</h3>
+              <button onClick={() => { setIsModalOpen(false); setEditingRoomId(null); setRoomName(""); }} className="text-red-500 font-bold hover:text-red-400">Đóng</button>
             </div>
 
             <div className="flex gap-4 mb-6">
