@@ -32,21 +32,12 @@ export const searchMovies = async (req, res) => {
     }
 
     const headers = { Authorization: `Bearer ${process.env.TMDB_API_KEY}` };
-    const [nowPlayingRes, upcomingRes] = await Promise.all([
-      axios.get("https://api.themoviedb.org/3/movie/now_playing?language=vi-VN&region=VN", { headers }),
-      axios.get("https://api.themoviedb.org/3/movie/upcoming?language=vi-VN&region=VN", { headers })
-    ]);
-
-    const allMovies = [...nowPlayingRes.data.results, ...upcomingRes.data.results];
-    const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.id, m])).values());
-
-    // Filter locally by search query
-    const filteredMovies = uniqueMovies.filter(m => 
-      m.title.toLowerCase().includes(q.toLowerCase()) || 
-      (m.original_title && m.original_title.toLowerCase().includes(q.toLowerCase()))
+    const searchRes = await axios.get(
+      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(q)}&language=vi-VN`,
+      { headers }
     );
 
-    res.json({ success: true, movies: filteredMovies });
+    res.json({ success: true, movies: searchRes.data.results });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
