@@ -110,6 +110,7 @@ export const addShow = async (req, res) => {
       const start = new Date(dt.getTime() - 2 * 60 * 60 * 1000);
       const end = new Date(dt.getTime() + 2 * 60 * 60 * 1000);
       const conflict = await Show.findOne({
+        room: roomId,
         showDateTime: { $gt: start, $lt: end }
       }).populate("movie");
       
