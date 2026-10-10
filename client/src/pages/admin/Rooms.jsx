@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import { Trash2Icon } from "lucide-react";
 
 const Rooms = () => {
   const { axios, getToken } = useAppContext();
@@ -127,6 +128,28 @@ const Rooms = () => {
     setLoading(false);
   };
 
+  const handleDeleteRoom = async (e, roomId, roomName) => {
+    e.stopPropagation(); // prevent opening the edit modal
+    
+    if (window.confirm(`Bạn có chắc chắn muốn xóa phòng "${roomName}" không?\nCẢNH BÁO: Việc này sẽ xóa toàn bộ các SUẤT CHIẾU và VÉ liên quan đến phòng này.`)) {
+      try {
+        const token = await getToken();
+        const { data } = await axios.delete(`/api/room/${roomId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (data.success) {
+          toast.success(data.message);
+          fetchRooms();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error("Lỗi khi xóa phòng");
+      }
+    }
+  };
+
   return (
     <div className="text-white">
       <h2 className="text-2xl font-bold mb-6">Quản lý Phòng Chiếu</h2>
@@ -172,8 +195,17 @@ const Rooms = () => {
             className="bg-white/5 p-6 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 hover:border-primary transition-all duration-300 group"
           >
             <div className="flex justify-between items-start">
-              <h4 className="text-xl font-bold text-primary mb-2 group-hover:scale-105 transition-transform">{room.name}</h4>
-              <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Click để sửa</span>
+              <div>
+                <h4 className="text-xl font-bold text-primary mb-2 group-hover:scale-105 transition-transform">{room.name}</h4>
+                <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-300">Click để sửa</span>
+              </div>
+              <button 
+                onClick={(e) => handleDeleteRoom(e, room._id, room.name)}
+                className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                title="Xóa phòng chiếu"
+              >
+                <Trash2Icon className="w-5 h-5" />
+              </button>
             </div>
             <p className="text-gray-400">Kích thước lưới: {room.rows} x {room.columns}</p>
             <p className="text-gray-400 mt-1">

@@ -1,4 +1,6 @@
 import Room from "../models/Room.js";
+import Show from "../models/Show.js";
+import Booking from "../models/Booking.js";
 
 // Add a new room
 export const addRoom = async (req, res) => {
@@ -39,8 +41,19 @@ export const getAllRooms = async (req, res) => {
 export const deleteRoom = async (req, res) => {
   try {
     const { roomId } = req.params;
+
+    // Find all shows for this room
+    const shows = await Show.find({ room: roomId });
+    const showIds = shows.map(s => s._id);
+
+    // Delete associated bookings and shows
+    if (showIds.length > 0) {
+      await Booking.deleteMany({ show: { $in: showIds } });
+      await Show.deleteMany({ room: roomId });
+    }
+
     await Room.findByIdAndDelete(roomId);
-    res.json({ success: true, message: "Đã xóa phòng chiếu!" });
+    res.json({ success: true, message: "Đã xóa phòng chiếu và các suất chiếu/vé liên quan!" });
   } catch (error) {
     console.error(error.message);
     res.json({ success: false, message: error.message });
