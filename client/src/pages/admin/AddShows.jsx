@@ -61,10 +61,12 @@ const AddShows = () => {
       }
     }, 500);
 
-    fetchRooms();
-
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, user]);
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   const executeSearch = async () => {
     setIsSearching(true);
