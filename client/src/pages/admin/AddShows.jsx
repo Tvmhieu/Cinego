@@ -163,7 +163,7 @@ const AddShows = () => {
 
   // Removed since we fetch via debounce in the useEffect above
 
-  return nowPlayingMovies.length > 0 ? (
+  return (
     <>
       <Title text1="Thêm" text2="Suất chiếu" />
 
@@ -181,35 +181,39 @@ const AddShows = () => {
       <p className="mt-8 text-lg font-medium">
         {searchQuery ? "Kết quả tìm kiếm" : "Phim đang hot"}
       </p>
-      <div className="pb-4 overflow-x-auto">
-        <div className="flex flex-wrap gap-4 mt-4 group w-max">
-          {nowPlayingMovies.map((movie) => (
-            <div
-              key={movie.id}
-              className={`relative max-w-40 cursor-pointer group-hover:not-hover:opacity-40 hover:-translate-y-1 transition duration-300`}
-              onClick={() => setSelectedMovie(movie.id)}
-            >
-              <div className="relative overflow-hidden rounded-lg">
-                <img
-                  src={image_base_url + movie.poster_path}
-                  alt=""
-                  className="object-cover w-full brightness-90"
-                />
-
-
-              </div>
-              {selectedMovie === movie.id && (
-                <div className="absolute flex items-center justify-center w-6 h-6 rounded top-2 right-2 bg-primary">
-                  <CheckIcon className="w-4 h-4 text-white" strokeWidth={2.5} />
-                </div>
-              )}
-
-              <p className="font-medium truncate">{movie.title}</p>
-              <p className="text-sm text-gray-400">{movie.release_date}</p>
-            </div>
-          ))}
+      {nowPlayingMovies.length === 0 ? (
+        <div className="mt-4 p-8 text-center bg-white/5 border border-white/10 rounded-xl text-gray-400">
+          {isSearching ? "Đang tìm kiếm..." : "Không tìm thấy phim nào phù hợp."}
         </div>
-      </div>
+      ) : (
+        <div className="pb-4 overflow-x-auto">
+          <div className="flex flex-wrap gap-4 mt-4 group w-max">
+            {nowPlayingMovies.map((movie) => (
+              <div
+                key={movie.id}
+                className={`relative max-w-40 cursor-pointer group-hover:not-hover:opacity-40 hover:-translate-y-1 transition duration-300`}
+                onClick={() => setSelectedMovie(movie.id)}
+              >
+                <div className="relative overflow-hidden rounded-lg">
+                  <img
+                    src={image_base_url + movie.poster_path}
+                    alt=""
+                    className="object-cover w-full brightness-90"
+                  />
+                </div>
+                {selectedMovie === movie.id && (
+                  <div className="absolute flex items-center justify-center w-6 h-6 rounded top-2 right-2 bg-primary">
+                    <CheckIcon className="w-4 h-4 text-white" strokeWidth={2.5} />
+                  </div>
+                )}
+
+                <p className="font-medium truncate">{movie.title}</p>
+                <p className="text-sm text-gray-400">{movie.release_date}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Select Room */}
       <div className="mt-8">
@@ -337,8 +341,6 @@ const AddShows = () => {
         Thêm suất chiếu
       </button>
     </>
-  ) : (
-    <Loading />
   );
 };
 
