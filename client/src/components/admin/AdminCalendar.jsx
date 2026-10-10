@@ -87,11 +87,11 @@ const AdminCalendar = ({ shows }) => {
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto">
       {/* Calendar Section */}
-      <div className="w-full bg-[#0a0a0a] rounded-lg border border-[#2a2a2a] overflow-hidden flex flex-col">
+      <div className="w-full bg-[#161616] rounded-xl border border-gray-800 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-[#2a2a2a] bg-[#0a0a0a] gap-4">
-          <h2 className="text-xl font-medium text-[#f1f1f1] flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-[#888]" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-gray-800 bg-[#161616] gap-4">
+          <h2 className="text-xl font-medium text-white flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5 text-gray-400" />
             {monthNames[month]} {year}
           </h2>
           <div className="flex items-center gap-3">
@@ -101,42 +101,42 @@ const AdminCalendar = ({ shows }) => {
                 setSelectedRoomId(e.target.value);
                 setSelectedDayShows(null);
               }}
-              className="bg-[#111] border border-[#333] text-[#ccc] text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#555] transition-colors cursor-pointer appearance-none"
+              className="bg-[#111] border border-gray-700 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary transition-colors cursor-pointer"
             >
-              <option value="" className="bg-[#111] text-[#ccc]">Tất cả phòng</option>
+              <option value="" className="bg-[#111] text-gray-300">Tất cả phòng</option>
               {rooms.map(room => (
-                <option key={room._id} value={room._id} className="bg-[#111] text-[#ccc]">
+                <option key={room._id} value={room._id} className="bg-[#111] text-gray-300">
                   {room.name}
                 </option>
               ))}
             </select>
             <button 
               onClick={handleToday}
-              className="px-3 py-1.5 text-sm font-medium text-[#888] hover:text-[#eee] bg-transparent border border-[#333] hover:border-[#555] rounded-lg transition-colors"
+              className="px-3 py-1.5 text-sm font-medium text-gray-400 hover:text-white bg-transparent border border-gray-700 hover:border-gray-500 rounded-lg transition-colors"
             >
               Hôm nay
             </button>
             <div className="flex gap-1">
               <button 
                 onClick={handlePrevMonth}
-                className="p-1.5 text-[#888] hover:text-[#eee] bg-transparent border border-[#333] hover:border-[#555] rounded transition-colors"
+                className="p-1.5 text-gray-400 hover:text-white bg-transparent border border-gray-700 hover:border-gray-500 rounded-lg transition-colors"
               >
-                <ChevronLeftIcon className="w-4 h-4" />
+                <ChevronLeftIcon className="w-5 h-5" />
               </button>
               <button 
                 onClick={handleNextMonth}
-                className="p-1.5 text-[#888] hover:text-[#eee] bg-transparent border border-[#333] hover:border-[#555] rounded transition-colors"
+                className="p-1.5 text-gray-400 hover:text-white bg-transparent border border-gray-700 hover:border-gray-500 rounded-lg transition-colors"
               >
-                <ChevronRightIcon className="w-4 h-4" />
+                <ChevronRightIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Days Header */}
-        <div className="grid grid-cols-7 border-b border-[#2a2a2a] bg-[#0a0a0a]">
+        <div className="grid grid-cols-7 border-b border-gray-800 bg-[#111]">
           {dayNames.map((day, idx) => (
-            <div key={idx} className="py-3 text-center text-xs font-medium text-[#666] border-r border-[#2a2a2a] last:border-r-0">
+            <div key={idx} className="py-3 text-center text-xs font-medium text-gray-400 border-r border-gray-800 last:border-r-0">
               {day}
             </div>
           ))}
@@ -146,7 +146,7 @@ const AdminCalendar = ({ shows }) => {
         <div className="grid grid-cols-7 auto-rows-[minmax(120px,auto)]">
           {calendarDays.map((day, idx) => {
             if (!day) {
-              return <div key={`empty-${idx}`} className="bg-[#050505] border-r border-b border-[#2a2a2a]" />;
+              return <div key={`empty-${idx}`} className="bg-[#111] border-r border-b border-gray-800" />;
             }
 
             const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -159,18 +159,26 @@ const AdminCalendar = ({ shows }) => {
               <div 
                 key={dateKey} 
                 onClick={() => hasShows && setSelectedDayShows({ dateKey, dateStr: `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`, shows: dayShows })}
-                className={`p-3 border-r border-b border-[#2a2a2a] flex flex-col gap-2 transition-all duration-200 ${
-                  isSelected ? 'bg-[#1a1a1a] shadow-inner' : hasShows ? 'hover:bg-[#111] cursor-pointer bg-[#0a0a0a]' : 'bg-[#050505]'
+                className={`relative p-3 border-r border-b border-gray-800 flex flex-col gap-2 transition-all duration-300 ${
+                  isSelected 
+                    ? 'bg-gray-800/80 scale-105 z-10 shadow-2xl border-primary ring-1 ring-primary/50' 
+                    : hasShows 
+                      ? 'hover:bg-gray-800 cursor-pointer bg-[#161616]' 
+                      : 'bg-[#111]'
                 }`}
               >
                 <div className="flex justify-between items-start">
                   <span className={`text-sm w-7 h-7 flex items-center justify-center rounded-full ${
-                    isToday ? 'bg-[#eee] text-[#000] font-medium' : isSelected ? 'bg-[#333] text-white font-medium' : 'text-[#888]'
+                    isToday 
+                      ? 'bg-primary text-white font-medium' 
+                      : isSelected 
+                        ? 'bg-white text-black font-medium' 
+                        : 'text-gray-400'
                   }`}>
                     {day}
                   </span>
                   {hasShows && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#111] text-[#888] border border-[#2a2a2a]">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-900 text-primary border border-gray-700/50">
                       {dayShows.length} suất
                     </span>
                   )}
@@ -181,17 +189,17 @@ const AdminCalendar = ({ shows }) => {
                     const d = new Date(show.showDateTime);
                     const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
                     return (
-                      <div key={show._id} className="text-[11px] leading-tight text-[#999] truncate flex flex-col gap-0.5">
+                      <div key={show._id} className="text-[11px] leading-tight text-gray-400 truncate flex flex-col gap-0.5">
                         <div className="flex gap-1.5 items-center">
-                          <span className="text-[#ccc] font-medium">{timeStr}</span>
-                          {!selectedRoomId && show.room && <span className="text-[#666] text-[10px] border border-[#333] px-1 rounded-sm">[{show.room.name}]</span>}
+                          <span className="text-gray-300 font-medium">{timeStr}</span>
+                          {!selectedRoomId && show.room && <span className="text-primary text-[10px] border border-primary/30 px-1 rounded-sm bg-primary/10">[{show.room.name}]</span>}
                         </div>
-                        <span className="truncate">{show.movie?.title}</span>
+                        <span className="truncate text-gray-400">{show.movie?.title}</span>
                       </div>
                     );
                   })}
                   {dayShows.length > 3 && (
-                    <div className="text-[10px] text-[#666] mt-1 pl-1">
+                    <div className="text-[10px] text-gray-500 mt-1 pl-1">
                       + {dayShows.length - 3} suất khác
                     </div>
                   )}
@@ -204,26 +212,26 @@ const AdminCalendar = ({ shows }) => {
 
       {/* Selected Day Schedule (Simple List) */}
       {selectedDayShows && (
-        <div className="w-full bg-[#0a0a0a] rounded-lg border border-[#2a2a2a] p-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#2a2a2a]">
+        <div className="w-full bg-[#161616] rounded-xl border border-primary/50 shadow-[0_0_20px_rgba(229,9,20,0.1)] p-8 animate-in fade-in slide-in-from-bottom-2 duration-500 relative z-20">
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-800">
             <div>
-              <h3 className="text-xl font-medium text-[#f1f1f1] flex items-center gap-2">
-                <ClockIcon className="w-5 h-5 text-[#888]" />
+              <h3 className="text-xl font-medium text-white flex items-center gap-2">
+                <ClockIcon className="w-5 h-5 text-primary" />
                 Lịch chiếu ngày {selectedDayShows.dateStr}
               </h3>
-              <p className="text-sm text-[#666] mt-1">
+              <p className="text-sm text-gray-400 mt-1">
                 Có tổng cộng {selectedDayShows.shows.length} suất chiếu
               </p>
             </div>
             <button 
               onClick={() => setSelectedDayShows(null)}
-              className="text-sm text-[#888] hover:text-[#eee] transition-colors"
+              className="text-sm text-gray-400 hover:text-white transition-colors"
             >
               Đóng lại
             </button>
           </div>
 
-          <div className="grid gap-0 border-t border-l border-r border-[#2a2a2a] rounded overflow-hidden">
+          <div className="grid gap-0 border-t border-l border-r border-gray-800 rounded-xl overflow-hidden shadow-lg">
             {selectedDayShows.shows.map((show, index) => {
               const d = new Date(show.showDateTime);
               const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
@@ -231,23 +239,23 @@ const AdminCalendar = ({ shows }) => {
                 <div 
                   key={show._id}
                   onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
-                  className={`flex flex-col sm:flex-row sm:items-center gap-6 p-5 bg-[#0a0a0a] border-b border-[#2a2a2a] hover:bg-[#111] transition-colors cursor-pointer group`}
+                  className={`flex flex-col sm:flex-row sm:items-center gap-6 p-5 bg-[#111] border-b border-gray-800 hover:bg-gray-800/80 transition-colors cursor-pointer group`}
                 >
-                  <div className="w-16 text-lg font-medium text-[#eee]">
+                  <div className="w-16 text-lg font-medium text-white">
                     {timeStr}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium text-[#eee] text-base group-hover:text-white transition-colors">{show.movie?.title}</h4>
-                    <p className="text-xs text-[#888] mt-1">{show.room?.name || "Chưa xếp phòng"}</p>
+                    <h4 className="font-medium text-gray-200 text-base group-hover:text-primary transition-colors">{show.movie?.title}</h4>
+                    <p className="text-xs text-gray-500 mt-1">{show.room?.name || "Chưa xếp phòng"}</p>
                   </div>
                   <div className="flex items-center gap-8 text-sm">
                     <div className="flex flex-col gap-1">
-                      <span className="text-[10px] uppercase text-[#666]">Giá vé</span>
-                      <span className="text-[#ccc]">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</span>
+                      <span className="text-[10px] uppercase text-gray-500">Giá vé</span>
+                      <span className="text-gray-300">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-[10px] uppercase text-[#666]">Đã bán</span>
-                      <span className="text-[#ccc]">{show.paidTickets || 0} vé</span>
+                      <span className="text-[10px] uppercase text-gray-500">Đã bán</span>
+                      <span className="text-gray-300">{show.paidTickets || 0} vé</span>
                     </div>
                   </div>
                 </div>
