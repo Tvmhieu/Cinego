@@ -52,6 +52,12 @@ const Rooms = () => {
   };
 
   const handleOpenBuilder = () => {
+    if (!roomName.trim()) {
+      return toast.error("Vui lòng nhập tên phòng chiếu trước khi dựng sơ đồ!");
+    }
+    if (rows <= 0 || cols <= 0) {
+      return toast.error("Số hàng và số cột phải lớn hơn 0!");
+    }
     setEditingRoomId(null);
     initLayout(rows, cols);
     setIsModalOpen(true);
