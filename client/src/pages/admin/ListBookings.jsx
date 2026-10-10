@@ -20,7 +20,7 @@ const ListBookings = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [activeTab, setActiveTab] = useState("valid"); // 'valid', 'cancelled'
+  const [activeTab, setActiveTab] = useState("upcoming"); // 'upcoming', 'past', 'cancelled'
   const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
   const [selectedBookings, setSelectedBookings] = useState([]);
 
@@ -160,7 +160,11 @@ const ListBookings = () => {
     if (!item || !item.show || !item.show.movie) return false;
     
     // Tab filter
-    if (activeTab === "valid" && item.isCancelled) return false;
+    const showDate = new Date(item.show.showDateTime);
+    const now = new Date();
+    
+    if (activeTab === "upcoming" && (item.isCancelled || showDate <= now)) return false;
+    if (activeTab === "past" && (item.isCancelled || showDate > now)) return false;
     if (activeTab === "cancelled" && !item.isCancelled) return false;
 
     // Show ID filter (from ListShows)
@@ -352,12 +356,20 @@ const ListBookings = () => {
       {!showIdFilter && (
         <div className="flex gap-4 mb-6 border-b border-gray-800 pb-2">
           <button
-            onClick={() => setActiveTab("valid")}
+            onClick={() => setActiveTab("upcoming")}
             className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
-              activeTab === "valid" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+              activeTab === "upcoming" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
             }`}
           >
-            Đang hoạt động ({bookings.filter(b => !b.isCancelled).length})
+            Sắp chiếu ({bookings.filter(b => !b.isCancelled && new Date(b.show?.showDateTime) > new Date()).length})
+          </button>
+          <button
+            onClick={() => setActiveTab("past")}
+            className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+              activeTab === "past" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+            }`}
+          >
+            Đã chiếu ({bookings.filter(b => !b.isCancelled && new Date(b.show?.showDateTime) <= new Date()).length})
           </button>
           <button
             onClick={() => setActiveTab("cancelled")}

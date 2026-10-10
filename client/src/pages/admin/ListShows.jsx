@@ -18,6 +18,7 @@ const ListShows = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: 'showDateTime', direction: 'desc' });
   const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
+  const [activeTab, setActiveTab] = useState("upcoming"); // 'upcoming', 'past', 'cancelled'
   const [selectedShows, setSelectedShows] = useState([]);
 
   const getAllShows = async () => {
@@ -35,12 +36,20 @@ const ListShows = () => {
 
   const handleCancelShow = async (e, showId) => {
     e.stopPropagation();
-    if (!window.confirm("Bạn có chắc chắn muốn xóa suất chiếu này?")) return;
+    
+    const reason = window.prompt("Nhập lý do hủy suất chiếu (Bắt buộc):");
+    if (reason === null) return;
+    if (reason.trim() === "") {
+      toast.error("Vui lòng nhập lý do hủy");
+      return;
+    }
+
+    if (!window.confirm(`Bạn có chắc chắn muốn hủy suất chiếu này với lý do: "${reason.trim()}"? Tất cả vé sẽ bị hủy.`)) return;
 
     try {
       const { data } = await axios.post(
         "/api/admin/cancel-show",
-        { showId },
+        { showId, reason: reason.trim() },
         { headers: { Authorization: `Bearer ${await getToken()}` } }
       );
 
@@ -58,12 +67,20 @@ const ListShows = () => {
 
   const handleBulkCancel = async () => {
     if (selectedShows.length === 0) return;
-    if (!window.confirm(`Bạn có chắc muốn xóa ${selectedShows.length} suất chiếu đã chọn?`)) return;
+    
+    const reason = window.prompt("Nhập lý do hủy các suất chiếu (Bắt buộc):");
+    if (reason === null) return;
+    if (reason.trim() === "") {
+      toast.error("Vui lòng nhập lý do hủy");
+      return;
+    }
+
+    if (!window.confirm(`Bạn có chắc muốn hủy ${selectedShows.length} suất chiếu đã chọn với lý do: "${reason.trim()}"? Tất cả vé sẽ bị hủy.`)) return;
 
     try {
       const { data } = await axios.post(
         "/api/admin/bulk-cancel-shows",
-        { showIds: selectedShows },
+        { showIds: selectedShows, reason: reason.trim() },
         { headers: { Authorization: `Bearer ${await getToken()}` } }
       );
 
@@ -80,11 +97,14 @@ const ListShows = () => {
     }
   };
 
-  const getShowStatus = (showDateTime, runtime = 120) => {
+  const getShowStatus = (show) => {
     const now = new Date();
-    const showDate = new Date(showDateTime);
+    const showDate = new Date(show.showDateTime);
     const diffMins = (now - showDate) / (1000 * 60);
+    const runtime = show.movie?.runtime || 120;
 
+    if (show.isCancelled) return { text: "Đã hủy", color: "text-red-400 bg-red-500/10 border-red-500/20", value: -1 };
+    
     if (diffMins < 0) return { text: "Sắp chiếu", color: "text-blue-400 bg-blue-500/10 border-blue-500/20", value: 3 };
     if (diffMins >= 0 && diffMins <= 15) return { text: "Đang mở bán", color: "text-green-400 bg-green-500/10 border-green-500/20", value: 2 };
     if (diffMins > 15 && diffMins < runtime) return { text: "Đang chiếu", color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20", value: 1 };
@@ -106,6 +126,15 @@ const ListShows = () => {
   }, [user]);
 
   const filteredShows = shows.filter((show) => {
+    // Tab filter
+    const showDate = new Date(show.showDateTime);
+    const now = new Date();
+    
+    if (activeTab === "upcoming" && (show.isCancelled || showDate <= now)) return false;
+    if (activeTab === "past" && (show.isCancelled || showDate > now)) return false;
+    if (activeTab === "cancelled" && !show.isCancelled) return false;
+
+    // Search filter
     const term = searchTerm.toLowerCase();
     const title = show.movie?.title?.toLowerCase() || "";
     const code = show.showCode?.toLowerCase() || "";
@@ -138,8 +167,8 @@ const ListShows = () => {
       return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
     }
     if (sortConfig.key === 'status') {
-      const statusA = getShowStatus(a.showDateTime, a.movie?.runtime).value;
-      const statusB = getShowStatus(b.showDateTime, b.movie?.runtime).value;
+      const statusA = getShowStatus(a).value;
+      const statusB = getShowStatus(b).value;
       return sortConfig.direction === 'asc' ? statusA - statusB : statusB - statusA;
     }
     if (sortConfig.key === 'showPrice') {
@@ -226,6 +255,33 @@ const ListShows = () => {
         </div>
       </div>
 
+      <div className="flex gap-4 mb-6 border-b border-gray-800 pb-2">
+        <button
+          onClick={() => setActiveTab("upcoming")}
+          className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+            activeTab === "upcoming" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+          }`}
+        >
+          Sắp chiếu
+        </button>
+        <button
+          onClick={() => setActiveTab("past")}
+          className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+            activeTab === "past" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+          }`}
+        >
+          Đã chiếu
+        </button>
+        <button
+          onClick={() => setActiveTab("cancelled")}
+          className={`pb-2 px-1 text-sm font-medium transition-colors border-b-2 ${
+            activeTab === "cancelled" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
+          }`}
+        >
+          Đã hủy
+        </button>
+      </div>
+
       {viewMode === 'calendar' ? (
         <AdminCalendar shows={filteredShows} />
       ) : (
@@ -264,7 +320,7 @@ const ListShows = () => {
             </div>
           ) : (
             filteredShows.map((show) => {
-              const status = getShowStatus(show.showDateTime, show.movie?.runtime);
+              const status = getShowStatus(show);
               return (
                 <div 
                   key={show._id} 
@@ -282,6 +338,12 @@ const ListShows = () => {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-4">
+                    {show.isCancelled && show.cancellationReason && (
+                      <div className="col-span-2 bg-red-500/10 border border-red-500/20 p-2 rounded-lg mb-2">
+                        <p className="text-[10px] text-red-400 uppercase tracking-wider mb-0.5">Lý do hủy</p>
+                        <p className="text-xs text-red-300 line-clamp-2">{show.cancellationReason}</p>
+                      </div>
+                    )}
                     <div className="col-span-2 flex justify-between items-start">
                       <div>
                         <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Thời Gian</p>
@@ -311,12 +373,14 @@ const ListShows = () => {
                     >
                       <EyeIcon className="w-4 h-4" /> Xem Vé
                     </button>
-                    <button
-                      onClick={(e) => handleCancelShow(e, show._id)}
-                      className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-medium transition"
-                    >
-                      <Trash2Icon className="w-4 h-4" /> Xóa
-                    </button>
+                    {!show.isCancelled && (
+                      <button
+                        onClick={(e) => handleCancelShow(e, show._id)}
+                        className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-medium transition"
+                      >
+                        <Trash2Icon className="w-4 h-4" /> Hủy suất
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -360,7 +424,7 @@ const ListShows = () => {
                 </tr>
               ) : (
                 filteredShows.map((show, index) => {
-                  const status = getShowStatus(show.showDateTime, show.movie?.runtime);
+                  const status = getShowStatus(show);
                   return (
                     <tr
                       key={index}
@@ -405,14 +469,21 @@ const ListShows = () => {
                         <span className={`px-3 py-1 text-xs font-medium rounded border ${status.color}`}>
                           {status.text}
                         </span>
+                        {show.isCancelled && show.cancellationReason && (
+                          <p className="text-[10px] text-red-400 mt-1 max-w-[150px] truncate" title={show.cancellationReason}>
+                            {show.cancellationReason}
+                          </p>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={(e) => handleCancelShow(e, show._id)}
-                          className="px-4 py-2 text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
-                        >
-                          Xóa
-                        </button>
+                        {!show.isCancelled && (
+                          <button
+                            onClick={(e) => handleCancelShow(e, show._id)}
+                            className="px-4 py-2 text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
+                          >
+                            Hủy suất
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

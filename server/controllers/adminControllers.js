@@ -184,21 +184,37 @@ export const getAllBookings = async (req, res) => {
 // API to cancel a show
 export const cancelShow = async (req, res) => {
   try {
-    const { showId } = req.body;
+    const { showId, reason } = req.body;
+    const { userId: clerkId } = req.auth();
     
-    // Check if there are paid bookings for this show
-    const bookings = await Booking.find({ show: showId, isPaid: true });
-    if (bookings.length > 0) {
-      return res.json({ success: false, message: "Không thể xóa suất chiếu đã có khách thanh toán" });
+    if (!reason || reason.trim() === "") {
+      return res.json({ success: false, message: "Vui lòng nhập lý do hủy suất chiếu" });
     }
 
-    // Delete associated unpaid bookings
-    await Booking.deleteMany({ show: showId });
+    const admin = await User.findOne({ clerkId });
+    const adminName = admin?.firstName ? `${admin.firstName} ${admin.lastName || ''}` : "Admin";
 
-    // Delete the show
-    await Show.findByIdAndDelete(showId);
+    const show = await Show.findById(showId);
+    if (!show) {
+      return res.json({ success: false, message: "Không tìm thấy suất chiếu" });
+    }
 
-    res.json({ success: true, message: "Xóa suất chiếu thành công" });
+    // Cancel all associated bookings (paid and unpaid)
+    const bookings = await Booking.find({ show: showId, isCancelled: false });
+    for (const booking of bookings) {
+      booking.isCancelled = true;
+      booking.cancellationReason = `Suất chiếu bị hủy. Lý do: ${reason.trim()} (Bởi: ${adminName})`;
+      await booking.save();
+    }
+
+    // Mark show as cancelled
+    show.isCancelled = true;
+    show.cancellationReason = `Hủy bởi: ${adminName}. Lý do: ${reason.trim()}`;
+    show.occupiedSeats = {}; // Release all seats
+    show.markModified("occupiedSeats");
+    await show.save();
+
+    res.json({ success: true, message: "Hủy suất chiếu thành công" });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
@@ -404,28 +420,45 @@ export const adminCancelBooking = async (req, res) => {
 // API to bulk delete shows
 export const bulkCancelShows = async (req, res) => {
   try {
-    const { showIds } = req.body;
+    const { showIds, reason } = req.body;
+    const { userId: clerkId } = req.auth();
+
     if (!Array.isArray(showIds) || showIds.length === 0) {
       return res.json({ success: false, message: "Danh sách suất chiếu trống" });
     }
+    
+    if (!reason || reason.trim() === "") {
+      return res.json({ success: false, message: "Vui lòng nhập lý do hủy suất chiếu" });
+    }
 
-    const skipped = [];
-    const deleted = [];
+    const admin = await User.findOne({ clerkId });
+    const adminName = admin?.firstName ? `${admin.firstName} ${admin.lastName || ''}` : "Admin";
+
+    let cancelledCount = 0;
 
     for (const showId of showIds) {
-      const bookings = await Booking.find({ show: showId, isPaid: true });
-      if (bookings.length > 0) {
-        skipped.push(showId);
-        continue;
+      const show = await Show.findById(showId);
+      if (!show || show.isCancelled) continue;
+
+      const bookings = await Booking.find({ show: showId, isCancelled: false });
+      for (const booking of bookings) {
+        booking.isCancelled = true;
+        booking.cancellationReason = `Suất chiếu bị hủy (Hàng loạt). Lý do: ${reason.trim()} (Bởi: ${adminName})`;
+        await booking.save();
       }
-      await Booking.deleteMany({ show: showId });
-      await Show.findByIdAndDelete(showId);
-      deleted.push(showId);
+
+      show.isCancelled = true;
+      show.cancellationReason = `Hủy hàng loạt bởi: ${adminName}. Lý do: ${reason.trim()}`;
+      show.occupiedSeats = {};
+      show.markModified("occupiedSeats");
+      await show.save();
+      
+      cancelledCount++;
     }
 
     res.json({ 
       success: true, 
-      message: `Đã xóa ${deleted.length} suất chiếu. ${skipped.length > 0 ? `Bỏ qua ${skipped.length} suất do đã có khách thanh toán.` : ''}` 
+      message: `Đã hủy thành công ${cancelledCount} suất chiếu.` 
     });
   } catch (error) {
     console.error(error);

@@ -29,6 +29,15 @@ const showSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+
+    isCancelled: {
+      type: Boolean,
+      default: false,
+    },
+
+    cancellationReason: {
+      type: String,
+    },
   },
   {
     timestamps: true,
