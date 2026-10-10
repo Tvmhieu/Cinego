@@ -87,11 +87,11 @@ const AdminCalendar = ({ shows }) => {
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto">
       {/* Calendar Section */}
-      <div className="w-full bg-[#0a0a0a] rounded-lg border border-[#2a2a2a] overflow-hidden flex flex-col font-sans">
+      <div className="w-full bg-[#0a0a0a] rounded-lg border border-[#2a2a2a] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-[#2a2a2a] bg-[#0a0a0a] gap-4">
-          <h2 className="text-xl font-medium text-[#f1f1f1] tracking-tight flex items-center gap-2">
-            <CalendarIcon className="w-4 h-4 text-[#888]" />
+          <h2 className="text-xl font-medium text-[#f1f1f1] flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5 text-[#888]" />
             {monthNames[month]} {year}
           </h2>
           <div className="flex items-center gap-3">
@@ -101,20 +101,20 @@ const AdminCalendar = ({ shows }) => {
                 setSelectedRoomId(e.target.value);
                 setSelectedDayShows(null);
               }}
-              className="bg-[#111] border border-[#333] text-[#ccc] text-xs font-mono rounded px-3 py-1.5 focus:outline-none focus:border-[#555] transition-colors cursor-pointer appearance-none"
+              className="bg-[#111] border border-[#333] text-[#ccc] text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#555] transition-colors cursor-pointer appearance-none"
             >
-              <option value="" className="bg-[#111] text-[#ccc]">TẤT CẢ PHÒNG</option>
+              <option value="" className="bg-[#111] text-[#ccc]">Tất cả phòng</option>
               {rooms.map(room => (
                 <option key={room._id} value={room._id} className="bg-[#111] text-[#ccc]">
-                  {room.name.toUpperCase()}
+                  {room.name}
                 </option>
               ))}
             </select>
             <button 
               onClick={handleToday}
-              className="px-3 py-1.5 text-xs font-mono text-[#888] hover:text-[#eee] bg-transparent border border-[#333] hover:border-[#555] rounded transition-colors"
+              className="px-3 py-1.5 text-sm font-medium text-[#888] hover:text-[#eee] bg-transparent border border-[#333] hover:border-[#555] rounded-lg transition-colors"
             >
-              HÔM NAY
+              Hôm nay
             </button>
             <div className="flex gap-1">
               <button 
@@ -136,7 +136,7 @@ const AdminCalendar = ({ shows }) => {
         {/* Days Header */}
         <div className="grid grid-cols-7 border-b border-[#2a2a2a] bg-[#0a0a0a]">
           {dayNames.map((day, idx) => (
-            <div key={idx} className="py-2.5 text-center text-[10px] uppercase font-mono tracking-widest text-[#666] border-r border-[#2a2a2a] last:border-r-0">
+            <div key={idx} className="py-3 text-center text-xs font-medium text-[#666] border-r border-[#2a2a2a] last:border-r-0">
               {day}
             </div>
           ))}
@@ -164,14 +164,14 @@ const AdminCalendar = ({ shows }) => {
                 }`}
               >
                 <div className="flex justify-between items-start">
-                  <span className={`text-sm font-mono flex items-center justify-center ${
-                    isToday ? 'text-white border-b border-white pb-0.5' : isSelected ? 'text-white' : 'text-[#666]'
+                  <span className={`text-sm w-7 h-7 flex items-center justify-center rounded-full ${
+                    isToday ? 'bg-[#eee] text-[#000] font-medium' : isSelected ? 'bg-[#333] text-white font-medium' : 'text-[#888]'
                   }`}>
-                    {String(day).padStart(2, '0')}
+                    {day}
                   </span>
                   {hasShows && (
-                    <span className="text-[9px] font-mono tracking-wider text-[#888]">
-                      {dayShows.length} SUẤT
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#111] text-[#888] border border-[#2a2a2a]">
+                      {dayShows.length} suất
                     </span>
                   )}
                 </div>
@@ -183,16 +183,16 @@ const AdminCalendar = ({ shows }) => {
                     return (
                       <div key={show._id} className="text-[11px] leading-tight text-[#999] truncate flex flex-col gap-0.5">
                         <div className="flex gap-1.5 items-center">
-                          <span className="font-mono text-[#ccc]">{timeStr}</span>
-                          {!selectedRoomId && show.room && <span className="text-[#666] font-mono text-[9px] border border-[#333] px-1 rounded-sm">[{show.room.name}]</span>}
+                          <span className="text-[#ccc] font-medium">{timeStr}</span>
+                          {!selectedRoomId && show.room && <span className="text-[#666] text-[10px] border border-[#333] px-1 rounded-sm">[{show.room.name}]</span>}
                         </div>
                         <span className="truncate">{show.movie?.title}</span>
                       </div>
                     );
                   })}
                   {dayShows.length > 3 && (
-                    <div className="text-[9px] font-mono text-[#666] mt-1">
-                      + {dayShows.length - 3} SUẤT KHÁC
+                    <div className="text-[10px] text-[#666] mt-1 pl-1">
+                      + {dayShows.length - 3} suất khác
                     </div>
                   )}
                 </div>
@@ -207,19 +207,19 @@ const AdminCalendar = ({ shows }) => {
         <div className="w-full bg-[#0a0a0a] rounded-lg border border-[#2a2a2a] p-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#2a2a2a]">
             <div>
-              <h3 className="text-lg font-medium text-[#f1f1f1] flex items-center gap-2">
-                <ClockIcon className="w-4 h-4 text-[#888]" />
-                LỊCH CHIẾU - {selectedDayShows.dateStr}
+              <h3 className="text-xl font-medium text-[#f1f1f1] flex items-center gap-2">
+                <ClockIcon className="w-5 h-5 text-[#888]" />
+                Lịch chiếu ngày {selectedDayShows.dateStr}
               </h3>
-              <p className="text-xs font-mono text-[#666] mt-2 tracking-widest uppercase">
-                Tổng cộng: {selectedDayShows.shows.length} suất
+              <p className="text-sm text-[#666] mt-1">
+                Có tổng cộng {selectedDayShows.shows.length} suất chiếu
               </p>
             </div>
             <button 
               onClick={() => setSelectedDayShows(null)}
-              className="text-xs font-mono text-[#888] hover:text-[#eee] transition-colors uppercase tracking-wider"
+              className="text-sm text-[#888] hover:text-[#eee] transition-colors"
             >
-              [ Đóng ]
+              Đóng lại
             </button>
           </div>
 
@@ -233,21 +233,21 @@ const AdminCalendar = ({ shows }) => {
                   onClick={() => navigate(`/admin/list-bookings?showId=${show._id}`)}
                   className={`flex flex-col sm:flex-row sm:items-center gap-6 p-5 bg-[#0a0a0a] border-b border-[#2a2a2a] hover:bg-[#111] transition-colors cursor-pointer group`}
                 >
-                  <div className="w-16 font-mono text-xl text-[#eee]">
+                  <div className="w-16 text-lg font-medium text-[#eee]">
                     {timeStr}
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-[#eee] text-base group-hover:text-white transition-colors">{show.movie?.title}</h4>
-                    <p className="text-xs font-mono text-[#888] mt-1.5 uppercase tracking-wider">{show.room?.name || "Chưa xếp phòng"}</p>
+                    <p className="text-xs text-[#888] mt-1">{show.room?.name || "Chưa xếp phòng"}</p>
                   </div>
-                  <div className="flex items-center gap-8 text-sm font-mono">
+                  <div className="flex items-center gap-8 text-sm">
                     <div className="flex flex-col gap-1">
-                      <span className="text-[9px] uppercase text-[#666] tracking-widest">Giá vé</span>
+                      <span className="text-[10px] uppercase text-[#666]">Giá vé</span>
                       <span className="text-[#ccc]">{(show.showPrice || 0).toLocaleString("vi-VN")} {currency}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-[9px] uppercase text-[#666] tracking-widest">Đã bán</span>
-                      <span className="text-[#ccc]">{show.paidTickets || 0}</span>
+                      <span className="text-[10px] uppercase text-[#666]">Đã bán</span>
+                      <span className="text-[#ccc]">{show.paidTickets || 0} vé</span>
                     </div>
                   </div>
                 </div>
