@@ -12,18 +12,7 @@ const Footer = () => {
             khám phá các bộ phim mới nhất và tìm kiếm rạp chiếu gần bạn.
             Trải nghiệm đặt vé nhanh chóng, an toàn cùng nhiều ưu đãi hấp dẫn!
           </p>
-          <div className="flex items-center gap-2 mt-4">
-            <img
-              src={assets.googlePlay}
-              alt="Get it on Google Play"
-              className="h-9 w-auto"
-            />
-            <img
-              src={assets.appStore}
-              alt="Download on the App Store"
-              className="h-9 w-auto"
-            />
-          </div>
+
         </div>
         <div className="flex-1 flex items-start md:justify-end gap-20 md:gap-40">
           <div>
