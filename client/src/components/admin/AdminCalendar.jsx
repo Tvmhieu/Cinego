@@ -246,7 +246,12 @@ const AdminCalendar = ({ shows }) => {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-200 text-base group-hover:text-primary transition-colors">{show.movie?.title}</h4>
-                    <p className="text-xs text-gray-500 mt-1">{show.room?.name || "Chưa xếp phòng"}</p>
+                    <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-2">
+                      <span className="font-mono text-[10px] bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded border border-gray-700">
+                        {show.showCode || "N/A"}
+                      </span>
+                      {show.room?.name || "Chưa xếp phòng"}
+                    </p>
                   </div>
                   <div className="flex items-center gap-8 text-sm">
                     <div className="flex flex-col gap-1">
