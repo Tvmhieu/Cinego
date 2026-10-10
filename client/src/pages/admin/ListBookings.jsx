@@ -19,6 +19,7 @@ const ListBookings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: 'show.showDateTime', direction: 'desc' });
 
   const [activeTab, setActiveTab] = useState("upcoming"); // 'upcoming', 'past', 'cancelled'
   const [viewMode, setViewMode] = useState(window.innerWidth >= 768 ? 'table' : 'card');
@@ -377,7 +378,7 @@ const ListBookings = () => {
               activeTab === "cancelled" ? "border-primary text-primary" : "border-transparent text-gray-400 hover:text-white"
             }`}
           >
-            Đã hủy ({bookings.filter(b => b.isCancelled).length})
+            Đã hủy ({bookings.filter(b => b && b.isCancelled).length})
           </button>
         </div>
       )}
@@ -544,8 +545,8 @@ const ListBookings = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-medium text-white mb-0.5">
-                        {item.show.movie?.title || "Phim không xác định"} 
-                        {item.show.showCode && <span className="ml-2 font-mono text-xs text-gray-500">({item.show.showCode})</span>}
+                        {item.show?.movie?.title || "Phim không xác định"} 
+                        {item.show?.showCode && <span className="ml-2 font-mono text-xs text-gray-500">({item.show.showCode})</span>}
                       </p>
                       <p className="text-xs text-gray-400">{dateFormat(item.show?.showDateTime)}</p>
                     </td>
