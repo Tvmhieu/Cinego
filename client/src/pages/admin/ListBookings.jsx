@@ -443,7 +443,10 @@ const ListBookings = () => {
                   </div>
                   <div className="flex justify-between items-start text-xs">
                     <span className="text-gray-500 font-medium">Lịch chiếu:</span>
-                    <span className="text-gray-300 text-right">{dateFormat(item.show?.showDateTime)}</span>
+                    <div className="text-right">
+                      <span className="text-gray-300 block">{dateFormat(item.show?.showDateTime)}</span>
+                      <span className="text-primary font-medium">{item.show?.room?.name || "N/A"}</span>
+                    </div>
                   </div>
                   <div className="flex justify-between items-start text-xs">
                     <span className="text-gray-500 font-medium">Ghế:</span>
@@ -548,7 +551,11 @@ const ListBookings = () => {
                         {item.show?.movie?.title || "Phim không xác định"} 
                         {item.show?.showCode && <span className="ml-2 font-mono text-xs text-gray-500">({item.show.showCode})</span>}
                       </p>
-                      <p className="text-xs text-gray-400">{dateFormat(item.show?.showDateTime)}</p>
+                      <p className="text-xs text-gray-400">
+                        {dateFormat(item.show?.showDateTime)}
+                        <span className="mx-2">|</span>
+                        <span className="text-primary">{item.show?.room?.name || "N/A"}</span>
+                      </p>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <p className="font-medium text-gray-200 mb-0.5">{item.bookedSeats?.join(", ") || "N/A"}</p>

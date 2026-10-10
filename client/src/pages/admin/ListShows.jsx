@@ -177,6 +177,11 @@ const ListShows = () => {
       const valB = b.showPrice || 0;
       return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
     }
+    if (sortConfig.key === 'room.name') {
+      const valA = a.room?.name || "";
+      const valB = b.room?.name || "";
+      return sortConfig.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
     return 0;
   });
 
@@ -330,7 +335,11 @@ const ListShows = () => {
                 >
                   <div className="flex justify-between items-start mb-3 border-b border-gray-800/60 pb-3">
                     <div className="flex-1 pr-2">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Mã: <span className="font-mono text-gray-300 font-medium">{show.showCode || "N/A"}</span></p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">
+                        Mã: <span className="font-mono text-gray-300 font-medium">{show.showCode || "N/A"}</span> 
+                        <span className="mx-2 text-gray-600">|</span> 
+                        Phòng: <span className="text-primary font-medium">{show.room?.name || "N/A"}</span>
+                      </p>
                       <p className="font-medium text-white text-base leading-tight">{show.movie?.title}</p>
                     </div>
                     <span className={`flex-shrink-0 px-2.5 py-1 text-xs font-medium rounded-full border ${status.color}`}>
@@ -406,6 +415,7 @@ const ListShows = () => {
                   />
                 </th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showCode')}>Mã{renderSortIndicator('showCode')}</th>
+                <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('room.name')}>Phòng{renderSortIndicator('room.name')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('movie.title')}>Tên phim{renderSortIndicator('movie.title')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showDateTime')}>Giờ chiếu{renderSortIndicator('showDateTime')}</th>
                 <th className="px-6 py-4 font-medium cursor-pointer hover:text-white transition" onClick={() => handleSort('showPrice')}>Giá vé{renderSortIndicator('showPrice')}</th>
@@ -443,6 +453,11 @@ const ListShows = () => {
                       <td className="px-6 py-4">
                         <span className="font-mono text-xs font-medium text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
                           {show.showCode || "N/A"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-medium text-primary bg-primary/10 px-2 py-1 rounded">
+                          {show.room?.name || "N/A"}
                         </span>
                       </td>
                       <td className="px-6 py-4">

@@ -144,6 +144,7 @@ export const getAllShows = async (req, res) => {
       // showDateTime: { $gte: new Date() },
     })
       .populate("movie")
+      .populate("room")
       .sort({ showDateTime: -1 });
 
     const showsWithRevenue = await Promise.all(
@@ -171,7 +172,13 @@ export const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({})
       .populate("user")
-      .populate({ path: "show", populate: { path: "movie" } })
+      .populate({ 
+        path: "show", 
+        populate: [
+          { path: "movie" },
+          { path: "room" }
+        ] 
+      })
       .sort({ createdAt: -1 });
 
     res.json({ success: true, bookings });
