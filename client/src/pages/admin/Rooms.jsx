@@ -8,12 +8,12 @@ const Rooms = () => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // Room form state
   const [editingRoomId, setEditingRoomId] = useState(null);
   const [roomName, setRoomName] = useState("");
   const [rows, setRows] = useState(10);
   const [cols, setCols] = useState(15);
   const [layout, setLayout] = useState([]);
+  const [vipMultiplier, setVipMultiplier] = useState(1.5);
   
   // Selection state for seat builder
   const [selectedSeats, setSelectedSeats] = useState([]);
@@ -80,7 +80,7 @@ const Rooms = () => {
       row.seats.forEach((seat) => {
         if (selectedSeats.includes(seat.id)) {
           if (action === "empty") seat.type = "empty";
-          if (action === "vip") { seat.type = "vip"; seat.priceMultiplier = 1.5; }
+          if (action === "vip") { seat.type = "vip"; seat.priceMultiplier = vipMultiplier; }
           if (action === "standard") { seat.type = "standard"; seat.priceMultiplier = 1; }
         }
       });
@@ -191,12 +191,27 @@ const Rooms = () => {
               <button onClick={() => { setIsModalOpen(false); setEditingRoomId(null); setRoomName(""); }} className="text-red-500 font-bold hover:text-red-400">Đóng</button>
             </div>
 
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-4 mb-6 flex-wrap items-center">
               <button onClick={() => applyActionToSelected("empty")} className="bg-gray-800 px-4 py-2 rounded">Xóa thành Lối Đi</button>
-              <button onClick={() => applyActionToSelected("vip")} className="bg-yellow-600 px-4 py-2 rounded">Set Ghế VIP</button>
+              
+              <div className="flex items-center bg-yellow-600/20 border border-yellow-600 rounded">
+                <button onClick={() => applyActionToSelected("vip")} className="bg-yellow-600 px-4 py-2 rounded-l text-black font-bold">Set Ghế VIP</button>
+                <div className="px-3 flex items-center gap-2">
+                  <span className="text-sm">Hệ số giá: x</span>
+                  <input 
+                    type="number" 
+                    step="0.1"
+                    min="1"
+                    value={vipMultiplier}
+                    onChange={(e) => setVipMultiplier(Number(e.target.value))}
+                    className="w-16 bg-transparent outline-none border-b border-yellow-500 text-yellow-500 font-bold"
+                  />
+                </div>
+              </div>
+
               <button onClick={() => applyActionToSelected("standard")} className="bg-blue-600 px-4 py-2 rounded">Set Ghế Thường</button>
               <div className="ml-auto flex items-center">
-                <span className="mr-2">Đã chọn: {selectedSeats.length} ghế</span>
+                <span className="mr-2 bg-white/10 px-3 py-1 rounded-full text-sm">Đã chọn: {selectedSeats.length} ghế</span>
               </div>
             </div>
 
