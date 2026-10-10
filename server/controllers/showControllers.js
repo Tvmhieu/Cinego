@@ -175,6 +175,7 @@ export const getShows = async (req, res) => {
   try {
     const shows = await Show.find({
       showDateTime: { $gte: new Date(Date.now() - 15 * 60 * 1000) },
+      isCancelled: { $ne: true }
     })
       .populate("movie")
       .sort({ showDateTime: 1 });
@@ -209,6 +210,7 @@ export const getShow = async (req, res) => {
       Show.find({
         movie: movieId,
         showDateTime: { $gte: new Date(Date.now() - 15 * 60 * 1000) },
+        isCancelled: { $ne: true }
       }).populate('room'),
       Movie.findById(movieId)
     ]);
