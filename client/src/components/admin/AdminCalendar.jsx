@@ -1,11 +1,29 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ClockIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../context/AppContext";
 
 const AdminCalendar = ({ shows }) => {
   const navigate = useNavigate();
+  const { axios } = useAppContext();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDayShows, setSelectedDayShows] = useState(null); // { dateStr, shows: [] }
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState("");
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const { data } = await axios.get("/api/room/all");
+        if (data.success) {
+          setRooms(data.rooms);
+        }
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+    fetchRooms();
+  }, [axios]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -32,9 +50,14 @@ const AdminCalendar = ({ shows }) => {
     setSelectedDayShows(null);
   };
 
+  const filteredShows = useMemo(() => {
+    if (!selectedRoomId) return shows;
+    return shows.filter(show => show.room && show.room._id === selectedRoomId);
+  }, [shows, selectedRoomId]);
+
   const showsByDate = useMemo(() => {
     const map = {};
-    shows.forEach(show => {
+    filteredShows.forEach(show => {
       const d = new Date(show.showDateTime);
       const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       if (!map[dateKey]) map[dateKey] = [];
@@ -44,7 +67,7 @@ const AdminCalendar = ({ shows }) => {
       map[key].sort((a, b) => new Date(a.showDateTime) - new Date(b.showDateTime));
     });
     return map;
-  }, [shows]);
+  }, [filteredShows]);
 
   const calendarDays = [];
   for (let i = 0; i < firstDayOfMonth; i++) calendarDays.push(null);
@@ -72,6 +95,21 @@ const AdminCalendar = ({ shows }) => {
             {monthNames[month]} {year}
           </h2>
           <div className="flex items-center gap-2">
+            <select
+              value={selectedRoomId}
+              onChange={(e) => {
+                setSelectedRoomId(e.target.value);
+                setSelectedDayShows(null);
+              }}
+              className="bg-gray-900 border border-gray-800 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary transition-colors cursor-pointer"
+            >
+              <option value="" className="bg-gray-900 text-white">Tất cả phòng</option>
+              {rooms.map(room => (
+                <option key={room._id} value={room._id} className="bg-gray-900 text-white">
+                  {room.name}
+                </option>
+              ))}
+            </select>
             <button 
               onClick={handleToday}
               className="px-3 py-1.5 text-sm font-medium text-gray-300 hover:text-white bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded transition-colors"
@@ -144,7 +182,8 @@ const AdminCalendar = ({ shows }) => {
                     const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
                     return (
                       <div key={show._id} className="text-[11px] px-1.5 py-1 rounded bg-[#1a1a1a] text-gray-400 truncate border border-gray-800/50">
-                        <span className="text-gray-200">{timeStr}</span> - {show.movie?.title}
+                        <span className="text-gray-200">{timeStr}</span> 
+                        {!selectedRoomId && show.room && <span className="text-primary ml-1">[{show.room.name}]</span>} - {show.movie?.title}
                       </div>
                     );
                   })}
@@ -196,6 +235,7 @@ const AdminCalendar = ({ shows }) => {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-white text-base">{show.movie?.title}</h4>
+                    <p className="text-xs text-primary mt-0.5">{show.room?.name || "Chưa xếp phòng"}</p>
                   </div>
                   <div className="flex items-center gap-6 text-sm text-gray-400">
                     <div className="flex flex-col">
