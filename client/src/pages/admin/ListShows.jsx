@@ -34,7 +34,7 @@ const ListShows = () => {
     }
   };
 
-  const handleCancelShow = async (e, showId) => {
+  const handleCancelShow = async (e, show) => {
     e.stopPropagation();
     
     const reason = window.prompt("Nhập lý do hủy suất chiếu (Bắt buộc):");
@@ -44,12 +44,12 @@ const ListShows = () => {
       return;
     }
 
-    if (!window.confirm(`Bạn có chắc chắn muốn hủy suất chiếu này với lý do: "${reason.trim()}"? Tất cả vé sẽ bị hủy.`)) return;
+    if (!window.confirm(`Bạn có chắc chắn muốn hủy suất chiếu này với lý do: "${reason.trim()}"?\nCẢNH BÁO: ${show.paidTickets || 0} vé đã đặt sẽ bị hủy và hệ thống sẽ tự động hoàn tiền (nếu có cấu hình).`)) return;
 
     try {
       const { data } = await axios.post(
         "/api/admin/cancel-show",
-        { showId, reason: reason.trim() },
+        { showId: show._id, reason: reason.trim() },
         { headers: { Authorization: `Bearer ${await getToken()}` } }
       );
 
@@ -75,7 +75,8 @@ const ListShows = () => {
       return;
     }
 
-    if (!window.confirm(`Bạn có chắc muốn hủy ${selectedShows.length} suất chiếu đã chọn với lý do: "${reason.trim()}"? Tất cả vé sẽ bị hủy.`)) return;
+    const totalTickets = shows.filter(s => selectedShows.includes(s._id)).reduce((acc, s) => acc + (s.paidTickets || 0), 0);
+    if (!window.confirm(`Bạn có chắc muốn hủy ${selectedShows.length} suất chiếu đã chọn với lý do: "${reason.trim()}"?\nCẢNH BÁO: Toàn bộ ${totalTickets} vé đã đặt thuộc các suất chiếu này sẽ bị hủy.`)) return;
 
     try {
       const { data } = await axios.post(
@@ -375,7 +376,7 @@ const ListShows = () => {
                     </button>
                     {!show.isCancelled && (
                       <button
-                        onClick={(e) => handleCancelShow(e, show._id)}
+                        onClick={(e) => handleCancelShow(e, show)}
                         className="flex-1 flex justify-center items-center gap-2 py-2.5 bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white border border-red-600/20 rounded-xl text-sm font-medium transition"
                       >
                         <Trash2Icon className="w-4 h-4" /> Hủy suất
@@ -478,7 +479,7 @@ const ListShows = () => {
                       <td className="px-6 py-4 text-right">
                         {!show.isCancelled && (
                           <button
-                            onClick={(e) => handleCancelShow(e, show._id)}
+                            onClick={(e) => handleCancelShow(e, show)}
                             className="px-4 py-2 text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition active:scale-95"
                           >
                             Hủy suất

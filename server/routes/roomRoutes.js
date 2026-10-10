@@ -1,5 +1,5 @@
 import express from "express";
-import { addRoom, getAllRooms, deleteRoom, updateRoom } from "../controllers/roomControllers.js";
+import { addRoom, getAllRooms, deleteRoom, updateRoom, getRoomStats } from "../controllers/roomControllers.js";
 import { requireAuth } from "@clerk/express";
 
 const roomRouter = express.Router();
@@ -9,5 +9,6 @@ roomRouter.post("/add", requireAuth(), addRoom);
 roomRouter.get("/all", getAllRooms); // Public or admin? Usually admin, but we keep it open for booking
 roomRouter.delete("/:roomId", requireAuth(), deleteRoom);
 roomRouter.put("/:roomId", requireAuth(), updateRoom);
+roomRouter.get("/stats/:roomId", requireAuth(), getRoomStats);
 
 export default roomRouter;

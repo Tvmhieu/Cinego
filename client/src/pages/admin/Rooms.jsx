@@ -131,9 +131,15 @@ const Rooms = () => {
   const handleDeleteRoom = async (e, roomId, roomName) => {
     e.stopPropagation(); // prevent opening the edit modal
     
-    if (window.confirm(`Bạn có chắc chắn muốn xóa phòng "${roomName}" không?\nCẢNH BÁO: Việc này sẽ xóa toàn bộ các SUẤT CHIẾU và VÉ liên quan đến phòng này.`)) {
-      try {
-        const token = await getToken();
+    try {
+      const token = await getToken();
+      
+      const { data: stats } = await axios.get(`/api/room/stats/${roomId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const showCountText = stats.success ? stats.showCount : 'nhiều';
+
+      if (window.confirm(`Bạn có chắc chắn muốn xóa phòng "${roomName}" không?\nCẢNH BÁO: Việc này sẽ xóa toàn bộ ${showCountText} SUẤT CHIẾU và TẤT CẢ VÉ liên quan đến phòng này.`)) {
         const { data } = await axios.delete(`/api/room/${roomId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -144,9 +150,9 @@ const Rooms = () => {
         } else {
           toast.error(data.message);
         }
-      } catch (error) {
-        toast.error("Lỗi khi xóa phòng");
       }
+    } catch (error) {
+      toast.error("Lỗi khi xóa phòng");
     }
   };
 

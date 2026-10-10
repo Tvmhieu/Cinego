@@ -78,3 +78,15 @@ export const updateRoom = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+// Get room stats
+export const getRoomStats = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const showCount = await Show.countDocuments({ room: roomId });
+    res.json({ success: true, showCount });
+  } catch (error) {
+    console.error(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
