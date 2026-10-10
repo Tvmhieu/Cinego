@@ -37,7 +37,7 @@ const PaymentResult = () => {
           {isSuccess ? (
             <>
               Vé của bạn đã được xác nhận. <br />
-              <span className="text-yellow-400 font-medium mt-2 inline-block">Lưu ý:</span> Vui lòng có mặt tại rạp đúng giờ chiếu để có trải nghiệm xem phim tuyệt vời nhất nhé! 🎬
+              <span className="text-yellow-400 font-medium mt-2 inline-block">Lưu ý:</span> Vui lòng có mặt tại rạp đúng giờ và cung cấp mã đặt chỗ để có trải nghiệm xem phim tốt nhất nhé! 🎬
             </>
           ) : (
             "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại."
