@@ -62,9 +62,10 @@ export const isAdmin = async (req, res) => {
 // API to get dashboard data
 export const getDashboardData = async (req, res) => {
   try {
-    const bookings = await Booking.find({ isPaid: true });
+    const bookings = await Booking.find({ isPaid: true, isCancelled: false });
     const activeShows = await Show.find({
       showDateTime: { $gte: new Date() },
+      isCancelled: { $ne: true }
     }).populate("movie");
 
     // Calculate unique movies having active shows
@@ -79,7 +80,7 @@ export const getDashboardData = async (req, res) => {
     });
 
     // Actually let's fetch all shows and populate movies to calculate overall performance
-    const allShows = await Show.find({}).populate("movie");
+    const allShows = await Show.find({ isCancelled: { $ne: true } }).populate("movie");
     const showToMovieMap = {};
     const showCountMap = {};
 
